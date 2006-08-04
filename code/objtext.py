@@ -1,8 +1,8 @@
 #text class
 
-import pygame, pygame.font
+import pygame
 from pygame.locals import *
-import game, gfx
+import game, gfx, txt
 
 fonts = []
 availpos = game.arena.centerx, 100
@@ -12,14 +12,14 @@ numtexts = 0
 def load_game_resources():
     #load ship graphics
     global fonts
-    fonts = [pygame.font.Font(None, 50)]
+    fonts = [txt.Font('serif', 30, bold=0)]
 
 
 class Text:
     def __init__(self, message):
         global availpos, numtexts
         bgd = 0, 0, 0
-        self.img, self.rect = gfx.text(fonts[0], (128, 255, 255), message, availpos)
+        self.img, self.rect = fonts[0].text((128, 255, 255), message, availpos)
         if gfx.surface.get_bytesize() > 1:
             self.img.set_alpha(128, RLEACCEL)
         self.clocks = game.text_length

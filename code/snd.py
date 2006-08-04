@@ -55,20 +55,20 @@ def play(name, volume=1.0, pos=-1):
             if pos == -1:
                 chan.set_volume(volume)
             else:
-                percent = (pos / 700.0) 
+                percent = (pos / 700.0)
                 inv = 1.0 - percent
                 chan.set_volume(inv*volume, percent*volume)
-    
+
 
 def playmusic(musicname):
     if not music: return
     if music.get_busy():
         #we really should fade out nicely and
-        #wait for the end music event, for now, CUT 
+        #wait for the end music event, for now, CUT
         music.stop()
     fullname = os.path.join('data', 'music', musicname)
     music.load(fullname)
     music.play(-1)
     music.set_volume(1.0)
 
-    
+

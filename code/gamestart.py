@@ -1,13 +1,12 @@
 """Game start and user select handler, part of SOLARWOLF."""
 
 import string, math
-import pygame, pygame.font
+import pygame
 from pygame.locals import *
 import game
-import gfx
+import gfx, txt, snd
 import input
 import players
-import snd
 import score
 import gameplay
 
@@ -27,17 +26,17 @@ def load_game_resources():
     images.append((img, img.get_rect()))
 
     bgd = 0, 0, 0
-    font = pygame.font.Font(None, 50)
-    t = gfx.text(font, (220, 210, 180), 'Select A Player:', (gfx.rect.centerx, 30))
+    font = txt.Font(None, 50)
+    t = font.text((220, 210, 180), 'Select A Player:', (gfx.rect.centerx, 30))
     images.append(t)
 
-    namefont = pygame.font.Font(None, 46)
-    textfont = pygame.font.Font(None, 26)
+    namefont = txt.Font(None, 46)
+    textfont = txt.Font(None, 26)
 
     snd.preload('select_choose', 'select_move', 'delete')
 
     delimage = gfx.load('btn-delete.gif')
-    
+
 
 def preGameStart(prevhandler):
     if not players.players:
@@ -70,11 +69,11 @@ class GameStart:
             msg = 'Hall Of Famers:  '
             for w in players.winners:
                 msg += w.name + '  '
-            t = gfx.text(textfont, (255, 250, 160), msg, (gfx.rect.centerx, 560))
+            t = textfont.text((255, 250, 160), msg, (gfx.rect.centerx, 560))
             self.images.append(t)
 
         self.moveto(self.gamelist[self.current[0]][1][1])
-        
+
 
 
     def starting(self):
@@ -84,7 +83,7 @@ class GameStart:
 
     def moveto(self, pos):
         self.shippos = pos[0] - 10, pos[1] + 10
-        
+
 
     def input(self, i):
         if self.done:
@@ -108,7 +107,7 @@ class GameStart:
                 self.current[0] = (self.current[0] - 1) % len(self.gamelist)
             elif i.translated == input.LEFT or i.translated == input.RIGHT:
                 self.current[1] = not self.current[1]
-            
+
             if self.current[1] and not self.gamelist[self.current[0]][2]:
                 self.current[1] = 0
             snd.play('select_move')
@@ -167,7 +166,7 @@ class GameStart:
         self.clearlist()
         self.gamelist = []
         if len(players.players) < game.max_players:
-            t = gfx.text(namefont, clr, '-= New Player =-', (offsetx, offsety), 'topleft')
+            t = namefont.text(clr, '-= New Player =-', (offsetx, offsety), 'topleft')
             self.gamelist.append(('', t, None))
             offsety += sizey
         for p in players.players:
@@ -177,7 +176,7 @@ class GameStart:
                 img = pygame.Surface((490, 55), 0, 32)
 
             subimgs = []
-
+#ACK, A RENDER
             subimgs.append((namefont.render(p.name, 1, clr), (0, 0)))
 
             subimg = textfont.render('Level: ', 1, clr2)
@@ -196,7 +195,7 @@ class GameStart:
                 img.blit(sub, pos)
             img.set_colorkey(bgd, RLEACCEL)
             #img = img.convert()
-            
+
             rect = img.get_rect().move(offsetx, offsety)
             img2 = delimage
             rect2 = img2.get_rect().move(offsetx + 500, offsety + 40)
@@ -255,7 +254,6 @@ class GameStart:
             global lastplayer
             lastplayer = p
             game.player = p
-            game.player_name = p.name
             self.clearlist()
             self.moveto((860, 500))
             self.done = 1
@@ -264,5 +262,6 @@ class GameStart:
             players.players.remove(p)
             self.buildlist()
             self.current = [0, 0]
+            self.moveto((120, 110))
 
 

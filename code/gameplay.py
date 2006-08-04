@@ -5,56 +5,38 @@ from pygame.locals import *
 import random, math
 
 import game, gfx, input, snd
+import gamehelp, gamepause
 import objship, objbox, objguard, objshot, objexplode, objtele
-import objpopbox, objpopshot, objtext, objsmoke, objwarp, objpowerup
+import objpopbox, objpopshot, objtext, objsmoke, objwarp
+import objpowerup, objasteroid
 import levels, hud, players
 
 #num of insults must match num of complements
 Complements = (
-    'You\'re on Fire!',
-    'Not too Shabby',
     'Keep it up!',
     'Looking Great!',
-    'Use the Force, Luke!',
     'Hotshot',
-    'Make Momma Proud',
-    'Rad-o-Cool',
     'Too Hot to Handle',
-    'What\'s not to Love?',
-    'Dance the Mambo',
     'Lord of the Dance',
     'Bring it on',
-    'Weaving a Tapestry',
-    'Shuck and Jive',
     'Beautiful',
-    'Break it down',
     'Own the Zone',
     'Too Cool For School',
     'So Hot Right Now',
-    'You\'re a Red Hot Pepper Inside'
+    'Smooth Moves'
 )
 Insults = (
-    'Try Missing the Bullets',
     'Not so good',
     'Ouch',
     'Look away',
     'Rookie',
-    'It hurts, it Hurts',
-    'Both hands on the Wheel',
+    'Sloppy',
     'Choke Choke',
-    'Don\'t Quit that Day Job',
     'Not Today',
     'Hall of Shame',
-    'Daddy Don\'t Let Them Hurt Me',
-    'Dumb and Dumber',
     'Wrong way',
     'Clumsy, Clumsy',
-    'Sloppy',
-    'I Can\'t Take it',
-    'You have Become Derelicte',
-    'Scotty, Beam Me Out of Here',
-    'Mission Impossible',
-    'Aunty Em, Its a Twister',
+    'Medic',
 )
 
 
@@ -79,28 +61,35 @@ class GamePlay:
         self.popobjs = []
         self.textobjs = []
         self.smokeobjs = []
+        self.asteroidobjs = []
         self.guardobjs = [objguard.Guard(x) for x in range(4)]
         self.objlists = [self.boxobjs, self.shotobjs, self.popobjs, self.smokeobjs,
-                         self.powerupobjs, self.guardobjs, self.staticobjs, self.textobjs]
+                         self.powerupobjs, self.asteroidobjs, self.guardobjs,
+                         self.staticobjs, self.textobjs]
         self.hud = hud.HUD()
 
         self.state = ''
         self.statetick = self.dummyfunc
         self.lives_left = 0
-        self.shotsfired = 0.0
+        self.grabbedboxes = 0
+        self.powerupcount = 0.0
         self.numdeaths = 0
         self.complement = random.randint(0, len(Complements)-1)
 
         self.lasttick = pygame.time.get_ticks()
         self.speedadjust = 1.0
+        self.startmusic = 1
 
         self.changestate('gamestart')
 
         self.bgfill = gfx.surface.fill
 
 
+
     def starting(self):
-        snd.playmusic('arg.xm')
+        if self.startmusic:
+            self.startmusic = 0
+            snd.playmusic('arg.xm')
 
     def gamewin(self):
         self.gamewon = 1
@@ -143,13 +132,17 @@ class GamePlay:
 
 
     def event(self, e):
-        pass
+        if e.type == pygame.KEYDOWN:
+            if e.key == pygame.K_PAUSE or e.key == pygame.K_p:
+                game.handler = gamepause.GamePause(self)
 
     def run(self):
         ratio = game.clockticks / 25
         self.speedadjust = max(ratio, 1.0)
-        self.speedadjust *= game.speedmult
-
+        if game.speedmult >= 2:
+            self.speedadjust *= 0.35
+        elif game.speedmult: #if true must be 1
+            self.speedadjust *= 0.55
         self.statetick()
 
 
@@ -162,17 +155,23 @@ class GamePlay:
                 self.powereffects.remove(effect)
             else:
                 effect.tick(S)
-        for l, o in [(l, o) for l in objects for o in l]:
-            o.erase(B)
-            o.tick(S)
+
+        #add pop for timedout powerups, sad place to do this, but owell
+        for o in self.powerupobjs:
             if o.dead:
+                self.popobjs.append(objpopbox.PopBox(o.rect.center))
+
+        for l in objects:
+            for o in l[:]:
                 o.erase(B)
-                l.remove(o)
+                o.tick(S)
+                if o.dead:
+                    o.erase(B)
+                    l.remove(o)
         for l in objects:
             for o in l:
                 o.draw(G)
         self.hud.draw()
-
 
     def background(self, area):
         return self.bgfill(0, area)
@@ -188,14 +187,26 @@ class GamePlay:
 #normal play
     def normal_start(self):
         self.clocks = 0
+        if self.levelnum == 0:
+            gamehelp.help("player", (250, 100))
+        elif self.levelnum == 1:
+            gamehelp.help("guardians", (20, 700))
+        elif self.levelnum == 2:
+            gamehelp.help("skip", (700, 400))
+        elif self.levelnum == 3:
+            gamehelp.help("multibox", (220, 220))
+
+        if len(self.asteroidobjs):
+            gamehelp.help("asteroids", self.asteroidobjs[0].rect.center)
+
 
     def normal_tick(self):
-        if not self.player.active:
-            self.player.start((100, 100)) #should never do this!
+        #assert(self.player.active)
 
         #fire the guards
         shootchance = game.guard_fire * self.speedadjust
         if self.player.active and random.random() < shootchance:
+            self.powerupcount += 0.3
             baddy = self.guardobjs[random.randint(0,3)]
             if not baddy.reloading:
                 baddy.reloading = objguard.guard_loadtime
@@ -211,49 +222,75 @@ class GamePlay:
             s = objshot.Shot(shotspot, shotdir)
             self.shotobjs.append(s)
             snd.play('shoot', 1.0, shotspot[0])
-            self.shotsfired += 0.3
-        if self.shotsfired >= 35.0:
+
+        #add a powerup if ready
+        if self.powerupcount >= 46.0:
+            self.powerupcount = 0.0
+            p = objpowerup.Powerup()
+            self.powerupobjs.append(p)
+            snd.play('startlife', 0.3)
+            gamehelp.help("powerup", p.rect.topleft)
+        if self.grabbedboxes >= 50:
+            self.grabbedboxes = 0
             self.textobjs.append(objtext.Text(Complements[self.complement]))
             self.complement = (self.complement + 1) % len(Complements)
-            self.shotsfired = 0.0
+        elif self.grabbedboxes >= 20:
             self.numdeaths = 0
-            self.powerupobjs.append(objpowerup.Powerup())
-            snd.play('startlife', 0.3)
 
         self.tickleveltime(self.speedadjust)
 
         playerrect = self.player.rect.inflate(-1, -1)
         playercollide = playerrect.colliderect
+        #collide player to boxes
         for b in self.boxobjs:
             status = b.playercollide(playerrect)
             if status:
-                self.shotsfired += 1.2
+                self.grabbedboxes += 1
+                self.powerupcount += 0.6
                 if status == 1:
+                    self.powerupcount += 0.3
                     b.dead = 1
                     self.popobjs.append(objpopbox.PopBox(b.rect.center))
+        #collide player to powerups
         for p in self.powerupobjs:
             if playercollide(p.rect):
                 p.dead = 1
-                choices = objpowerup.effects[:2+(self.levelnum/6)]
+                choices = objpowerup.effects[:2+(self.levelnum/8)]
                 effect = random.choice(choices)()
                 self.textobjs.append(objtext.Text('"'+effect.__doc__+'"'))
                 self.powereffects.append(effect)
+                gamehelp.help(effect.__doc__, self.player.rect.center)
         playerrect = playerrect.inflate(-6, -6)
         playercollide = playerrect.colliderect
+        asteroidrects = [o.colliderect for o in self.asteroidobjs]
+        hitbullet = 0
+        #collide player and asteroids to bullets
         for s in self.shotobjs:
-            if playercollide(s.rect):
+            r = s.rect
+            if playercollide(r):
+                s.dead = 1
                 if not self.player.shield:
-                    s.dead = 1
-                    self.player.dead = 1
-                    self.player.active = 0
                     self.changestate('playerdie')
+                    hitbullet = 1
                 else:
+                    self.popobjs.append(objpopshot.PopShot(s.rect.center))
+            for ar in asteroidrects:
+                if ar.colliderect(r) and not s.dead:
                     s.dead = 1
                     self.popobjs.append(objpopshot.PopShot(s.rect.center))
+                    break
+        #collide player to asteroids
+        if not hitbullet:
+            for a,r in zip(self.asteroidobjs, asteroidrects):
+                if playercollide(r):
+                    self.changestate('playerdie')
+                    a.dead = 1
+                    self.popobjs.append(objpopshot.PopShot(r.center))
 
         if not self.boxobjs:
             self.changestate('levelend')
 
+        #blow smoke (turbo)
         self.clocks += 1
         if self.player.turbo and (self.player.move[0] or self.player.move[1]) and gfx.surface.get_bytesize()>1:
             self.smokeobjs.append(objsmoke.Smoke(self.player.rect.center))
@@ -272,7 +309,7 @@ class GamePlay:
         self.poptime = 3
         self.player.dead = 1
         self.player.active = 0
-        self.shotsfired = max(self.shotsfired - 30.0, 0.0)
+        self.grabbedboxes = 0
         self.numdeaths += 1
         if len(self.boxobjs) <= 2:
             self.textobjs.append(objtext.Text('Doh, so close'))
@@ -313,18 +350,27 @@ class GamePlay:
     def playerstart_start(self):
         snd.play('startlife', 1.0, self.startpos[0])
         self.hud.drawlives(self.lives_left)
+        self.powerupcount = max(0.0, self.powerupcount - 15.0)
         self.teleport = objtele.Tele(self.startpos)
         self.popobjs.append(self.teleport)
-        self.shotsfired = 0.0
+        self.grabbedboxes = 0
 
     def playerstart_tick(self):
         #when animations done
+        anyblock = 0
+        collide = self.teleport.rect.inflate(10, 10).colliderect
+        for a in self.asteroidobjs:
+            if collide(a.rect) or collide(a.predictrect()):
+                anyblock = 1
+                break
+        if not anyblock:
+            self.teleport.rocksclear = 1
         if self.teleport.dead:
             self.changestate('normal')
             self.player.start(self.startpos)
             self.staticobjs.append(self.player)
         self.runobjects(self.objlists)
-        self.tickleveltime(self.speedadjust)
+        #self.tickleveltime(self.speedadjust)
 
     def playerstart_end(self):
         input.resetexclusive()
@@ -343,14 +389,20 @@ class GamePlay:
         if game.clock.get_fps() < 25:
             self.addtime = 1
         self.hud.drawlevel(self.levelnum)
-        self.textobjs.append(objtext.Text(msg))
-        self.shotsfired = 0.0
+        self.textobjs.append(objtext.Text(msg)) #MSG
+        self.grabbedboxes = 0
         self.numdeaths = 0
 
         if self.levelnum > game.player.score:
             game.player.score = self.levelnum
         if not self.newcontinue and game.player.start_level() > self.startlevel:
             self.newcontinue = 1
+
+        for i in range(levels.numrocks(self.levelnum) - len(self.asteroidobjs)):
+            self.asteroidobjs.append(objasteroid.Asteroid())
+
+        for p in self.powerupobjs:
+            p.extendtime()
 
         if self.skipping: self.skiptime = 20
 
@@ -396,12 +448,11 @@ class GamePlay:
         self.player.dead = 1
         self.player.active = 0
         self.poptime = 2
-        if self.shotsfired >= 32.0:
-            self.textobjs.append(objtext.Text(Complements[self.complement]))
-            self.complement = (self.complement + 1) % len(Complements)
-            self.shotsfired = 0.0
         for effect in self.powereffects:
             effect.dead = 1
+        if self.grabbedboxes >= 40:
+            self.textobjs.append(objtext.Text(Complements[self.complement]))
+            self.complement = (self.complement + 1) % len(Complements)
 
     def levelend_tick(self):
         self.poptime -= 1
@@ -435,7 +486,7 @@ class GamePlay:
         if self.skiptime:
             self.skiptime -= 1
         else:
-            game.timeleft = max(game.timeleft - 4.0, 0.0)
+            game.timeleft = max(game.timeleft - 5.0, 0.0)
             self.poptime -= 1
             if not self.poptime:
                 self.poptime = 2
@@ -473,10 +524,10 @@ class GamePlay:
                 self.donehud = 1
                 self.ticks = 0
         else:
-            if not self.ticks % 4 and self.levelnum < self.startlevel-1:
+            if not self.ticks % 3 and self.levelnum < self.startlevel-1:
                 self.levelnum += 1
                 self.hud.drawlevel(self.levelnum)
-            if not self.ticks % 10 and self.lives_left < game.start_lives:
+            if not self.ticks % 16 and self.lives_left < game.start_lives:
                 self.lives_left += 1
                 self.hud.drawlives(self.lives_left)
             if self.lives_left == game.start_lives and \
@@ -514,13 +565,19 @@ class GamePlay:
                 self.final_game_end()
         self.runobjects(self.objlists)
 
+        B = self.background
+        for l in self.objlists:
+            for o in l:
+                o.erase(B)
+
 
     def final_game_end(self):
         nexthandler = self.prevhandler
         if self.gamewon:
             import gamewin
             nexthandler = gamewin.GameWin(nexthandler)
-            players.make_winner(game.player)
+            if not game.player:
+                nexthandler = gamename.GameName(nexthandler)
         if self.newcontinue:
             if not game.player in players.players:
                 players.players.append(game.player)
@@ -528,8 +585,7 @@ class GamePlay:
             #add a highscore handler into these chains
             if not game.player.name:
                 import gamename
-                game.handler = gamename.GameName(nexthandler)
-                return
+                nexthandler = gamename.GameName(nexthandler)
 
         game.handler = nexthandler
 

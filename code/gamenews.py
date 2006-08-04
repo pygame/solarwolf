@@ -5,9 +5,8 @@ import urllib, tempfile, shutil
 import pygame, pygame.font
 from pygame.locals import *
 import game
-import gfx
+import gfx, snd, txt
 import input
-import snd
 import gameplay
 
 images = []
@@ -25,11 +24,11 @@ def load_game_resources():
         img = gfx.load(i+'.gif')
         downimgs.append(img)
 
-    fonts.append((pygame.font.Font(None, 40), (50, 50, 200)))
-    fonts.append((pygame.font.Font(None, 26), (100, 100, 250)))
-    fonts.append((pygame.font.Font(None, 30), (100, 100, 250)))
-    fonts[0][0].set_underline(1)  #this crashes SDL_ttf :[
-    fonts[1][0].set_italic(1)
+    fonts.append((txt.Font(None, 40, italic=1), (50, 50, 200)))
+    fonts.append((txt.Font(None, 26), (100, 100, 250)))
+    fonts.append((txt.Font(None, 30), (100, 100, 250)))
+    #fonts[0][0].set_underline(1)  #this crashes SDL_ttf :[
+    #fonts[1][0].set_italic(1)
 
     snd.preload('select_choose', 'startlife', 'levelskip')
 
@@ -87,14 +86,14 @@ class GameNews:
 
 
     def makebadnews(self, title, message):
-        t = gfx.text(fonts[1][0], fonts[1][1], title, (100, 200), 'topleft')
+        t = fonts[1][0].text(fonts[1][1], title, (100, 200), 'topleft')
         self.imgs.append(t)
-        t = gfx.text(fonts[0][0], fonts[1][1], message, (140, 235), 'topleft')
+        t = fonts[0][0].text(fonts[1][1], message, (140, 235), 'topleft')
         self.imgs.append(t)
 
 
     def rendertext(self, font, text):
-        return gfx.text(fonts[font][0], fonts[font][1], text)
+        return fonts[font][0].text(fonts[font][1], text)
 
 
     def loadnews(self):
@@ -106,6 +105,9 @@ class GameNews:
             newsfilename = game.get_resource('news')
         if os.path.isfile(newsfilename):
             news = open(newsfilename).readlines()[2:]
+            if not news:
+                self.makebadnews(' ', 'Invalid News File')
+                return
             self.newsversion = news[0].split()[-1]
             newsitems = []
             title = date = None

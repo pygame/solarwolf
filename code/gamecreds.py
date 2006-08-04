@@ -3,7 +3,7 @@
 import math, os
 import pygame
 from pygame.locals import *
-import game, gfx, snd
+import game, gfx, snd, txt
 import gameplay
 
 
@@ -11,8 +11,8 @@ import gameplay
 credits = (
     ('Developer', ('Pete "ShredWheat" Shinners',)),
     ('Input Setup', ('Aaron "APS" Schlaegel',)),
-    ('Music', ('"P2E"',)),
-    ('Graphics Help', ('John Croisant', 'Kevin Turner')),
+    ('Music', ('"theGREENzebra"',)),
+    ('Graphics Help', ('John Croisant', 'Kevin Turner', 'Michael Urman')),
     ('Special Thanks', ('David "Futility" Clark',)),
 )
 
@@ -27,8 +27,8 @@ images = []
 def load_game_resources():
     global fonts, images
     fontname = None
-    fonts.append((pygame.font.Font(fontname, 25), (50, 50, 200)))
-    fonts.append((pygame.font.Font(fontname, 40), (100, 100, 250)))
+    fonts.append((txt.Font(fontname, 25), (50, 50, 200)))
+    fonts.append((txt.Font(fontname, 40), (100, 100, 250)))
 
     img = gfx.load('oldsolarfox.png')
     r = img.get_rect()
@@ -43,13 +43,13 @@ def load_game_resources():
     r = img.get_rect().move(20, 5)
     images.append((img, r))
 
-    font = pygame.font.Font(None, 15)
+    font = txt.Font(None, 15)
     top = 560
     mid = 400
     for l in licenseinfo:
-        txt = gfx.text(font, (50, 150, 150), l, (mid, top))
-        top += txt[1].height
-        images.append(txt)
+        t = font.text((50, 150, 150), l, (mid, top))
+        top += t[1].height
+        images.append(t)
 
     snd.preload('select_choose')
 
@@ -58,7 +58,7 @@ class GameCreds:
     def __init__(self, prevhandler):
         self.prevhandler = prevhandler
         self.done = 0
-        self.top = 120
+        self.top = 100
         self.center = gfx.rect.centerx - 120
         self.text = []
         for cred in credits:
@@ -70,7 +70,7 @@ class GameCreds:
 
     def createtext(self, text, size):
         f, c = fonts[size]
-        t = gfx.text(f, c, text, (self.center, 0))
+        t = f.text(c, text, (self.center, 0))
         t[1].top = self.top
         self.top = t[1].bottom - 5
         self.text.append(t)

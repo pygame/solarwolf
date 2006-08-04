@@ -1,8 +1,6 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 """
-Solarwolf has been created by Pete Shinners.
-The original Solarwolf was released in May, 2001.
-About a year later this exciting new version is available.
+Solarwolf, created by Pete Shinners.
 """
 
 
@@ -14,7 +12,7 @@ def main():
     dir = os.path.split(fullpath)[0]
     os.chdir(dir)
 
-    #add our code to the python path    
+    #add our code to the python path
     sys.path.insert(0, 'code')
 
     checkdependencies()
@@ -59,7 +57,7 @@ def checkdependencies():
     #first, we need python >= 2.0
     if int(sys.version[0]) < 2:
         errorbox('Requires Python-2.0 or Greater')
-    
+
     #is correct pygame found?
     try:
         import pygame
@@ -109,7 +107,7 @@ def __pygamebox(title, message):
         pygame.font.init()
         screen = pygame.display.set_mode((460, 140))
         pygame.display.set_caption(title)
-        font = pygame.font.Font(None, 18)            
+        font = pygame.font.Font(None, 18)
         foreg, backg, liteg = (0, 0, 0), (180, 180, 180), (210, 210, 210)
         ok = font.render('Ok', 1, foreg, liteg)
         okbox = ok.get_rect().inflate(200, 10)

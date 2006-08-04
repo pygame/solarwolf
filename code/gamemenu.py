@@ -4,19 +4,19 @@ import math, os
 import pygame, pygame.draw
 from pygame.locals import *
 import game
-import gfx
+import gfx, snd, txt
 import input
-import snd
 import players
-import gamecreds
-import gamenews
-import gamestart
-import gamesetup
+import gamecreds, gamenews, gamestart, gamesetup
+
+import gamewin
 
 
 
 images = []
 boximages = []
+yboximages = []
+rboximages = []
 
 class MenuItem:
     def __init__(self, imgname, handler):
@@ -59,8 +59,20 @@ def load_game_resources():
     images.append(gfx.load('menu_on_bgd.png'))
     images[0].set_colorkey(0)
     images.append(gfx.load('logo.png'))
+    images.append(gfx.load('bigship.png'))
+    images[1].set_colorkey()
+    images[2].set_colorkey()
     for i in range(15):
-        boximages.append(gfx.load('bigbox%04d.gif'%i))
+        #boximages.append(gfx.load('bigbox%04d.gif'%i))
+        img = gfx.load_raw('bigbox%04d.gif'%i)
+        boximages.append(img.convert())
+        pal = img.get_palette()
+        newpal = [(g,g,b) for (r,g,b) in pal]
+        img.set_palette(newpal)
+        yboximages.append(img.convert())
+        newpal = [(g,b,b) for (r,g,b) in pal]
+        img.set_palette(newpal)
+        rboximages.append(img.convert())
 
     snd.preload('select_move', 'select_choose')
 
@@ -77,23 +89,30 @@ class GameMenu:
         self.logorect = self.logo.get_rect().move(30, 25)
         self.logorectsmall = self.logorect.inflate(-2,-2)
         self.boxtick = 0
-        self.boxrect = boximages[0].get_rect().move(520, 190)
+        if players.winners:
+            self.boximages = rboximages
+        else:
+            self.boximages = boximages
+        self.boxrect = self.boximages[0].get_rect().move(580, 80)
+        self.bigship = images[2]
+        self.bigshiprect = self.bigship.get_rect().move(450, 250)
 
-        fnt = pygame.font.Font(None, 18)
-        self.version = gfx.text(fnt, (100, 200, 120), 'SolarWolf Version ' + game.version, (10, 580), 'topleft')
+        fnt = txt.Font(None, 18)
+        self.version = fnt.text((100, 200, 120), 'SolarWolf Version ' + game.version, (10, 580), 'topleft')
 
 
     def starting(self):
         snd.playmusic('aster2_sw.xm')
-        r = gfx.surface.blit(self.logo, self.logorect)
-        gfx.dirty(r)
+
+        gfx.dirty(gfx.surface.blit(self.logo, self.logorect))
+        gfx.dirty(gfx.surface.blit(self.bigship, self.bigshiprect))
 
         if players.winners:
             msg = 'Hall Of Famers:  '
             for w in players.winners:
                 msg += w.name + '  '
-            textfont = pygame.font.Font(None, 26)
-            t = gfx.text(textfont, (255, 250, 160), msg, (gfx.rect.centerx, 560))
+            textfont = txt.Font(None, 26)
+            t = textfont.text((255, 250, 160), msg, (gfx.rect.centerx, 560))
             self.fame = t
         else:
             self.fame = None
@@ -176,7 +195,7 @@ class GameMenu:
     def run(self):
         self.glow += .35
         self.boxtick = (self.boxtick + 1)%15
-        boximg = boximages[self.boxtick]
+        boximg = self.boximages[self.boxtick]
 
         if self.startclock:
             alpha = (6-self.startclock)*40
@@ -194,14 +213,12 @@ class GameMenu:
 
         gfx.updatestars(self.background, gfx)
 
-        gfx.dirty(gfx.surface.blit(self.logo, self.logorect))
-
         gfx.dirty(gfx.surface.blit(*self.version))
         if self.fame:
             gfx.dirty(gfx.surface.blit(*self.fame))
 
         if self.startclock == 1 or self.switchclock == 1:
-            self.setalphas(255, [menu[self.current].img_on] + boximages)
+            self.setalphas(255, [menu[self.current].img_on] + self.boximages)
 
         if self.switchclock != 1:
             r = gfx.surface.blit(boximg, self.boxrect)
@@ -213,8 +230,6 @@ class GameMenu:
             self.drawitem(select, 1)
 
         else:
-            gfx.dirty(self.background(self.logorect))
-            gfx.dirty(self.background(self.boxrect))
             for m in menu:
                 gfx.dirty(m.rect)
             if self.switchhandler == self.prevhandler:
@@ -229,6 +244,8 @@ class GameMenu:
             gfx.dirty(self.background(self.version[1]))
             if self.fame:
                 gfx.dirty(self.background(self.fame[1]))
+            gfx.dirty(gfx.surface.fill((0, 0, 0), self.logorect))
+            gfx.dirty(gfx.surface.fill((0, 0, 0), self.bigshiprect))
 
         if self.startclock:
             self.startclock -= 1
@@ -238,9 +255,15 @@ class GameMenu:
 
 
     def background(self, area):
-        #if area.colliderect(self.logorectsmall) and self.switchclock != 1:
-        #    r = area.move(-self.logorect.left, -self.logorect.top)
-        #    return gfx.surface.blit(self.logo, area, r)
-        return gfx.surface.fill((0, 0, 0), area)
+        fullr = gfx.surface.fill((0, 0, 0), area)
+        if self.switchclock != 1:
+            if area.colliderect(self.bigshiprect):
+                    r = area.move(-self.bigshiprect.left, -self.bigshiprect.top)
+                    return gfx.surface.blit(self.bigship, area, r)
+            elif self.switchclock != 1:
+                if area.colliderect(self.logorectsmall):
+                    r = area.move(-self.logorect.left, -self.logorect.top)
+                    return gfx.surface.blit(self.logo, area, r)
+        return fullr
 
 

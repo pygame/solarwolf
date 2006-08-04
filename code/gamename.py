@@ -2,12 +2,11 @@
 # Portions Copyright (C) 2002 Aaron "APS" Schlaegel, LGPL, see lgpl.txt
 
 import string, math
-import pygame, pygame.font
+import pygame
 from pygame.locals import *
 import game
-import gfx
+import gfx, snd, txt
 import input
-import snd
 import players
 import gameplay
 import gamecreds
@@ -27,7 +26,7 @@ def load_game_resources():
     extraimgs = {'<':gfx.load('rub.gif'), '>':gfx.load('end.gif')}
     for i in extraimgs.values():
         i.set_colorkey(0, RLEACCEL)
-    font = pygame.font.Font(None, 100)
+    font = txt.Font(None, 100)
     thefont = font
     color = 120, 210, 160
     color2 = 210, 230, 220
@@ -42,8 +41,8 @@ def load_game_resources():
             r = img.get_rect()
             r.center = pos
         else:
-            img, r = gfx.text(font, color, letter, pos)
-            img2, r2 = gfx.text(font, color2, letter, pos)
+            img, r = font.text(color, letter, pos)
+            img2, r2 = font.text(color2, letter, pos)
         fontimages.append((img, r, letter, img2))
         step += 1
         if letter in charset:
@@ -55,7 +54,7 @@ def load_game_resources():
         rect2 = Rect(rect.left+1, rect.bottom-15, rect.width-2, 8)
         nameletters.append([rect, rect2, None])
 
-    font = pygame.font.Font(None, 40)
+    font = txt.Font(None, 40)
     img = font.render('Enter Your Name:', 1, (220, 210, 180), bgd).convert()
     img.set_colorkey(bgd, RLEACCEL)
     r = img.get_rect()
@@ -180,11 +179,11 @@ class GameName:
             if l[2]:
                 r = l[2].get_rect()
                 r.centerx = l[0].centerx
-                r.bottom = l[0].bottom 
+                r.bottom = l[0].bottom
                 r = gfx.surface.blit(l[2], r)
                 gfx.dirty(r)
-            
-    
+
+
     def input(self, i):
         if i.release:
             return

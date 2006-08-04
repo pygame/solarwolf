@@ -25,6 +25,7 @@ class Tele:
         self.rect = images[0].get_rect()
         self.rect.center = pos
         self.dead = 0
+        self.rocksclear = 0
 
     def erase(self, background):
         r = background(self.rect)
@@ -37,6 +38,7 @@ class Tele:
         gfx.dirty(r)
 
     def tick(self, speedadjust):
-        self.clocks += 1
-        if self.clocks == self.numclocks:
-            self.dead = 1
+        if self.clocks < 3 or self.rocksclear:
+            self.clocks += 1
+            if self.clocks == self.numclocks:
+                self.dead = 1

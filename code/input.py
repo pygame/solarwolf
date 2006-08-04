@@ -6,6 +6,8 @@ from pygame.locals import *
 import time, sys, os, pickle, tempfile
 import game
 
+ScreenshotNum = 1
+
 # control constants
 DEFAULT   = 0
 UP        = 1
@@ -191,7 +193,19 @@ def translate(event):
     release = 0
     if event.type in (KEYDOWN, KEYUP):
         # K_NUMLOCK and K_CAPSLOCK don't work right in pygame
-        if event.key not in (K_NUMLOCK, K_CAPSLOCK):
+        if event.key == K_PRINT:
+            if event.type == KEYDOWN:
+                global ScreenshotNum
+                dir = os.environ.get('HOME', '.')
+                file = 'solarwolf%02d.bmp' % ScreenshotNum
+                fullname = os.path.join(dir, file)
+                print 'Screenshot:', fullname
+                try:
+                    pygame.image.save(pygame.display.get_surface(), fullname)
+                except:
+                    print ' Screenshot FAILED'
+                ScreenshotNum += 1
+        elif event.key not in (K_NUMLOCK, K_CAPSLOCK):
             normalized = event.key
             translated = translations[KEYDOWN].get(normalized, DEFAULT)
             if translated == DEFAULT:
@@ -331,7 +345,7 @@ def load_translations():
         filename = game.make_dataname('input')
         translations = pickle.load(open(filename, 'rb'))
     except (IOError, OSError, KeyError):
-        print 'ERROR OPENING CONTROL FILE, loading defaults'
+        #print 'ERROR OPENING CONTROL FILE, loading defaults'
         translations = translations_default
 
 def save_translations():

@@ -3,7 +3,7 @@
 import pygame, pygame.draw
 from pygame.locals import *
 import sys, threading
-import game, gfx, snd, input
+import game, gfx, snd, txt, input
 
 load_total = 0
 load_current = 0
@@ -28,6 +28,7 @@ def loadresources():
             load_current += 1
             f()
     except:
+        #raise
         global load_finished_status, load_finished_message, load_finished_module, load_finished_type
         load_finished_message = str(sys.exc_value)
         load_finished_type = str(sys.exc_type) + ' in module ' + m
@@ -38,8 +39,8 @@ def loadresources():
 class GameInit:
     def __init__(self, prevhandler):
         self.prevhandler = prevhandler
-        font = pygame.font.Font(None, 20)
-        self.font = pygame.font.Font(None, 22)
+        font = txt.Font(None, 20)
+        self.font = txt.Font(None, 22)
         self.rect = Rect(50, 450, 700, 22)
         self.text = font.render('Loading Resources...', 1, (250, 230, 180))
         self.img_powered = gfx.load('pygame_powered.gif')

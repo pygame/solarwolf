@@ -1,12 +1,11 @@
 """Gamename input setup handler, part of SOLARWOLF."""
 # Copyright (C) 2002 Aaron "APS" Schlaegel, LGPL, see lgpl.txt
 import string, math
-import pygame, pygame.font
+import pygame
 from pygame.locals import *
 import game
-import gfx
+import gfx, snd, txt
 import input
-import snd
 import score
 import gameplay
 
@@ -33,19 +32,21 @@ ADDING   = 3
 
 def load_game_resources():
     global images, namefont, namefontheight, textfont, textfontheight, delimage, addimage, allimage
-
     img = pygame.transform.rotate(gfx.load('ship.gif'), -90)
     images.append((img, img.get_rect()))
 
     bgd = 0, 0, 0
-    font = pygame.font.Font(None, 50)
-    t = gfx.text(font, (220, 210, 180), 'Setup Controls', (gfx.rect.centerx, 30))
+    font = txt.Font(None, 50)
+    t = font.text((220, 210, 180), 'Setup Controls', (gfx.rect.centerx, 30))
+    images.append(t)
+    t = txt.Font('sans', 12).text((180, 220, 180), '(You can Pause the game with the PAUSE or P buttons)', (400, 590))
     images.append(t)
 
     namefontheight = 46
-    namefont = pygame.font.Font(None, 46)
+    namefont = txt.Font(None, 46)
     textfontheight = 26
-    textfont = pygame.font.Font(None, textfontheight)
+    textfont = txt.Font(None, textfontheight)
+    smallfont = txt.Font('sans', 12)
 
     snd.preload('select_choose', 'select_move', 'incorrect', 'delete')
 
@@ -324,7 +325,7 @@ class GameSetup:
     def buildstatus(self):
         if self.status != '...':
             statustext = "(Latest Input Event: %s)" % self.status
-            self.statusimage = gfx.text(textfont, (255, 250, 160), statustext, (gfx.rect.centerx, 560))
+            self.statusimage = textfont.text((255, 250, 160), statustext, (gfx.rect.centerx, 560))
         else:
             self.statusimage = None
 

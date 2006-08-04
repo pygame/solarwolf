@@ -60,7 +60,7 @@ def makelevel(level):
                 boxlist.append(objbox.Box(pos, touches+1))
                 numboxes += touches + 1
             elif cell == 's':
-                startpos = pos[0] , pos[1] 
+                startpos = pos[0] , pos[1]
             pos[0] = pos[0] + size[0]
         pos[0] = corner[0]
         pos[1] = pos[1] + size[1]
@@ -74,3 +74,8 @@ def maxlevels():
     return len(Levels) * 2
 
 
+def numrocks(level):
+    if level >= maxlevels():
+        return 18
+    percent = float(level) / maxlevels()
+    return int(percent * 12)

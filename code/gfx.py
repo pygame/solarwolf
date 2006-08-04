@@ -27,10 +27,10 @@ def initialize(size, fullscreen):
         rect = surface.get_rect()
 
         pygame.mouse.set_visible(0)
-        
+
         if surface.get_bytesize() == 1:
             loadpalette()
-            
+
     except pygame.error, msg:
         import messagebox
         messagebox.error('Cannot Initialize Graphics', msg.args[0])
@@ -61,24 +61,6 @@ def update():
     dirtyrects = []
 
 
-def text(font, color, text, center=None, pos='center'):
-    bgd = 0, 0, 0
-    if text is None: text = ' '
-    try:
-        if surface.get_bytesize()>1:
-            img = font.render(text, 1, color, bgd)
-            img.set_colorkey(bgd, RLEACCEL)
-        else:
-            img = font.render(text, 0, color)
-        img = img.convert()
-    except (pygame.error, TypeError):
-        #print 'TEXTFAILED', text
-        img = pygame.Surface((10, 10))
-        #raise
-    r = img.get_rect()
-    if center: setattr(r, pos, center)
-    return [img, r]
-
 
 def load(name):
     img = load_raw(name)
@@ -103,4 +85,63 @@ def loadpalette():
     for line in file.readlines()[3:]:
         vals = [int(x) for x in line.split()]
         pal.append(vals)
-    surface.set_palette(pal)              
+    surface.set_palette(pal)
+
+
+
+#thanks to MU
+def drawvertdashline(dstsurf, startpos, endpos, color, dashsize, offset):
+    """drawvertdashline
+
+    dstsurf = surface on which line is drawn
+    startpos, endpos = (x0, y0), (x0, y1) of line
+    color = RGB(A) of line; between dashes is nothing
+    dashsize = pixel length of on, and of off sections
+    offset = where to start"""
+
+    x, y0 = startpos
+    x, y1 = endpos
+
+    if y1 < y0:
+        y0, y1 = y1, y0
+
+    period = 2*dashsize
+    offset = offset % period
+    starts = [ max(y,y0)
+        for y in range(y0-period+offset, y1+period, 2*dashsize)
+        if y0-dashsize < y < y1 ]
+    stops = [ min(y-1,y1)
+        for y in range(y0-dashsize+offset, y1+period, 2*dashsize)
+        if y0 < y < y1+dashsize ]
+
+    for b,e in zip(starts, stops):
+        #pygame.draw.line(dstsurf, color, (x,b), (x,e))
+        dstsurf.fill(color, (x,b,1,e-b+1))
+
+def drawhorzdashline(dstsurf, startpos, endpos, color, dashsize, offset):
+    """drawhorzdashline
+
+    dstsurf = surface on which line is drawn
+    startpos, endpos = (x0, y0), (x0, y1) of line
+    color = RGB(A) of line; between dashes is nothing
+    dashsize = pixel length of on, and of off sections
+    offset = where to start"""
+
+    x0, y = startpos
+    x1, y = endpos
+
+    if x1 < x0:
+        x0, x1 = x1, x0
+
+    period = 2*dashsize
+    offset = offset % period
+    starts = [ max(x,x0)
+        for x in range(x0-period+offset, x1+period, 2*dashsize)
+        if x0-dashsize < x < x1 ]
+    stops = [ min(x-1,x1)
+        for x in range(x0-dashsize+offset, x1+period, 2*dashsize)
+        if x0 < x < x1+dashsize ]
+
+    for b,e in zip(starts, stops):
+        #pygame.draw.line(dstsurf, color, (x,b), (x,e))
+        dstsurf.fill(color, (b,y,e-b+1,1))

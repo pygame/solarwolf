@@ -7,9 +7,10 @@
 #we'll just parse this string out and import everything in it
 modules_string = """
 game, gameplay, gamemenu, gamename, gamestart, gamesetup, gamewin,
-gfx, hud, levels, main, input, score,
+gamehelp, gamepause,
+gfx, snd, txt, hud, levels, main, input, score,
 objbox, objexplode, objguard, objpopbox, objpopshot, objtele,
-objship, objshot, objsmoke, objtext, objwarp, stars, objpowerup
+objship, objshot, objsmoke, objtext, objwarp, stars, objpowerup, objasteroid
 """
 
 def modules_import():

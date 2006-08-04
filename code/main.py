@@ -1,11 +1,12 @@
 """main module, starts game and main loop"""
 
-import sys
+import sys, random
 import pygame
-import game, gfx, snd, input
+import game, gfx, snd, txt, input
 import allmodules
 import players
 
+#import psyco
 
 #at this point, all needed pygame modules should
 #be imported, so they can be initialized at the
@@ -37,6 +38,9 @@ def gamemain(args):
     players.load_players()
     input.load_translations()
 
+    if not txt.initialize():
+        raise pygame.error, "Pygame Font Module Unable to Initialize"
+
     #create the starting game handler
     from gameinit import GameInit
     from gamefinish import GameFinish
@@ -45,9 +49,17 @@ def gamemain(args):
     #set timer to control stars..
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
+
+    #psyco.full()
+    gamestart = pygame.time.get_ticks()
+    numframes = 0
+    #random.seed(0)
+
+
     #main game loop
     lasthandler = None
     while game.handler:
+        numframes += 1
         handler = game.handler
         if handler != lasthandler:
             lasthandler = handler
@@ -76,6 +88,11 @@ def gamemain(args):
             pygame.event.pump()
 
         #pygame.time.wait(10)
+
+    gameend = pygame.time.get_ticks()
+    runtime = (gameend - gamestart) / 1000.0
+    #print "FINAL FRAMERATE: ", numframes, runtime, numframes/runtime
+
 
     #game is finished at this point, do any
     #uninitialization needed

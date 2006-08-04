@@ -52,6 +52,9 @@ class Powerup:
         if self.time >= game.poweruptime:
             self.dead = 1
 
+    def extendtime(self):
+        self.time -= 20.0
+
 
 class PowerupEffect:
     "Generic Powerup"
@@ -77,13 +80,17 @@ class PowerupEffect:
 
 class ExtraLevelTime(PowerupEffect):
     "Skip Bonus"
-    runtime = 150.0
+    runtime = 200.0
     def start(self):
         snd.play('levelskip')
-        game.timetick = game.timetick * -2
+        self.origtick = game.timetick
+        game.timetick = game.timetick / -2
+        #for s in self.state.asteroidobjs[:2]:
+        #    s.dead = 1
+        #    self.state.popobjs.append(objpopshot.PopShot(s.rect.center))
 
     def end(self):
-        game.timetick = game.timetick / -2
+        game.timetick = self.origtick
 
 class Shield(PowerupEffect):
     "Shield"
@@ -113,6 +120,9 @@ class PopShots(PowerupEffect):
         for s in self.state.shotobjs:
             s.dead = 1
             self.state.popobjs.append(objpopshot.PopShot(s.rect.center))
+        #for s in self.state.asteroidobjs[:2]:
+        #    s.dead = 1
+        #    self.state.popobjs.append(objpopshot.PopShot(s.rect.center))
 
 class ExtraLife(PowerupEffect):
     "Extra Life"
@@ -124,23 +134,22 @@ class ExtraLife(PowerupEffect):
 
 class SlowMotion(PowerupEffect):
     "Bullet Time"
-    runtime = 80.0
+    runtime = 140.0
     def start(self):
         snd.play('gameover')
-        game.speedmult *= 0.25
+        game.speedmult += 2
         self.ending = 0
 
     def tick(self, speedadjust):
         PowerupEffect.tick(self, speedadjust)
-        if not self.ending and self.time >= 60.0:
+        if not self.ending and self.time >= 120.0:
             self.ending = 1
-            game.speedmult /= 0.5
+            game.speedmult -= 1
 
     def end(self):
         if self.ending:
-            game.speedmult /= 0.5
+            game.speedmult -= 1
         else:
-            game.speedmult /= 0.25
-
+            game.speedmult -= 2
 
 effects = ExtraLevelTime, PopShots, Shield, SlowMotion, ExtraLife

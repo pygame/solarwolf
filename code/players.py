@@ -18,12 +18,14 @@ def make_winner(player):
     player.winner = 1
     players.remove(player)
     winners.insert(0, player)
+    game.player = None
 
 class Player:
     def __init__(self, name, guid=None, score=0):
         self.name = name
         self.score = score
         self.winner = 0
+        self.help = {}
         if guid:
             self.guid = guid
         else:
@@ -46,7 +48,7 @@ def find_player(guid):
         if p.guid == guid:
             return p
     return None
-    
+
 
 def load_players():
     global players, winners
@@ -61,9 +63,11 @@ def load_players():
                 winners.append(p)
             else:
                 players.append(p)
+                if not getattr(p, "help", 0):
+                    p.help = {}
     except (IOError, OSError, KeyError):
         players = []
-        print 'ERROR OPENING PLAYER FILE'
+        #print 'ERROR OPENING PLAYER FILE'
 
 
 
