@@ -55,8 +55,20 @@ def load_game_resources():
     r.center = gfx.rect.centerx, 70
     images.append((img, r))
 
-    for x in range(1, 6):
-        stars.append(gfx.load('star%d.gif'%x))
+    img = gfx.load('star.gif')
+    starsize = img.get_rect()
+    tmpstars = []
+    for x in range(1, 12*6+2, 12):
+        tmp=pygame.transform.rotate(img, x)
+        tmpstars.append(tmp)
+        starsize.union_ip(tmp.get_rect())
+    for s in tmpstars:
+        star = pygame.Surface(starsize.size)
+        r = s.get_rect()
+        r.center = star.get_rect().center
+        star.blit(s, r)
+        star.set_colorkey(s.get_colorkey(), RLEACCEL)
+        stars.append(star)
 
     snd.preload('select_choose', 'select_move', 'incorrect', 'delete')
 
@@ -72,7 +84,7 @@ class GameName:
         self.starrect = self.stars[0].get_rect()
         self.starframe = 0
         self.starinc = 1
-        if game.clock.current_fps < 28:
+        if game.clock.get_fps() < 28:
             self.starinc = 0
         self.letter = fontimages[0]
         self.selectletter(self.letter)
@@ -95,7 +107,7 @@ class GameName:
         game.handler = self.prevhandler
         self.done = 1
         if not game.player.name:
-            game.player.name = 'ANONYMOUS'
+            game.player.name = 'NONAME'
         game.player.newguid()
 
 

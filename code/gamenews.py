@@ -18,10 +18,6 @@ def load_game_resources():
     r = img.get_rect().move(10, 10)
     images.append((img, r))
 
-    img = gfx.load('newsrules.gif')
-    r = img.get_rect().move(220, 20)
-    images.append((img, r))
-
     for i in ('download1', 'download2', 'downerror', 'newversion', 'downok'):
         img = gfx.load(i+'.gif')
         downimgs.append(img)
@@ -29,7 +25,7 @@ def load_game_resources():
     fonts.append((pygame.font.Font(None, 40), (50, 50, 200)))
     fonts.append((pygame.font.Font(None, 26), (100, 100, 250)))
     fonts.append((pygame.font.Font(None, 30), (100, 100, 250)))
-    #fonts[0][0].set_underline(1)  #this crashes SDL_ttf :[
+    fonts[0][0].set_underline(1)  #this crashes SDL_ttf :[
     fonts[1][0].set_italic(1)
 
     snd.preload('select_choose', 'startlife', 'levelskip')
@@ -78,6 +74,9 @@ class GameNews:
         self.downcur = 0
         self.lastdownrect = None
 
+    def starting(self):
+        self.download_start()
+
     def quit(self):
         snd.play('select_choose')
         game.handler = self.prevhandler
@@ -100,8 +99,10 @@ class GameNews:
             self.cleartext()
         self.imgs = []
         newsfilename = game.make_dataname('news')
+        if not os.path.isfile(newsfilename):
+            newsfilename = game.get_resource('news')
         if os.path.isfile(newsfilename):
-            news = open(newsfilename).readlines()
+            news = open(newsfilename).readlines()[2:]
             self.newsversion = news[0].split()[-1]
             newsitems = []
             title = date = None
@@ -131,7 +132,7 @@ class GameNews:
                     self.imgs.append((text, r))
                 top += 30
         else:
-            self.makebadnews('Error', 'No Local Newsfile')
+            self.makebadnews(' ', 'Cannot Download News')
 
 
     def download_start(self):
@@ -151,10 +152,7 @@ class GameNews:
 
 
     def input(self, i):
-        if i == input.RIGHT:
-            self.download_start()
-        else:
-            self.quit()
+        self.quit()
 
     def event(self, e):
         pass
@@ -204,8 +202,7 @@ class GameNews:
             if self.newsversion > game.version:
                 img = self.downimgs[3]
                 r = img.get_rect()
-                r.centerx = self.downloadpos[0]
-                r.top = self.downloadpos[1]
+                r.midtop = self.downloadpos
                 return img, r
             elif news_downloaded:
                 img = self.downimgs[4]

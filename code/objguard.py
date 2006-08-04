@@ -6,19 +6,26 @@ from pygame.locals import *
 import game, gfx
 
 images = []
-guard_loadtime = 15
+guard_anim = 0,1,2,3,4,3,4,4,5,5,5,6,5,5,6,6
+guard_loadtime = len(guard_anim)
 
 def load_game_resources():
     #load ship graphics
     global images
-    for s in 'nwse':
-        imgs = []
-        for i in range(0,7):
-            img = gfx.load('guard_%s-%02d.gif'%(s,i))
-            imgs.append(img)
-        imgs = map(lambda index, l=imgs: l[index],
-                   [0,1,2,3,4,3,4,4,5,5,5,6,5,5,6,6])
-        images.append(imgs)
+    imgs = []
+    for i in range(0,7):
+        img = gfx.load('guard_n-%02d.gif'%i)
+        imgs.append(img)
+    animimgs = map(lambda index, l=imgs: l[index], guard_anim)
+    images.append(animimgs)
+    for x in range(90, 271, 90):
+        rotimgs = []
+        for i in imgs:
+            r = pygame.transform.rotate(i, x)
+            rotimgs.append(r)
+        animimgs = map(lambda index, l=rotimgs: l[index], guard_anim)
+        images.append(animimgs)
+ 
 
 
 class Guard:

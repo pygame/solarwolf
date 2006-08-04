@@ -1,17 +1,11 @@
 """main module, starts game and main loop"""
 
-try:
-    import sys
-    import pygame
-    import game, gfx, snd, input
-    import allmodules
-    import FpsClock
-    import players
-#except ImportError, msg:
-#    import messagebox
-#    messagebox.error('Error Initializing', msg.args[0])
-#    raise
-except RuntimeError: raise
+import sys
+import pygame
+import game, gfx, snd, input
+import allmodules
+import players
+
 
 #at this point, all needed pygame modules should
 #be imported, so they can be initialized at the
@@ -27,16 +21,10 @@ def main(args):
         print 'Exiting'
 
 
-class MyFpsClock(FpsClock.FpsClock):
-    def report(self):
-        #FpsClock.FpsClock.report(self)
-        if gfx.starobj: gfx.starobj.recalc_num_stars(self.current_fps)
-
-
 def gamemain(args):
     #initialize all our code (not load resources)
     pygame.init()
-    game.clock = MyFpsClock(40, 1)
+    game.clock = pygame.time.Clock()
 
     size = 800, 600
     full = '-window' not in args
@@ -53,7 +41,9 @@ def gamemain(args):
     from gamefinish import GameFinish
     game.handler = GameInit(GameFinish(None))
 
-    
+    #set timer to control stars..
+    pygame.time.set_timer(pygame.USEREVENT, 1000)
+
     #main game loop
     lasthandler = None
     while game.handler:
@@ -63,6 +53,11 @@ def gamemain(args):
             if hasattr(handler, 'starting'):
                 handler.starting()
         for event in pygame.event.get():
+            if event.type == pygame.USEREVENT:
+                fps = game.clock.get_fps()
+                #print 'FRAMERATE: %f fps' % fps
+                gfx.starobj.recalc_num_stars(fps)
+                continue
             inputtype = input.translate(event)
             if inputtype:
                 handler.input(inputtype)
@@ -71,13 +66,13 @@ def gamemain(args):
                 break
             handler.event(event)
         handler.run()
-        game.clock.tick() #note, tick can cause stars to erase
+        game.clockticks = game.clock.tick(40)
         gfx.update()
         while not pygame.display.get_active():
             pygame.time.delay(100)
             pygame.event.pump()
 
-        #pygame.time.delay(18)
+        #pygame.time.wait(18)
 
     #game is finished at this point, do any
     #uninitialization needed

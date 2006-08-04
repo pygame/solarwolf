@@ -10,7 +10,7 @@ class Stars:
     def __init__(self):
         stars = []
         scrwide, scrhigh = gfx.rect.size
-        self.maxstars = 200
+        self.maxstars = 300
         for x in range(self.maxstars):
             val = randint(1, 3)
             color = val*40+45, val*35+45, val*45+45
@@ -28,7 +28,7 @@ class Stars:
         if isinstance(game.handler, gameinit.GameInit):
             #don't change stars while loading resources
             return
-        change = int((fps - 40.0) * 1.8)
+        change = int((fps - 35.0) * 1.8)
         change = min(change, 15) #limit how quickly they can be added
         numstars = self.numstars + change
         numstars = max(min(numstars, self.maxstars/2), 0)
@@ -37,7 +37,7 @@ class Stars:
             for rect, vel, col in self.stars[self.odd][numstars:self.numstars]:
                 DIRTY(BGD(rect))
         self.numstars = numstars
-        #print 'STAR:', numstars, fps
+        #print 'STAR:', numstars, fps, change
 
 
     def erase_tick_draw(self, background, gfx):

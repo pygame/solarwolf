@@ -24,6 +24,7 @@ def loadresources():
     m = ''
     try:
         for m, f in funcs:
+            if game.threadstop: break
             load_current += 1
             f()
     except:
@@ -31,6 +32,7 @@ def loadresources():
         load_finished_message = str(sys.exc_value)
         load_finished_type = str(sys.exc_type) + ' in module ' + m
         load_finished_status = -1
+    game.thread = None
 
 
 class GameInit:
@@ -51,7 +53,10 @@ class GameInit:
         self.gatherinfo()
         self.handlederror = 0
         self.thread = threading.Thread(None, loadresources)
+        game.threadstop = 0
+        game.thread = self.thread
         self.thread.start()
+        
 
     def gatherinfo(self):
         lines = []
@@ -61,11 +66,22 @@ class GameInit:
         lines.append('Display Depth (Bits Per Pixel): %d' % info.bitsize)
         self.buildblock(lines)
 
+        lines = []
+        info = pygame.mixer.get_init()
+        if info:
+            lines.append('Sound Frequency: %d' % info[0])
+            lines.append('Sound Quality: %d bits' % abs(info[1]))
+            lines.append('Sound Channels: %s' % ('Mono', 'Stereo')[info[2]])
+        else:
+            lines.append('Sound: None')
+        self.buildblock(lines)
+        
+
         lines = []        
         if not input.joystick:
-            lines.append('Joystick: NONE')
+            lines.append('Input: Keyboard')
         else:
-            lines.append('Joystick: %s' % input.joystick.get_name())
+            lines.append('Input: Keyboard, %s' % input.joystick.get_name())
         self.buildblock(lines)
 
 

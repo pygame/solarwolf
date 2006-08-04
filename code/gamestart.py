@@ -18,20 +18,16 @@ lastplayer = None
 def load_game_resources():
     global images, namefont, textfont, delimage
 
-    img = gfx.load('ship4.gif')
+    img = pygame.transform.rotate(gfx.load('ship.gif'), -90)
     images.append((img, img.get_rect()))
 
     bgd = 0, 0, 0
     font = pygame.font.Font(None, 50)
-    t = gfx.text(font, (220, 210, 180), 'Select A Game:', (gfx.rect.centerx, 30))
+    t = gfx.text(font, (220, 210, 180), 'Select A Player:', (gfx.rect.centerx, 30))
     images.append(t)
 
     namefont = pygame.font.Font(None, 46)
     textfont = pygame.font.Font(None, 26)
-
-    msg = '(Continue Level Is Two Less Than The Highest Score)'
-    t = gfx.text(textfont, (140, 130, 100), msg, (gfx.rect.centerx, 60))
-    images.append(t)
 
     snd.preload('select_choose', 'select_move', 'delete')
 
@@ -72,13 +68,13 @@ class GameStart:
             t = gfx.text(textfont, (255, 250, 160), msg, (gfx.rect.centerx, 560))
             self.images.append(t)
 
-
         self.moveto(self.gamelist[self.current[0]][1][1])
         
 
 
     def starting(self):
-        snd.playmusic('gamestart.wav')
+        #snd.playmusic('gamestart.wav')
+        pass
 
 
     def moveto(self, pos):
@@ -175,24 +171,14 @@ class GameStart:
 
             subimgs.append((namefont.render(p.name, 1, clr), (0, 0)))
 
-            subimg = textfont.render('Continue At: ', 1, clr2)
+            subimg = textfont.render('Level: ', 1, clr2)
             r1 = subimg.get_rect()
             r1.bottomleft = 10, img.get_height()
             subimgs.append((subimg, r1))
 
-            subimg = textfont.render('Highest Score: ', 1, clr2)
-            r2 = subimg.get_rect()
-            r2.bottomleft = 240, img.get_height()
-            subimgs.append((subimg, r2))
-
             subimg = score.render(p.start_level())
             r = subimg.get_rect()
             r.bottomleft = r1.bottomright
-            subimgs.append((subimg, r))
-
-            subimg = score.render(p.score)
-            r = subimg.get_rect()
-            r.bottomleft = r2.bottomright
             subimgs.append((subimg, r))
 
             bgd = 0, 0, 0

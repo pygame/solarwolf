@@ -9,10 +9,9 @@ import gameplay
 
 
 credits = (
-    ('Developer', ('Pete Shinners',)),
-    ('Quality Assurance', ('David Clark',)),
-    ('Graphics Assistance', ('Kevin Turner',)),
-    ('Special Thanks', ('Guido van Rossom', 'Sam Lantinga')),
+    ('Developer', ('Pete "ShredWheat" Shinners',)),
+    ('Quality Assurance', ('David "Futility" Clark',)),
+    ('Music', ('"P2E"',)),
 )
 
 licenseinfo = ('This program is free software. You are encouraged to make',
@@ -34,27 +33,15 @@ def load_game_resources():
     r.bottomright = gfx.rect.bottomright
     images.append((img, r))
 
-    img = gfx.load('credrules.gif')
-    r = img.get_rect().move(220, 20)
-    images.append((img, r))
-
-    img = gfx.load('python.gif')
-    r = img.get_rect().move(620, 40)
-    images.append((img, r))
-
-    img = gfx.load('pygame.gif')
-    r = img.get_rect().move(618, 140)
-    images.append((img, r))
-
-    img = gfx.load('sdl.gif')
-    r = img.get_rect().move(636, 270)
+    img = gfx.load('pygame_powered.gif')
+    r = img.get_rect().move(540, 20)
     images.append((img, r))
 
     img = gfx.load('menu_creds_on.gif')
     r = img.get_rect().move(20, 5)
     images.append((img, r))
 
-    font = pygame.font.Font(None, 14)
+    font = pygame.font.Font(None, 15)
     top = 560
     mid = 400
     for l in licenseinfo:
@@ -62,7 +49,6 @@ def load_game_resources():
         top += txt[1].height
         images.append(txt)
 
-    
     snd.preload('select_choose')
 
 

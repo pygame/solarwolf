@@ -2,24 +2,27 @@
 
 import pygame, pygame.image
 from pygame.locals import *
-
-import gfx, game
+import gfx, game, random
 
 images = []
 
 def load_game_resources():
     #load shot graphics
     global images
-    for i in range(1,5):
-        img = gfx.load('bullet.gif')
-        images.append(img)
+    img = gfx.load('bullet.gif')
+    images.append(img)
+    images.append(pygame.transform.flip(img, 0,1))
+    images.append(pygame.transform.flip(img, 1,1))
+    images.append(pygame.transform.flip(img, 1,0))
     
 
 class Shot:
     def __init__(self, pos, move):
         self.move = move
-        self.image = images[0]
-        self.rect = self.image.get_rect()
+        self.images = images
+        self.numframes = len(images)
+        self.frame = random.randint(0,self.numframes-1)
+        self.rect = self.images[0].get_rect()
         self.rect.center = pos
         self.lastrect = None
         self.dead = 0
@@ -36,7 +39,9 @@ class Shot:
                 self.lastrect = None
 
     def draw(self, gfx):
-        r = gfx.surface.blit(self.image, self.rect)            
+        self.frame = (self.frame + 1) % self.numframes
+        img = self.images[self.frame]
+        r = gfx.surface.blit(img, self.rect)            
         gfx.dirty2(r, self.lastrect)
         self.lastrect = r
 

@@ -9,9 +9,11 @@ shipimages = []
 def load_game_resources():
     #load ship graphics
     global shipimages
-    for i in range(1,5):
-        img = gfx.load('ship%d.gif'%i)
-        shipimages.append(img)
+    img = gfx.load('ship.gif')
+    shipimages.append(img)
+    for i in range(90, 271, 90):
+        img2 = pygame.transform.rotate(img, i)
+        shipimages.append(img2)
 
 
 class Ship:

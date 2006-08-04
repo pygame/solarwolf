@@ -1,4 +1,4 @@
-SolarWolf - http://shredwheat.zopesite.com/solarwolf
+SolarWolf - http://pygame.org/shredwheat/solarwolf
 by Pete "ShredWheat" Shinners" - pete@shinners.org
 
 SolarWolf is an action/arcade game written entirely in Python.
@@ -14,10 +14,10 @@ keyboard or joystick.
  
 The game and its dependencies are extremely cross platform,
 allowing gameplay on just about all platforms; Windows, Linux,
-BeOS, IRIX, Solaris, NT4, and more. 
+BeOS, IRIX, Solaris, NT4, OSX, and more. 
  
-SolarWolf is built with Pygame 1.0. This library is a great set
-of modules for game development in python, with a growing community
+SolarWolf is built with Pygame. This library is a great set of
+modules for game development in python, with a growing community
 of users. It provides a "pythonic" object oriented interface for
 the fantastic SDL media library. 
  
@@ -28,3 +28,4 @@ All this, yet the best feature of all is; It is a hecka lotta fun!
 The point of the game is to scramble through 48 levels of patterns,
 collecting all the boxes. The part that makes it tricky is avoiding
 the relentless hailstorm of fire coming at you from all directions. 
+

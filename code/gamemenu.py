@@ -73,6 +73,12 @@ class GameMenu:
         fnt = pygame.font.Font(None, 18)
         self.version = gfx.text(fnt, (100, 200, 120), 'SolarWolf Version ' + game.version, (10, 580), 'topleft')
 
+
+    def starting(self):
+        snd.playmusic('aster2_sw.xm')
+        r = gfx.surface.blit(self.logo, self.logorect)
+        gfx.dirty(r)
+        
         if players.winners:
             msg = 'Hall Of Famers:  '
             for w in players.winners:
@@ -82,12 +88,6 @@ class GameMenu:
             self.fame = t
         else:
             self.fame = None
-
-
-    def starting(self):
-        snd.playmusic('gamemenu.wav')
-        r = gfx.surface.blit(self.logo, self.logorect)
-        gfx.dirty(r)
 
     def quit(self):
         self.current = len(menu)-1
@@ -162,7 +162,7 @@ class GameMenu:
 
 
     def run(self):
-        self.glow += .25
+        self.glow += .35
         self.boxtick = (self.boxtick + 1)%15
         boximg = boximages[self.boxtick]
 
@@ -210,6 +210,8 @@ class GameMenu:
                 self.switchclock = 0
                 self.switchhandler = None
                 self.startclock = 5
+            if self.fame:
+                gfx.dirty(self.background(self.fame[1]))
             gfx.dirty(self.background(self.version[1]))
             if self.fame:
                 gfx.dirty(self.background(self.fame[1]))
