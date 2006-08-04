@@ -14,14 +14,14 @@ def load_game_resources():
     images.append(pygame.transform.flip(img, 0,1))
     images.append(pygame.transform.flip(img, 1,1))
     images.append(pygame.transform.flip(img, 1,0))
-    
+
 
 class Shot:
     def __init__(self, pos, move):
         self.move = move
         self.images = images
         self.numframes = len(images)
-        self.frame = random.randint(0,self.numframes-1)
+        self.frame = random.random() * 3.0
         self.rect = self.images[0].get_rect()
         self.rect.center = pos
         self.lastrect = None
@@ -39,17 +39,18 @@ class Shot:
                 self.lastrect = None
 
     def draw(self, gfx):
-        self.frame = (self.frame + 1) % self.numframes
-        img = self.images[self.frame]
-        r = gfx.surface.blit(img, self.rect)            
+        frame = int(self.frame) % self.numframes
+        img = self.images[frame]
+        r = gfx.surface.blit(img, self.rect)
         gfx.dirty2(r, self.lastrect)
         self.lastrect = r
 
     def tick(self, speedadjust = 1.0):
+        self.frame += speedadjust * .5
         self.pos[0] += self.move[0] * speedadjust
         self.pos[1] += self.move[1] * speedadjust
         self.rect.topleft = self.pos
         if not gfx.rect.colliderect(self.rect):
             self.dead = 1
         return self.dead
-            
+

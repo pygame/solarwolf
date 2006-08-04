@@ -10,12 +10,14 @@ import gameplay
 
 credits = (
     ('Developer', ('Pete "ShredWheat" Shinners',)),
-    ('Quality Assurance', ('David "Futility" Clark',)),
+    ('Input Setup', ('Aaron "APS" Schlaegel',)),
     ('Music', ('"P2E"',)),
+    ('Graphics Help', ('John Croisant', 'Kevin Turner')),
+    ('Special Thanks', ('David "Futility" Clark',)),
 )
 
 licenseinfo = ('This program is free software. You are encouraged to make',
-               'copies and/or modify it, subject to the of the LGPL.',
+               'copies and/or modify it, subject to the LGPL.',
                'See "lgpl.txt" file for details.')
 
 
@@ -37,7 +39,7 @@ def load_game_resources():
     r = img.get_rect().move(540, 20)
     images.append((img, r))
 
-    img = gfx.load('menu_creds_on.gif')
+    img = gfx.load('menu_creds_on.png')
     r = img.get_rect().move(20, 5)
     images.append((img, r))
 
@@ -70,9 +72,9 @@ class GameCreds:
         f, c = fonts[size]
         t = gfx.text(f, c, text, (self.center, 0))
         t[1].top = self.top
-        self.top = t[1].bottom
+        self.top = t[1].bottom - 5
         self.text.append(t)
-        
+
 
     def quit(self):
         game.handler = self.prevhandler

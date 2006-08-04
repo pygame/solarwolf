@@ -1,11 +1,14 @@
-"gamemenu handler. main menu"
+"""Game news page handler, part of SOLARWOLF."""
 
 import math, os, threading, re
+import urllib, tempfile, shutil
 import pygame, pygame.font
 from pygame.locals import *
-import game, gfx, input, snd
+import game
+import gfx
+import input
+import snd
 import gameplay
-import urllib, tempfile, shutil
 
 images = []
 fonts = []
@@ -14,7 +17,7 @@ news_downloaded = 0
 
 def load_game_resources():
     global images, fonts
-    img = gfx.load('menu_news_on.gif')
+    img = gfx.load('menu_news_on.png')
     r = img.get_rect().move(10, 10)
     images.append((img, r))
 
@@ -186,15 +189,13 @@ class GameNews:
             if downimg:
                 self.lastdownrect = gfx.surface.blit(downimg, downrect)
                 gfx.dirty2(self.lastdownrect, clearme)
-                
+
+            for text, pos in self.imgs:
+                gfx.surface.blit(text, pos)
         else:
             for img, r in self.images:
                 gfx.dirty(self.background(r))
             gfx.dirty(clearme)
-
-        if not self.done:
-            for text, pos in self.imgs:
-                gfx.surface.blit(text, pos)
 
 
     def downimg(self):

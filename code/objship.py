@@ -5,6 +5,7 @@ from pygame.locals import *
 import game, gfx
 
 shipimages = []
+shieldimages = []
 
 def load_game_resources():
     #load ship graphics
@@ -14,6 +15,17 @@ def load_game_resources():
     for i in range(90, 271, 90):
         img2 = pygame.transform.rotate(img, i)
         shipimages.append(img2)
+    img = gfx.load('shipon.gif')
+    shipimages.append(img)
+    for i in range(90, 271, 90):
+        img2 = pygame.transform.rotate(img, i)
+        shipimages.append(img2)
+    img = gfx.load('tele_in-05.gif')
+    shieldimages.append(img)
+    for i in range(90, 271, 90):
+        img2 = pygame.transform.rotate(img, i)
+        shieldimages.append(img2)
+
 
 
 class Ship:
@@ -27,6 +39,7 @@ class Ship:
         self.active = 0
         self.speeds = game.ship_slowspeed, game.ship_fastspeed
         self.pos = list(self.rect.topleft)
+        self.shield = 0
 
     def start(self, pos):
         self.rect.center = pos
@@ -36,6 +49,7 @@ class Ship:
         self.move = [0, 0]
         self.turbo = 0
         self.image = 0
+        self.shield = 0
 
     def erase(self, background):
         if self.lastrect:
@@ -44,14 +58,20 @@ class Ship:
             gfx.dirty(self.lastrect)
 
     def draw(self, gfx):
-        img = shipimages[self.image]
+        if self.shield > 1:
+            img = shieldimages[self.image]
+        else:
+            img = shipimages[self.image + (self.turbo*4)]
         gfx.surface.blit(img, self.rect)
         gfx.dirty2(self.rect, self.lastrect)
         self.lastrect = Rect(self.rect)
 
     def tick(self, speedadjust = 1.0):
         speed = self.speeds[self.turbo]
-        speed = int(speed * speedadjust)
+        if self.shield > 1:
+            speed = int(speed * speedadjust * 1.3)
+        else:
+            speed = int(speed * speedadjust)
         self.pos[0] += self.move[0] * speed
         self.pos[1] += self.move[1] * speed
         self.rect.topleft = self.pos

@@ -25,7 +25,7 @@ def load_game_resources():
             rotimgs.append(r)
         animimgs = map(lambda index, l=rotimgs: l[index], guard_anim)
         images.append(animimgs)
- 
+
 
 
 class Guard:
@@ -50,6 +50,7 @@ class Guard:
         self.lastrect = None
         self.reloading = 0
         self.fireme = 0
+        self.waitshots = 0
         self.pos = list(self.rect.topleft)
 
     def shotinfo(self):
@@ -96,4 +97,4 @@ class Guard:
             self.reloading -= 1
             self.fireme = (self.reloading == 1)
         return self.dead
-        
+

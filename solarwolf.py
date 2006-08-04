@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python 
 """
 Solarwolf has been created by Pete Shinners.
 The original Solarwolf was released in May, 2001.

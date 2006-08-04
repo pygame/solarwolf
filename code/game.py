@@ -12,24 +12,27 @@ start_lives = 3
 
 ship_fastspeed = 8
 ship_slowspeed = 5
+shot_speed = 3
 
 guard_speed = 4
 guard_fire = .01
+fire_factor = .15
 
-
-shot_speed = 3
 
 arena = Rect(55, 50, 590, 490)
 
+poweruptime = 1000.0
+powerupspeed = 2.0
+
 timeleft = 0.0
 timetick = 0.0
-timefactor = 15    #how quickly time drops (bigger = slower)
+timefactor = 12    #how quickly time drops (bigger = slower)
+speedmult = 1.0
 
 text_length = 80  #frames text is displayed in-game
 
 
 news_url = 'http://pygame.org/shredwheat/solarwolf/thenews.html'
-
 
 player = None
 name_maxlength = 10     #longest name
@@ -68,5 +71,5 @@ def make_dataname(filename):
     filename = os.path.normpath(filename)
     return filename
 
-version = "1.1"
+version = "1.2"
 DEBUG = 0

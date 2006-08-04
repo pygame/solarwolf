@@ -1,9 +1,14 @@
-"gamename entry handler"
+"""Game start and user select handler, part of SOLARWOLF."""
 
 import string, math
 import pygame, pygame.font
 from pygame.locals import *
-import game, gfx, input, players, snd, score
+import game
+import gfx
+import input
+import players
+import snd
+import score
 import gameplay
 
 
@@ -31,7 +36,7 @@ def load_game_resources():
 
     snd.preload('select_choose', 'select_move', 'delete')
 
-    delimage = gfx.load('delete.gif')
+    delimage = gfx.load('btn-delete.gif')
     
 
 def preGameStart(prevhandler):
@@ -82,30 +87,34 @@ class GameStart:
         
 
     def input(self, i):
-        if self.done: return
-        if i == input.ABORT:
+        if self.done:
+            return
+        if i.release:
+            return
+        if i.translated == input.ABORT:
             self.aborted = 1
             self.done = 1
             self.current[0] = -1
             self.clearlist()
             self.moveto((2, 2))
             snd.play('select_choose')
-        if i == input.PRESS:
+        if i.translated == input.PRESS:
             return self.pressed()
 
-        if i == input.DOWN:
-            self.current[0] = (self.current[0] + 1) % len(self.gamelist)
-        elif i == input.UP:
-            self.current[0] = (self.current[0] - 1) % len(self.gamelist)
-        elif i == input.LEFT or i == input.RIGHT:
-            self.current[1] = not self.current[1]
-        if self.current[1] and not self.gamelist[self.current[0]][2]:
-            self.current[1] = 0
-        snd.play('select_move')
-        x = self.gamelist[self.current[0]][1+self.current[1]][1].left
-        y = self.gamelist[self.current[0]][1][1].top + self.current[1]* 24
-        self.moveto((x, y))
-
+        if i.translated in ( input.DOWN, input.UP, input.LEFT, input.RIGHT):
+            if i.translated == input.DOWN:
+                self.current[0] = (self.current[0] + 1) % len(self.gamelist)
+            elif i.translated == input.UP:
+                self.current[0] = (self.current[0] - 1) % len(self.gamelist)
+            elif i.translated == input.LEFT or i.translated == input.RIGHT:
+                self.current[1] = not self.current[1]
+            
+            if self.current[1] and not self.gamelist[self.current[0]][2]:
+                self.current[1] = 0
+            snd.play('select_move')
+            x = self.gamelist[self.current[0]][1+self.current[1]][1].left
+            y = self.gamelist[self.current[0]][1][1].top + self.current[1]* 24
+            self.moveto((x, y))
 
     def event(self, e):
         pass

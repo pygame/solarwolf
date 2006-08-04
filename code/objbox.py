@@ -21,9 +21,9 @@ def load_game_resources():
         yboximages.append(img.convert())
         newpal = [(g,b,b) for (r,g,b) in pal]
         img.set_palette(newpal)
-        rboximages.append(img.convert())  
+        rboximages.append(img.convert())
     snd.preload('boxhit', 'yboxhit')
-   
+
 
 class Box:
     def __init__(self, pos, touches):
@@ -44,7 +44,7 @@ class Box:
 
     def draw(self, gfx):
         frame = (self.rotate/6)%15
-        img = self.imglists[self.touches][frame]       
+        img = self.imglists[self.touches][frame]
         r = gfx.surface.blit(img, self.rect)
         gfx.dirty(r)
 
@@ -60,7 +60,7 @@ class Box:
             if self.touches:
                 self.touching = 1
                 snd.play('yboxhit', 1.0, self.rect.centerx)
-                return 0
+                return 2
             snd.play('boxhit', 1.0, self.rect.centerx)
             return 1
-        return 0            
+        return 0

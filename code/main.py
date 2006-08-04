@@ -17,7 +17,7 @@ def main(args):
     try:
         gamemain(args)
     except KeyboardInterrupt:
-        print 'Keyboard Interrupt (Control-C)...'
+        print 'Keyboard Interrupt...'
         print 'Exiting'
 
 
@@ -29,12 +29,13 @@ def gamemain(args):
     size = 800, 600
     full = '-window' not in args
     gfx.initialize(size, full)
-    pygame.display.set_caption('SolarWolf')        
+    pygame.display.set_caption('SolarWolf')
 
     if not '-nosound' in args:
         snd.initialize()
     input.init()
     players.load_players()
+    input.load_translations()
 
     #create the starting game handler
     from gameinit import GameInit
@@ -58,24 +59,27 @@ def gamemain(args):
                 #print 'FRAMERATE: %f fps' % fps
                 gfx.starobj.recalc_num_stars(fps)
                 continue
-            inputtype = input.translate(event)
-            if inputtype:
-                handler.input(inputtype)
+            inputevent = input.translate(event)
+            if inputevent.normalized != None:
+                inputevent = input.exclusive((input.UP, input.DOWN, input.LEFT, input.RIGHT), inputevent)
+                handler.input(inputevent)
             elif event.type == pygame.QUIT:
                 game.handler = None
                 break
             handler.event(event)
         handler.run()
         game.clockticks = game.clock.tick(40)
+        #print 'ticks=%d  rawticks=%d  fps=%.2f'%(game.clock.get_time(), game.clock.get_rawtime(), game.clock.get_fps())
         gfx.update()
         while not pygame.display.get_active():
-            pygame.time.delay(100)
+            pygame.time.wait(100)
             pygame.event.pump()
 
-        #pygame.time.wait(18)
+        #pygame.time.wait(10)
 
     #game is finished at this point, do any
     #uninitialization needed
+    input.save_translations()
     players.save_players()
     pygame.quit()
 

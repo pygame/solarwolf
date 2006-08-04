@@ -40,8 +40,10 @@ class GameInit:
         self.prevhandler = prevhandler
         font = pygame.font.Font(None, 20)
         self.font = pygame.font.Font(None, 22)
-        self.rect = Rect(50, 50, 700, 22)
+        self.rect = Rect(50, 450, 700, 22)
         self.text = font.render('Loading Resources...', 1, (250, 230, 180))
+        self.img_powered = gfx.load('pygame_powered.gif')
+        self.img_logo = gfx.load('logo.png')
         self.textrect = self.text.get_rect()
         self.textrect.center = self.rect.center
         self.lastcurrent = -1
@@ -50,13 +52,13 @@ class GameInit:
         self.left = 100
         self.blocks = []
         self.starttime = pygame.time.get_ticks()
-        self.gatherinfo()
+        #self.gatherinfo()
         self.handlederror = 0
         self.thread = threading.Thread(None, loadresources)
         game.threadstop = 0
         game.thread = self.thread
         self.thread.start()
-        
+
 
     def gatherinfo(self):
         lines = []
@@ -75,9 +77,9 @@ class GameInit:
         else:
             lines.append('Sound: None')
         self.buildblock(lines)
-        
 
-        lines = []        
+
+        lines = []
         if not input.joystick:
             lines.append('Input: Keyboard')
         else:
@@ -123,9 +125,9 @@ class GameInit:
         self.gotfinishinput = 0
 
 
-    def quit(self):        
+    def quit(self):
         import gamemenu
-        gfx.dirty(self.background(self.rect))
+        gfx.dirty(self.background(gfx.rect))
         for b in self.blocks:
             r = b[0].get_rect().move(b[1])
             gfx.dirty(self.background(r))
@@ -140,6 +142,9 @@ class GameInit:
         if self.rect:
             self.background(self.rect)
         gfx.updatestars(self.background, gfx)
+
+        gfx.dirty(gfx.surface.blit(self.img_logo, (30, 25)))
+        gfx.dirty(gfx.surface.blit(self.img_powered, (510, 490)))
 
         for b in self.blocks:
             gfx.dirty(gfx.surface.blit(*b))
@@ -164,9 +169,9 @@ class GameInit:
                     msg = ('Fatal Error Loading Resources', load_finished_type, load_finished_message, 'Press Any Key To Quit')
                     self.buildblock(msg)
                     self.handlederror = 1
-                if self.gotfinishinput:                
+                if self.gotfinishinput:
                     self.quit()
-                
+
 
     def background(self, area):
         return gfx.surface.fill((0, 0, 0), area)

@@ -1,10 +1,17 @@
-"gamemenu handler. main menu"
+"Game main menu handler, part of SOLARWOLF."
 
 import math, os
 import pygame, pygame.draw
 from pygame.locals import *
-import game, gfx, input, snd
-import gamecreds, gamenews, gamestart, players
+import game
+import gfx
+import input
+import snd
+import players
+import gamecreds
+import gamenews
+import gamestart
+import gamesetup
 
 
 
@@ -17,19 +24,20 @@ class MenuItem:
         self.handler = handler
 
     def init(self, pos):
-        self.img_on = gfx.load('menu_'+self.imgname+'_on.gif')
-        self.img_off = gfx.load('menu_'+self.imgname+'_off.gif')
+        self.img_on = gfx.load('menu_'+self.imgname+'_on.png')
+        self.img_off = gfx.load('menu_'+self.imgname+'_off.png')
         self.rect = self.img_on.get_rect().move(pos)
         self.smallrect = self.img_off.get_rect()
         self.smallrect.center = self.rect.center
 
 
-        
+
 menu = [
     MenuItem('start', gamestart.preGameStart),
 #    MenuItem('highs', gamename.GameName),
     MenuItem('news', gamenews.GameNews),
     MenuItem('creds', gamecreds.GameCreds),
+    MenuItem('setup', gamesetup.GameSetup),
     MenuItem('quit', None),
 ]
 
@@ -38,7 +46,7 @@ menu = [
 def load_game_resources():
     global menu, images, boximages
     images = []
-    pos = [100, 420] #[20, 420]
+    pos = [20, 420] #[100, 420]
     odd = 0
     for m in menu:
         m.init(pos)
@@ -48,9 +56,9 @@ def load_game_resources():
             pos[1] += 20
         else:
             pos[1] -= 20
-    images.append(gfx.load('menu_on_bgd.gif'))
+    images.append(gfx.load('menu_on_bgd.png'))
     images[0].set_colorkey(0)
-    images.append(gfx.load('logo.gif'))
+    images.append(gfx.load('logo.png'))
     for i in range(15):
         boximages.append(gfx.load('bigbox%04d.gif'%i))
 
@@ -67,6 +75,7 @@ class GameMenu:
         self.startclock = 5
         self.logo = images[1]
         self.logorect = self.logo.get_rect().move(30, 25)
+        self.logorectsmall = self.logorect.inflate(-2,-2)
         self.boxtick = 0
         self.boxrect = boximages[0].get_rect().move(520, 190)
 
@@ -78,7 +87,7 @@ class GameMenu:
         snd.playmusic('aster2_sw.xm')
         r = gfx.surface.blit(self.logo, self.logorect)
         gfx.dirty(r)
-        
+
         if players.winners:
             msg = 'Hall Of Famers:  '
             for w in players.winners:
@@ -125,7 +134,7 @@ class GameMenu:
                 c = i.get_colorkey()
                 if c:
                     i.set_colorkey(c, RLEACCEL)
-        
+
 
     def drawitem(self, item, lit):
         if not lit:
@@ -143,17 +152,20 @@ class GameMenu:
 
 
     def input(self, i):
-        if self.switchclock: return
-        if i == input.LEFT:
+        if i.release:
+            return
+        if self.switchclock:
+            return
+        if i.translated == input.LEFT:
             self.current = (self.current - 1)%len(menu)
             snd.play('select_move')
-        elif i == input.RIGHT:
+        elif i.translated == input.RIGHT:
             self.current = (self.current + 1)%len(menu)
             snd.play('select_move')
-        elif i == input.PRESS:
+        elif i.translated == input.PRESS:
             self.workbutton()
             snd.play('select_choose')
-        elif i == input.ABORT:
+        elif i.translated == input.ABORT:
             snd.play('select_choose')
             self.quit()
 
@@ -181,6 +193,8 @@ class GameMenu:
             self.clearitem(m)
 
         gfx.updatestars(self.background, gfx)
+
+        gfx.dirty(gfx.surface.blit(self.logo, self.logorect))
 
         gfx.dirty(gfx.surface.blit(*self.version))
         if self.fame:
@@ -224,9 +238,9 @@ class GameMenu:
 
 
     def background(self, area):
-        if area.colliderect(self.logorect) and self.switchclock != 1:
-            r = area.move(-self.logorect.left, -self.logorect.top)
-            return gfx.surface.blit(self.logo, area, r)
+        #if area.colliderect(self.logorectsmall) and self.switchclock != 1:
+        #    r = area.move(-self.logorect.left, -self.logorect.top)
+        #    return gfx.surface.blit(self.logo, area, r)
         return gfx.surface.fill((0, 0, 0), area)
-        
+
 
