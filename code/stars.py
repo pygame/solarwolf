@@ -13,13 +13,13 @@ class Stars:
         self.maxstars = 800
         for x in range(self.maxstars):
             val = randint(1, 3)
-            color = val*40+50, val*35+50, val*45+50
-            speed = -randint(2, 3), randint(2, 3)
+            color = val*40+60, val*35+50, val*22+100
+            speed = -val, val
             rect = Rect(randint(0, scrwide), randint(0, scrhigh), 1, 1)
             stars.append([rect, speed, color])
         half = self.maxstars / 2
         self.stars = stars[:half], stars[half:]
-        self.numstars = 20
+        self.numstars = 50
         self.dead = 0
         self.odd = 0
 

@@ -10,7 +10,7 @@ from cStringIO import StringIO
 #various data constants
 start_lives = 3
 
-ship_fastspeed = 8
+ship_fastspeed = 7
 ship_slowspeed = 5
 shot_speed = 3
 
@@ -21,19 +21,52 @@ fire_factor = .15
 
 arena = Rect(55, 50, 590, 490)
 
-poweruptime = 1000.0
+poweruptime = 1200.0
 powerupspeed = 2.0
-asteroidspeed = 1.2
+powerupwait = 26.0 #45.0
+asteroidspeed = 1.4
 
 timeleft = 0.0
 timetick = 0.0
-timefactor = 12.7    #how quickly time drops (bigger = slower)
+timefactor = 12.2    #how quickly time drops (bigger = slower)
 speedmult = 0
 
 text_length = 80  #frames text is displayed in-game
 
 
 news_url = 'http://pygame.org/shredwheat/solarwolf/thenews.html'
+
+
+
+#num of insults must match num of complements, be careful
+Complements = (
+    'Keep it up!',
+    'Looking Great!',
+    'Hotshot',
+    'Too Hot to Handle',
+    'Lord of the Dance',
+    'Bring it on',
+    'Beautiful',
+    'Own the Zone',
+    'Too Cool For School',
+    'So Hot Right Now',
+    'Smooth Moves'
+)
+Insults = (
+    'Not so good',
+    'Ouch',
+    'Look away',
+    'Rookie',
+    'Sloppy',
+    'Choke Choke',
+    'Not Today',
+    'Hall of Shame',
+    'Wrong way',
+    'Clumsy, Clumsy',
+    'Medic',
+)
+
+
 
 player = None
 name_maxlength = 10     #longest name
@@ -72,5 +105,5 @@ def make_dataname(filename):
     filename = os.path.normpath(filename)
     return filename
 
-version = "1.3"
+version = "1.4"
 DEBUG = 0

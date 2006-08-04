@@ -71,6 +71,10 @@ def gamemain(args):
                 #print 'FRAMERATE: %f fps' % fps
                 gfx.starobj.recalc_num_stars(fps)
                 continue
+            elif event.type == pygame.ACTIVEEVENT:
+                if event.state == 4 and event.gain:
+                    #uniconified, lets kick the screen
+                    pygame.display.update()
             inputevent = input.translate(event)
             if inputevent.normalized != None:
                 inputevent = input.exclusive((input.UP, input.DOWN, input.LEFT, input.RIGHT), inputevent)

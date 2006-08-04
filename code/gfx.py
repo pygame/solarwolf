@@ -22,8 +22,8 @@ def initialize(size, fullscreen):
         flags = 0
         if fullscreen:
             flags |= FULLSCREEN
-        depth = pygame.display.mode_ok(size, flags, 16)
-        surface = pygame.display.set_mode(size, flags, depth)
+        #depth = pygame.display.mode_ok(size, flags, 16)
+        surface = pygame.display.set_mode(size, flags)#, depth)
         rect = surface.get_rect()
 
         pygame.mouse.set_visible(0)
@@ -60,18 +60,24 @@ def update():
     pygame.display.update(dirtyrects)
     dirtyrects = []
 
-
-
-def load(name):
-    img = load_raw(name)
-    #use rle acceleration if no hardware accel
+def optimize(img):
+    #~ if surface.get_alpha():
+        #~ img.set_alpha()
+        #~ if surface.get_flags() & HWSURFACE:
+            #~ img.set_colorkey(0)
+        #~ else:
+            #~ img.set_colorkey(0, RLEACCEL)
+    #~ elif not surface.get_flags() & HWSURFACE:
     if not surface.get_flags() & HWSURFACE:
-        pass
         clear = img.get_colorkey()
         if clear:
             img.set_colorkey(clear, RLEACCEL)
     return img.convert()
 
+def load(name):
+    img = load_raw(name)
+    #use rle acceleration if no hardware accel
+    return optimize(img)
 
 def load_raw(name):
     file = game.get_resource(name)
@@ -145,3 +151,26 @@ def drawhorzdashline(dstsurf, startpos, endpos, color, dashsize, offset):
     for b,e in zip(starts, stops):
         #pygame.draw.line(dstsurf, color, (x,b), (x,e))
         dstsurf.fill(color, (b,y,e-b+1,1))
+
+
+
+def animstrip(img, width=0):
+    if not width:
+        width = img.get_height()
+    size = width, img.get_height()
+    images = []
+    origalpha = img.get_alpha()
+    origckey = img.get_colorkey()
+    img.set_colorkey(None)
+    img.set_alpha(None)
+    for x in range(0, img.get_width(), width):
+        i = pygame.Surface(size)
+        i.blit(img, (0, 0), ((x, 0), size))
+        if origalpha:
+            i.set_colorkey((0,0,0))
+        elif origckey:
+            i.set_colorkey(origckey)
+        images.append(optimize(i))
+    img.set_alpha(origalpha)
+    img.set_colorkey(origckey)
+    return images

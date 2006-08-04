@@ -15,12 +15,14 @@ downimgs = []
 news_downloaded = 0
 
 def load_game_resources():
-    global images, fonts
+    global images, fonts, downimgs
     img = gfx.load('menu_news_on.png')
     r = img.get_rect().move(10, 10)
     images.append((img, r))
 
-    for i in ('download1', 'download2', 'downerror', 'newversion', 'downok'):
+    img = gfx.load('download.png')
+    downimgs = gfx.animstrip(img, img.get_width()/2)
+    for i in ('downerror', 'newversion', 'downok'):
         img = gfx.load(i+'.gif')
         downimgs.append(img)
 

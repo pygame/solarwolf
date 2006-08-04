@@ -9,7 +9,7 @@ modules_string = """
 game, gameplay, gamemenu, gamename, gamestart, gamesetup, gamewin,
 gamehelp, gamepause,
 gfx, snd, txt, hud, levels, main, input, score,
-objbox, objexplode, objguard, objpopbox, objpopshot, objtele,
+objbox, objexplode, objguard, objpopshot, objtele,
 objship, objshot, objsmoke, objtext, objwarp, stars, objpowerup, objasteroid
 """
 

@@ -7,10 +7,12 @@ import game, gfx, txt, score
 
 hudimage = None
 miniship = None
+livesfont = None
 
 def load_game_resources():
-    global miniship
-    miniship = gfx.load('miniship.gif')
+    global miniship, livesfont
+    miniship = gfx.load('ship-mini-boost2.png')
+    livesfont = txt.Font(None, 30)
 
 
 
@@ -96,8 +98,15 @@ class HUD:
             self.lastlives = lives
             size = miniship.get_size()
             self.imglives = pygame.Surface((size[0]*lives+1, size[1]))
-            for l in range(lives):
-                self.imglives.blit(miniship, (size[0]*l, 0))
+            if lives <= 3: #ships
+                for l in range(lives):
+                    self.imglives.blit(miniship, (size[0]*l, 0))
+            else: #ships and num
+                self.imglives.blit(miniship, (4, 0))
+                pos = size[0]+10, 0
+                txt = 'x %d'%lives
+                txt,pos = livesfont.text((150,200,150), txt, pos, 'topleft')
+                self.imglives.blit(txt, pos)
             self.imglives.set_colorkey(0, RLEACCEL)
         r1 = dest.blit(self.imglives, self.poslives).move(offset)
         gfx.dirty2(r1, r2)

@@ -190,7 +190,7 @@ class GameName:
         if i.type == KEYDOWN:
             if i.unicode and i.unicode.upper() in charset:
                 return
-            elif i.key in (K_DELETE, K_BACKSPACE):
+            elif i.key in (K_DELETE, K_BACKSPACE, K_RETURN, K_KP_ENTER):
                 return
         if i.translated == input.ABORT:
             return self.quit()
@@ -224,6 +224,8 @@ class GameName:
             if e.key in (K_DELETE, K_BACKSPACE):
                 self.rub()
                 self.selectletter(self.fontimages[-2])
+            elif e.key in (K_RETURN, K_KP_ENTER):
+                self.quit()
             elif e.unicode:
                 l = e.unicode.upper()
                 if l in charset:

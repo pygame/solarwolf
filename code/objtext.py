@@ -5,14 +5,14 @@ from pygame.locals import *
 import game, gfx, txt
 
 fonts = []
-availpos = game.arena.centerx, 100
+availpos = game.arena.centerx, 70
 availpos_start = availpos
 numtexts = 0
 
 def load_game_resources():
     #load ship graphics
     global fonts
-    fonts = [txt.Font('serif', 30, bold=0)]
+    fonts = [txt.Font('serif', 24, bold=0)]
 
 
 class Text:

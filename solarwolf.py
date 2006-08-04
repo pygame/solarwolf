@@ -61,16 +61,18 @@ def checkdependencies():
     #is correct pygame found?
     try:
         import pygame
-        if pygame.ver < '1.5':
-            msgs.append('Requires Pygame-1.5 or Greater, You Have ' + pygame.ver)
+        if pygame.ver < '1.5.6':
+            msgs.append('Requires Pygame-1.5.6 or Greater, You Have ' + pygame.ver)
     except ImportError:
-        msgs.append("Cannot import Pygame, install version 1.4 or higher")
+        msgs.append("Cannot import Pygame, install version 1.5.6 or higher")
+        pygame = None
 
-    #check pygame version and that we have FONT and IMAGE
-    if not pygame.font:
-        msgs.append('Pygame requires the SDL_ttf library, not available')
-    if not pygame.image or not pygame.image.get_extended():
-        msgs.append('Pygame requires the SDL_image library, not available')
+    #check that we have FONT and IMAGE
+    if pygame:
+        if not pygame.font:
+            msgs.append('Pygame requires the SDL_ttf library, not available')
+        if not pygame.image or not pygame.image.get_extended():
+            msgs.append('Pygame requires the SDL_image library, not available')
 
     if msgs:
         msg = '\n'.join(msgs)

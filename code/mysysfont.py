@@ -18,12 +18,6 @@
 ##    Pete Shinners
 ##    pete@shinners.org
 
-#note, this is the 'sysfont' that ships with the currently nonreleased
-#pygame 1.6. it turns out previous sysfonts had several exception raising
-#bugs.
-
-
-
 "sysfont, used in the font module to find system fonts"
 
 import os, sys
@@ -113,7 +107,10 @@ def initsysfonts_darwin():
 def read_unix_fontscache(dir, file, fonts):
     file = open(os.path.join(dir, file))
     for line in file.readlines():
-        font, num, vals = line.split(' ', 2)
+        try:
+            font, num, vals = line.split(' ', 2)
+        except ValueError:
+            continue
         font = font.replace('"', '')
         if font[-4:].lower() != '.ttf':
             continue
@@ -130,7 +127,7 @@ def read_unix_fontsdir(dir, file, fonts):
     file = open(os.path.join(dir, file))
     numfonts = int(file.readline())
     for line in file.readlines():
-        font, descr = line.split(' ', 1)
+        font, descr = (line.split(' ', 1) + ['', ''])[:2]
         if font[-4:].lower() != ".ttf":
             continue
         font = os.path.join(dir, font)

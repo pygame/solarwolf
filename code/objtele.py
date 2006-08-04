@@ -8,22 +8,21 @@ import game, gfx
 
 images = []
 
-
 def load_game_resources():
-    global images
-    for i in range(1,11):
-        img = gfx.load('tele_in-%02d.gif'%i)
-        images.append(img)
+    global images, imagesbaddie
 
-   
+    img = gfx.load('ship-teleport.png')
+    images.extend(gfx.animstrip(img))
+
+
 
 class Tele:
     def __init__(self, pos):
         self.images = images
         self.numclocks = len(images)
-        self.clocks = 0
+        self.clocks = 0.0
         self.rect = images[0].get_rect()
-        self.rect.center = pos
+        self.rect.topleft = pos
         self.dead = 0
         self.rocksclear = 0
 
@@ -33,12 +32,13 @@ class Tele:
             gfx.dirty(r)
 
     def draw(self, gfx):
-        img = images[self.clocks]
+        frame = min(int(self.clocks), len(self.images)-1)
+        img = self.images[frame]
         r = gfx.surface.blit(img, self.rect)
         gfx.dirty(r)
 
     def tick(self, speedadjust):
-        if self.clocks < 3 or self.rocksclear:
-            self.clocks += 1
-            if self.clocks == self.numclocks:
+        if self.clocks < 3.0 or self.rocksclear:
+            self.clocks += speedadjust * .6
+            if self.clocks >= self.numclocks:
                 self.dead = 1

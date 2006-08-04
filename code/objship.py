@@ -4,36 +4,43 @@ import pygame
 from pygame.locals import *
 import game, gfx
 
+upimage = None
+shieldbg = None
 shipimages = []
-shieldimages = []
 
 def load_game_resources():
     #load ship graphics
-    global shipimages
-    img = gfx.load('ship.gif')
-    shipimages.append(img)
-    for i in range(90, 271, 90):
-        img2 = pygame.transform.rotate(img, i)
-        shipimages.append(img2)
-    img = gfx.load('shipon.gif')
-    shipimages.append(img)
-    for i in range(90, 271, 90):
-        img2 = pygame.transform.rotate(img, i)
-        shipimages.append(img2)
-    img = gfx.load('tele_in-05.gif')
-    shieldimages.append(img)
-    for i in range(90, 271, 90):
-        img2 = pygame.transform.rotate(img, i)
-        shieldimages.append(img2)
+    global upimage, shipimages, shieldbg
 
+    upimage = gfx.load('ship-up.png')
+
+    anim = []
+    for img in gfx.animstrip(gfx.load('ship-up-boost1.png')):
+        imgs = [img]
+        for i in range(90, 359, 90):
+            imgs.append(pygame.transform.rotate(img, i))
+        anim.append(imgs)
+    shipimages.extend(zip(*anim))
+
+    anim = []
+    for img in gfx.animstrip(gfx.load('ship-up-boost2.png')):
+        imgs = [img]
+        for i in range(90, 359, 90):
+            imgs.append(pygame.transform.rotate(img, i))
+        anim.append(imgs)
+    shipimages.extend(zip(*anim))
+
+    shieldbg = gfx.animstrip(gfx.load('ship-teleport.png'))[5]
 
 
 class Ship:
     def __init__(self):
         self.move = [0, 0]
+        self.unmoved = 1
         self.turbo = 0
         self.image = 0
-        self.rect = shipimages[0].get_rect()
+        self.frame = 0.0
+        self.rect = shipimages[0][0].get_rect()
         self.lastrect = None
         self.dead = 0
         self.active = 0
@@ -42,8 +49,9 @@ class Ship:
         self.shield = 0
 
     def start(self, pos):
-        self.rect.center = pos
+        self.rect.topleft = pos
         self.pos = list(self.rect.topleft)
+        self.unmoved = 1
         self.active = 1
         self.dead = 0
         self.move = [0, 0]
@@ -58,15 +66,19 @@ class Ship:
             gfx.dirty(self.lastrect)
 
     def draw(self, gfx):
+        frame = int(self.frame) % 4
         if self.shield > 1:
-            img = shieldimages[self.image]
+            gfx.surface.blit(shieldbg, self.rect)
+        if self.unmoved:
+            img = upimage
         else:
-            img = shipimages[self.image + (self.turbo*4)]
+            img = shipimages[self.image + (self.turbo*4)][frame]
         gfx.surface.blit(img, self.rect)
         gfx.dirty2(self.rect, self.lastrect)
         self.lastrect = Rect(self.rect)
 
     def tick(self, speedadjust = 1.0):
+        self.frame += speedadjust
         speed = self.speeds[self.turbo]
         if self.shield > 1:
             speed = int(speed * speedadjust * 1.3)
@@ -96,18 +108,22 @@ class Ship:
     def cmd_left(self):
         self.move = [-1, 0]
         self.image = 1
+        self.unmoved = 0
 
     def cmd_up(self):
         self.move = [0, -1]
         self.image = 0
+        self.unmoved = 0
 
     def cmd_right(self):
         self.move = [1, 0]
         self.image = 3
+        self.unmoved = 0
 
     def cmd_down(self):
         self.move = [0, 1]
         self.image = 2
+        self.unmoved = 0
 
     def cmd_turbo(self, onoff):
         self.turbo = onoff

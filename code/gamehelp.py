@@ -11,8 +11,8 @@ import gameplay
 fonts = []
 
 def load_game_resources():
-    fonts.append(txt.Font('sans', 16, italic=1))
-    fonts.append(txt.Font('sans', 18, bold=1))
+    fonts.append(txt.Font('sans', 14, italic=1))
+    fonts.append(txt.Font('sans', 20, bold=1))
     snd.preload('chimein', 'chimeout')
 
 
@@ -20,11 +20,13 @@ Help = {
 "player":"""SolarWolf Help
 You pilot the mighty SolarWolf fleet of ships.
 -
-There are no weapons, but it has the most
-advanced manuevering of it's kind.
+There are no weapons, but it has the most advanced
+manuevering of it's kind. Control your ship with the
+arrow keys or a joystick.
+(You can also use "vi" keys, if you know what that is.)
 -
-Take advantage of the Hyper Jets by holding the action button.
-(usually space bar or the joystick button)
+Take advantage of the Hyper Jets by holding the space
+bar or joystick button.
 -
 Collect all the Power Cubes on each level to advance.""",
 
@@ -33,17 +35,28 @@ Some power cubes will have alternate colors, which means
 the SolarWolf ship must contact the cube multiple times
 for it to be collected.""",
 
-"guardians":"""Guardian Information
+"guardians":"""Red Guardian Information
 The Red Guardians protect the Power Cubes on every level.
 They will become more aggressive in the later levels.
 -
-There is no way to stop or disable them.""",
+Don't get too close, they like to shoot point blank.""",
 
 "asteroids":"""Asteroid Warning
 Asteroids have started to appear. They will destroy anything
 they touch.
 -
 As you progress to deeper space, more asteroids will start to appear.""",
+
+"spikes":"""Spike Mine
+There is a deadly spike mine on this level. Touching it will destroy
+your ship.""",
+
+"secretspikes":"""Hidden Spike Mine
+Sensors indicate there is a Spike Mine somewhere on this level.
+Be careful, it could turn up anywhere.
+-
+There is only one Spike Mine hidden on this level, but there
+will be more than one on harder levels.""",
 
 "powerup":"""Power Ups
 When the green Power Ups appear be sure to grab them. They
@@ -75,20 +88,25 @@ when the shield is active.
 Beware, the shield does not protect you from the Asteroids.
 -
 You will are given a second of invincibility even after the
-shield wears out.""",
+shield effect wears out.""",
 
 "Bullet Time":"""Bullet Time Power Up
 This powerup enhances temporarily enhances your reflexes
 which makes everything appear to move slowly.
 -
-Watch closely at the end, as time will slowly speed up
-before returning to full speed.""",
+Watch closely after a few seconds, as time will slowly
+speed up before returning to full speed.""",
 
 "Extra Life":"""Extra Life Power Up
 This powerup adds another SolarWolf ship to your fleet.
 -
 With skilled play and this prize you can collect many
 more ships than the original fleet of 3.""",
+
+"Combustion":"""Guardian Combustion
+This powerup explodes one of the Red Guardians.
+-
+The enemy will remain dead until the end of the level.""",
 
 }
 
@@ -123,7 +141,7 @@ class GameHelp:
             snd.music.set_volume(1.0)
         if self.rect:
             r = self.rect.inflate(2, 2)
-            r = self.background(r)
+            r = self.prevhandler.background(r)
             gfx.dirty(r)
         game.handler = self.prevhandler
         self.done = 1
@@ -191,7 +209,6 @@ class GameHelp:
             gfx.drawvertdashline(s, pts[1], pts[2], clr, 10, -off)
             gfx.drawhorzdashline(s, pts[0], pts[1], clr, 10, off)
             gfx.drawhorzdashline(s, pts[3], pts[2], clr, 10, -off)
-
 
         #gfx.updatestars(self.background, gfx)
 

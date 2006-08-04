@@ -32,7 +32,7 @@ ADDING   = 3
 
 def load_game_resources():
     global images, namefont, namefontheight, textfont, textfontheight, delimage, addimage, allimage
-    img = pygame.transform.rotate(gfx.load('ship.gif'), -90)
+    img = pygame.transform.rotate(gfx.load('ship-up.png'), -90)
     images.append((img, img.get_rect()))
 
     bgd = 0, 0, 0

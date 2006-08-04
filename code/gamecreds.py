@@ -10,14 +10,14 @@ import gameplay
 
 credits = (
     ('Developer', ('Pete "ShredWheat" Shinners',)),
-    ('Input Setup', ('Aaron "APS" Schlaegel',)),
+    ('Graphics', ('Eero Tamminem',)),
     ('Music', ('"theGREENzebra"',)),
-    ('Graphics Help', ('John Croisant', 'Kevin Turner', 'Michael Urman')),
-    ('Special Thanks', ('David "Futility" Clark',)),
+    ('Programming Help', ('Aaron "APS" Schlaegel', 'Michael "MU" Urman')),
+    ('Special Thanks', ('David "Futility" Clark', 'Guido "Python" van Rossom', 'Sam "SDL" Lantinga')),
 )
 
-licenseinfo = ('This program is free software. You are encouraged to make',
-               'copies and/or modify it, subject to the LGPL.',
+licenseinfo = ('This program is free software. You are encouraged to',
+               'make copies and modify it, subject to the LGPL.',
                'See "lgpl.txt" file for details.')
 
 
@@ -58,22 +58,28 @@ class GameCreds:
     def __init__(self, prevhandler):
         self.prevhandler = prevhandler
         self.done = 0
-        self.top = 100
         self.center = gfx.rect.centerx - 120
         self.text = []
+        self.credits = []
+        self.area = Rect(40, 140, 500, 400)
+        self.offset = 0
         for cred in credits:
             self.createtext(cred[0], 0)
             for peop in cred[1]:
                 self.createtext(peop, 1)
-            self.top += 30
+            self.offset += 30
+        self.offset = 0.0
+        self.oldoffset = 0.0, 0.0
         self.text.extend(images)
+        self.first = 1
+        self.fade = ((1, 4), (8, 3), (15, 2), (21, 1))
 
     def createtext(self, text, size):
         f, c = fonts[size]
         t = f.text(c, text, (self.center, 0))
-        t[1].top = self.top
-        self.top = t[1].bottom - 5
-        self.text.append(t)
+        t[1].top = self.offset
+        self.offset = t[1].bottom - 5
+        self.credits.append(t)
 
 
     def quit(self):
@@ -90,17 +96,47 @@ class GameCreds:
 
 
     def run(self):
-        for cred in self.text:
-            r = cred[1]
-            self.background(r)
-            gfx.dirty(r)
+        if self.first:
+            gfx.dirty(gfx.rect)
+            self.first = 0
+        ratio = game.clockticks / 25
+        speedadjust = max(ratio, 1.0)
+
+        self.offset += speedadjust * 0.9
+        offset = math.cos(self.offset * .04)*30.0, self.area.bottom-self.offset
+
+        oldclip = gfx.surface.get_clip()
+        gfx.surface.set_clip(self.area)
+        for cred in self.credits:
+            r = cred[1].move(self.oldoffset)
+            gfx.dirty(self.background(r))
+        gfx.surface.set_clip(oldclip)
 
         gfx.updatestars(self.background, gfx)
 
         if not self.done:
             for cred, pos in self.text:
                 gfx.surface.blit(cred, pos)
+            gfx.surface.set_clip(self.area)
+            for cred, pos in self.credits:
+                r = pos.move(offset)
+                bottom = r.bottom
+                gfx.dirty(gfx.surface.blit(cred, r))
+            gfx.surface.set_clip(oldclip)
 
+            for y,h in self.fade:
+                r = Rect(self.area.left, self.area.top+y, self.area.width, h)
+                self.background(r)
+                r = Rect(self.area.left, self.area.bottom-y-h, self.area.width, h)
+                self.background(r)
+
+            self.oldoffset = offset
+            if bottom < self.area.top:
+                self.offset = 0.0
+        else:
+            for text in self.text:
+                r = text[1]
+                gfx.dirty(self.background(text[1]))
 
     def background(self, area):
         return gfx.surface.fill((0, 0, 0), area)

@@ -37,7 +37,7 @@ menu = [
 #    MenuItem('highs', gamename.GameName),
     MenuItem('news', gamenews.GameNews),
     MenuItem('creds', gamecreds.GameCreds),
-    MenuItem('setup', gamesetup.GameSetup),
+#    MenuItem('setup', gamesetup.GameSetup),
     MenuItem('quit', None),
 ]
 
@@ -59,20 +59,20 @@ def load_game_resources():
     images.append(gfx.load('menu_on_bgd.png'))
     images[0].set_colorkey(0)
     images.append(gfx.load('logo.png'))
-    images.append(gfx.load('bigship.png'))
+    images.append(gfx.load('ship-big.png'))
     images[1].set_colorkey()
     images[2].set_colorkey()
-    for i in range(15):
-        #boximages.append(gfx.load('bigbox%04d.gif'%i))
-        img = gfx.load_raw('bigbox%04d.gif'%i)
-        boximages.append(img.convert())
-        pal = img.get_palette()
-        newpal = [(g,g,b) for (r,g,b) in pal]
-        img.set_palette(newpal)
-        yboximages.append(img.convert())
-        newpal = [(g,b,b) for (r,g,b) in pal]
-        img.set_palette(newpal)
-        rboximages.append(img.convert())
+
+    global boximages, yboximages, rboximages
+    imgs = gfx.load_raw('bigboxes.png')
+    origpal = imgs.get_palette()
+    boximages = gfx.animstrip(imgs)
+    pal = [(g,g,b) for (r,g,b) in origpal]
+    imgs.set_palette(pal)
+    yboximages = gfx.animstrip(imgs)
+    pal = [(g,b,b) for (r,g,b) in origpal]
+    imgs.set_palette(pal)
+    rboximages = gfx.animstrip(imgs)
 
     snd.preload('select_move', 'select_choose')
 
@@ -242,8 +242,6 @@ class GameMenu:
             if self.fame:
                 gfx.dirty(self.background(self.fame[1]))
             gfx.dirty(self.background(self.version[1]))
-            if self.fame:
-                gfx.dirty(self.background(self.fame[1]))
             gfx.dirty(gfx.surface.fill((0, 0, 0), self.logorect))
             gfx.dirty(gfx.surface.fill((0, 0, 0), self.bigshiprect))
 

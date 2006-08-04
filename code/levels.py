@@ -47,7 +47,7 @@ def makelevel(level):
     corner = 106, 106
     startpos = corner[0]+236, corner[1]+182
     pos = [corner[0], corner[1]]
-    numboxes = 0
+    numboxes = level/2
     for row in lev[2:]:
         cells = list(row)
         if touches == 2:

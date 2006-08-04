@@ -3,21 +3,23 @@
 import random
 import pygame
 from pygame.locals import *
-import game, gfx, snd, objpopshot
+import game, gfx, snd, objpopshot, objexplode
 
 
 images = []
+symbols = []
 
 def load_game_resources():
-    global images
-    for letter in 'bcdef':
-        img = gfx.load('powerup_' + letter + '.png')
-        images.append(img)
+    global images, symbols
+    images = gfx.animstrip(gfx.load('powerup.png'))
+    symbols = gfx.animstrip(gfx.load('powereffects.png'))
     snd.preload('select_choose')
 
 
 class Powerup:
-    def __init__(self):
+    def __init__(self, effect):
+        self.effect = effect
+        self.symbol = symbols[effect.symbol]
         self.images = images
         self.image = self.images[0]
         self.speed = game.powerupspeed
@@ -39,6 +41,7 @@ class Powerup:
     def draw(self, gfx):
         img = self.image
         r = gfx.surface.blit(img, self.rect)
+        gfx.surface.blit(self.symbol, self.rect)
         gfx.dirty(r)
 
     def tick(self, speedadjust):
@@ -59,6 +62,7 @@ class Powerup:
 class PowerupEffect:
     "Generic Powerup"
     runtime = 100.0
+    symbol = 0
     def __init__(self):
         self.time = 0.0
         self.state = game.handler
@@ -81,6 +85,7 @@ class PowerupEffect:
 class ExtraLevelTime(PowerupEffect):
     "Skip Bonus"
     runtime = 200.0
+    symbol = 0
     def start(self):
         snd.play('levelskip')
         self.origtick = game.timetick
@@ -95,8 +100,10 @@ class ExtraLevelTime(PowerupEffect):
 class Shield(PowerupEffect):
     "Shield"
     runtime = 200.0
+    symbol = 1
     def start(self):
-        snd.play('select_choose')
+        #snd.play('select_choose')
+        snd.play('flop')
         self.state.player.shield += 2
         self.ending = 0
 
@@ -115,6 +122,7 @@ class Shield(PowerupEffect):
 class PopShots(PowerupEffect):
     "Shot Blocker"
     runtime = 1.0
+    symbol = 2
     def start(self):
         snd.play('whip')
         for s in self.state.shotobjs:
@@ -127,14 +135,16 @@ class PopShots(PowerupEffect):
 class ExtraLife(PowerupEffect):
     "Extra Life"
     runtime = 1.0
+    symbol = 3
     def start(self):
-        snd.play('delete')
+        snd.play('vaauw', 1.0)
         self.state.lives_left += 1
         self.state.hud.drawlives(self.state.lives_left)
 
 class SlowMotion(PowerupEffect):
     "Bullet Time"
     runtime = 140.0
+    symbol = 4
     def start(self):
         snd.play('gameover')
         game.speedmult += 2
@@ -152,4 +162,33 @@ class SlowMotion(PowerupEffect):
         else:
             game.speedmult -= 2
 
-effects = ExtraLevelTime, PopShots, Shield, SlowMotion, ExtraLife
+class Combustion(PowerupEffect):
+    "Combustion"
+    runtime = 1.0
+    symbol = 5
+    def start(self):
+        snd.play('explode', 1.0, 350)
+        aliveguards = []
+        for g in self.state.guardobjs:
+            if not g.killed:
+                aliveguards.append(g)
+        if aliveguards:
+            g = random.choice(aliveguards)
+            g.killed = 1
+            explode = objexplode.Explode(g.rect.center)
+            self.state.staticobjs.append(explode)
+            #argh, force a cleanup
+            self.state.background(g.lastrect)
+            gfx.dirty(g.lastrect)
+
+
+
+
+Effects = [ExtraLevelTime, PopShots, Shield,
+           SlowMotion, Combustion, ExtraLife]
+
+
+def newpowerup(levelnum):
+    choices = Effects[:2+(levelnum/8)]
+    effect = random.choice(choices)
+    return Powerup(effect)
