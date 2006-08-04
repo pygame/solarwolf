@@ -31,20 +31,22 @@ timetick = 0.0
 timefactor = 12.2    #how quickly time drops (bigger = slower)
 speedmult = 0
 
+musictime = 1000 * 120 #two minutes
+
 text_length = 80  #frames text is displayed in-game
 
 
+site_url = 'http://pygame.org/shredwheat/solarwolf'
 news_url = 'http://pygame.org/shredwheat/solarwolf/thenews.html'
 
 
 
-#num of insults must match num of complements, be careful
+#number of insults must match num of complements, be careful
 Complements = (
     'Keep it up!',
     'Looking Great!',
     'Hotshot',
     'Too Hot to Handle',
-    'Lord of the Dance',
     'Bring it on',
     'Beautiful',
     'Own the Zone',
@@ -55,7 +57,6 @@ Complements = (
 Insults = (
     'Not so good',
     'Ouch',
-    'Look away',
     'Rookie',
     'Sloppy',
     'Choke Choke',
@@ -70,7 +71,6 @@ Insults = (
 
 player = None
 name_maxlength = 10     #longest name
-
 max_players = 5         #most player accounts available
 
 #clock info
@@ -84,6 +84,15 @@ handler = None
 thread = None  #any background thread
 stopthread = 0 #request thread terminate
 
+
+
+#these are the defualt 'setup' controlled by Preferences
+music = 2
+volume = 2
+display = 1
+help = 0
+thruster = 0
+comments = 1
 
 
 def get_resource(filename):
@@ -105,5 +114,5 @@ def make_dataname(filename):
     filename = os.path.normpath(filename)
     return filename
 
-version = "1.4"
+version = "1.5"
 DEBUG = 0

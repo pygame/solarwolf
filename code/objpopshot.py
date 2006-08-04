@@ -11,12 +11,7 @@ explode_frames = 11
 
 def load_game_resources():
     global images
-
     images = gfx.animstrip(gfx.load('popshot.png'), 18)
-
-    #for i in range(1,5):
-    #    img = gfx.load('popshot%d.gif'%i)
-    #    images.append(img)
 
 
 

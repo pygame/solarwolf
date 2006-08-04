@@ -6,7 +6,7 @@ from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
-import gameplay
+import gameplay, objtext
 
 fonts = []
 
@@ -35,8 +35,8 @@ Some power cubes will have alternate colors, which means
 the SolarWolf ship must contact the cube multiple times
 for it to be collected.""",
 
-"guardians":"""Red Guardian Information
-The Red Guardians protect the Power Cubes on every level.
+"guardians":"""Guardian Info
+The Guardians protect the Power Cubes on every level.
 They will become more aggressive in the later levels.
 -
 Don't get too close, they like to shoot point blank.""",
@@ -104,17 +104,39 @@ With skilled play and this prize you can collect many
 more ships than the original fleet of 3.""",
 
 "Combustion":"""Guardian Combustion
-This powerup explodes one of the Red Guardians.
+This powerup explodes one of the Guardians.
 -
 The enemy will remain dead until the end of the level.""",
 
 }
 
 
+
+QuickHelp = {
+"asteroids":"Beware of Asteroids",
+"spikes":"Beware of Spike Mines",
+"secretspikes":"Beware of Hidden Spike Mines",
+"powerup":"Grab the Powerups",
+"Skip Bonus":"Adds To Skip Timer",
+"Shot Blocker":"Destroys All Bullets",
+"Shield":"Temporary Invincibility",
+"Bullet Time":"Slow Motion Effect",
+"Extra Life":"Extra Life",
+"Combustion":"Destroys One Guardian",
+}
+
+
+
 def help(helpname, helppos):
     if not game.player.help.has_key(helpname):
         game.player.help[helpname] = 1
-        game.handler = GameHelp(game.handler, helpname, helppos)
+        if game.help == 0:
+            game.handler = GameHelp(game.handler, helpname, helppos)
+        elif hasattr(game.handler, "textobjs"):
+            t = getattr(game.handler, "textobjs")
+            message = QuickHelp.get(helpname, None)
+            if message and game.comments >= 1:
+                t.append(objtext.Text(message))
 
 
 
@@ -129,7 +151,9 @@ class GameHelp:
         self.needdraw = 1
         self.done = 0
         if snd.music:
-            snd.music.set_volume(0.6)
+            vol = snd.music.get_volume()
+            if vol:
+                snd.music.set_volume(vol * 0.6)
         snd.play('chimein')
 
         if hasattr(game.handler, 'player'):
@@ -138,7 +162,7 @@ class GameHelp:
     def quit(self):
         snd.play('chimeout')
         if snd.music:
-            snd.music.set_volume(1.0)
+            snd.tweakmusicvolume()
         if self.rect:
             r = self.rect.inflate(2, 2)
             r = self.prevhandler.background(r)

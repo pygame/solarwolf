@@ -160,10 +160,10 @@ class GameInit:
         gfx.dirty(self.rect)
 
         now = pygame.time.get_ticks()
-        #we let the screen stay up for at about 3 seconds
+        #we let the screen stay up for at about 1 second
         if not self.thread.isAlive():
             if load_finished_status >= 0:
-                if now-self.starttime > 3200:
+                if now-self.starttime > 1200:
                     self.quit()
             else:
                 if not self.handlederror:

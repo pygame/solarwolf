@@ -1,10 +1,9 @@
 """main module, starts game and main loop"""
 
-import sys, random
 import pygame
 import game, gfx, snd, txt, input
 import allmodules
-import players
+import players, gamepref
 
 #import psyco
 
@@ -27,16 +26,20 @@ def gamemain(args):
     pygame.init()
     game.clock = pygame.time.Clock()
 
+    players.load_players()
+    input.load_translations()
+    gamepref.load_prefs()
+
     size = 800, 600
-    full = '-window' not in args
+    full = game.display
+    if '-window' in args:
+        full = 0
     gfx.initialize(size, full)
     pygame.display.set_caption('SolarWolf')
 
     if not '-nosound' in args:
         snd.initialize()
     input.init()
-    players.load_players()
-    input.load_translations()
 
     if not txt.initialize():
         raise pygame.error, "Pygame Font Module Unable to Initialize"
@@ -73,8 +76,20 @@ def gamemain(args):
                 continue
             elif event.type == pygame.ACTIVEEVENT:
                 if event.state == 4 and event.gain:
-                    #uniconified, lets kick the screen
+                    #uniconified, lets try to kick the screen
                     pygame.display.update()
+                elif event.state == 2:
+                    if hasattr(game.handler, 'gotfocus'):
+                        if event.gain:
+                            game.handler.gotfocus()
+                        else:
+                            game.handler.lostfocus()
+                continue
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                if event.mod&pygame.KMOD_ALT:
+                    game.display = not game.display
+                    gfx.switchfullscreen()
+                    continue
             inputevent = input.translate(event)
             if inputevent.normalized != None:
                 inputevent = input.exclusive((input.UP, input.DOWN, input.LEFT, input.RIGHT), inputevent)
@@ -102,6 +117,7 @@ def gamemain(args):
     #uninitialization needed
     input.save_translations()
     players.save_players()
+    gamepref.save_prefs()
     pygame.quit()
 
 

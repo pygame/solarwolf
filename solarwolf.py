@@ -3,28 +3,47 @@
 Solarwolf, created by Pete Shinners.
 """
 
-
 import sys, os
 
+
+
+#these directories will be used if solarwolf cannot find
+#the directories in the location of the main program
+if sys.platform == "win32":
+    DATADIR = "C:\\Program Files\\Solarwolf"
+    CODEDIR = "C:\\Program Files\\Solarwolf\\code"
+else:
+    DATADIR = "/usr/share/games/solarwolf"
+    CODEDIR = "/usr/lib/games/solarwolf"
+
+
+
 def main():
-    #make sure we're in the correct directory
-    fullpath = os.path.abspath(sys.argv[0])
-    dir = os.path.split(fullpath)[0]
-    os.chdir(dir)
+    #figure out our directories
+    global DATADIR, CODEDIR
+    localpath = os.path.split(os.path.abspath(sys.argv[0]))[0]
+    testdata = localpath
+    testcode = os.path.join(localpath, 'code')
+    if os.path.isdir(os.path.join(testdata, 'data')):
+        DATADIR = testdata
+    if os.path.isdir(testcode):
+        CODEDIR = testcode
 
-    #add our code to the python path
-    sys.path.insert(0, 'code')
-
+    #apply our directories and test environment
+    os.chdir(DATADIR)
+    sys.path.insert(0, CODEDIR)
     checkdependencies()
 
+    #install pychecker if debugging
     try:
         import game
         if game.DEBUG >= 2:
             import pychecker.checker
             print 'Pychecker Enabled'
     except ImportError, m:
-        print 'No Pychecker', m
+        pass
 
+    #run game and protect from exceptions
     try:
         import main, pygame
         main.main(sys.argv)
@@ -49,14 +68,14 @@ def checkdependencies():
     msgs = []
 
     #make sure this looks like the right directory
-    if not os.path.isdir('code'):
-        msgs.append('Cannot locate SolarWolf modules (code subdirectory)')
+    if not os.path.isdir(CODEDIR):
+        msgs.append('Cannot locate SolarWolf modules')
     if not os.path.isdir('data'):
-        msgs.append('Cannot locate SolarWolf data files (data subdirectory)')
+        msgs.append('Cannot locate SolarWolf data files')
 
-    #first, we need python >= 2.0
+    #first, we need python >= 2.1
     if int(sys.version[0]) < 2:
-        errorbox('Requires Python-2.0 or Greater')
+        errorbox('Requires Python-2.1 or Greater')
 
     #is correct pygame found?
     try:
@@ -125,7 +144,7 @@ def __pygamebox(title, message):
                 screen.blit(msg, pos)
             pos[1] += font.get_height()
         pygame.display.flip()
-        stepkeys = pygame.K_ESCAPE, pygame.K_SPACE, pygame.K_RETURN
+        stopkeys = pygame.K_ESCAPE, pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER
         while 1:
             e = pygame.event.wait()
             if e.type == pygame.QUIT or \

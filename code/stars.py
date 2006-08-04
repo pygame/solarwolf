@@ -51,3 +51,13 @@ class Stars:
             rect.top = (rect.top + yvel) % B
             DIRTY(FILL(col, rect))
         self.last_background = background
+
+
+    def eraseall(self, background, gfx): #only on fullscreen switch
+        R, B = gfx.rect.bottomright
+        FILL = gfx.surface.fill
+        for s in self.stars[0][:self.numstars]:
+            background(s[0])
+        for s in self.stars[1][:self.numstars]:
+            background(s[0])
+

@@ -2,7 +2,7 @@
 
 import pygame
 from pygame.locals import *
-import random, math
+import random
 
 import game, gfx, input, snd
 import gamehelp, gamepause
@@ -12,7 +12,7 @@ import objpowerup, objasteroid
 import levels, hud, players
 
 
-
+Songs = [('arg.xm', 1.0), ('h2.ogg', 0.6)]
 
 def load_game_resources():
     snd.preload('gameover', 'startlife', 'levelskip', 'explode')
@@ -42,6 +42,7 @@ class GamePlay:
         self.objlists = [self.boxobjs, self.shotobjs, self.spikeobjs, self.popobjs,
                          self.smokeobjs, self.powerupobjs, self.asteroidobjs,
                          self.guardobjs, self.staticobjs, self.textobjs]
+        self.glitter = objshot.Glitter()
         self.hud = hud.HUD()
 
         self.state = ''
@@ -57,6 +58,8 @@ class GamePlay:
         self.lasttick = pygame.time.get_ticks()
         self.speedadjust = 1.0
         self.startmusic = 1
+        self.song = ''
+        self.songtime = 0
 
         self.changestate('gamestart')
 
@@ -66,7 +69,9 @@ class GamePlay:
     def starting(self):
         if self.startmusic:
             self.startmusic = 0
-            snd.playmusic('arg.xm')
+            self.song = random.choice(Songs)
+            snd.playmusic(*self.song)
+            self.songtime = pygame.time.get_ticks()
         gfx.dirty(self.background(gfx.rect))
 
     def gamewin(self):
@@ -111,10 +116,30 @@ class GamePlay:
 
     def event(self, e):
         if e.type == pygame.KEYDOWN:
+            #What are you doing? Looking for Cheats?
+            #shame shame
+            if input.Cheatstring == "wheat":
+                snd.play('gameover')
+                snd.play('delete')
+                game.player.cheater = 1
+                self.textobjs.append(objtext.Text('"wheat" Cheat: Extra Lives'))
+                self.lives_left += 10
+                self.hud.drawlives(self.lives_left)
+            elif input.Cheatstring == "shred":
+                snd.play('gameover')
+                snd.play('delete')
+                game.player.cheater = 1
+                self.grabbedboxes = 0 #less not give any fake complements
+                self.levelnum = 49
+                self.textobjs.append(objtext.Text('"shred" Cheat: Warp Level 50'))
+                self.changestate('levelend')
             if e.key == pygame.K_PAUSE or e.key == pygame.K_p:
-                game.handler = gamepause.GamePause(self)
+                if game.handler is self: #just in case some "help" gets in first?
+                    game.handler = gamepause.GamePause(self)
 
     def run(self):
+        if game.handler is not self: #help or pause is taking over
+            return
         ratio = game.clockticks / 25
         self.speedadjust = max(ratio, 1.0)
         if game.speedmult >= 2:
@@ -123,6 +148,13 @@ class GamePlay:
             self.speedadjust *= 0.75
         objshot.updateglow(self.speedadjust)
         self.statetick()
+
+
+    def gotfocus(self):
+        pass
+    def lostfocus(self):
+        if game.handler is self and self.lives_left:
+            game.handler = gamepause.GamePause(self)
 
 
     def runobjects(self, objects):
@@ -149,9 +181,16 @@ class GamePlay:
                 if o.dead:
                     o.erase(B)
                     l.remove(o)
+
+        #HERE IS THE GLITTER
+        #self.glitter.update(S)
+        #self.glitter.add(self.shotobjs, 1.0)
+
         for l in objects:
             for o in l:
                 o.draw(G)
+
+
         self.hud.draw()
 
     def background(self, area):
@@ -187,8 +226,6 @@ class GamePlay:
 
 
     def normal_tick(self):
-        #assert(self.player.active)
-
         #fire the guards
         shootchance = game.guard_fire * self.speedadjust
         if self.player.active and random.random() < shootchance:
@@ -211,7 +248,8 @@ class GamePlay:
             gamehelp.help("powerup", p.rect.topleft)
         if self.grabbedboxes >= 50:
             self.grabbedboxes = 0
-            self.textobjs.append(objtext.Text(game.Complements[self.complement]))
+            if game.comments >= 1:
+                self.textobjs.append(objtext.Text(game.Complements[self.complement]))
             self.complement = (self.complement + 1) % len(game.Complements)
         elif self.grabbedboxes >= 20:
             self.numdeaths = 0
@@ -245,7 +283,8 @@ class GamePlay:
             if playercollide(p.rect):
                 p.dead = 1
                 effect = p.effect()
-                self.textobjs.append(objtext.Text('"'+effect.__doc__+'"'))
+                if game.comments >= 2:
+                    self.textobjs.append(objtext.Text('"'+effect.__doc__+'"'))
                 self.powereffects.append(effect)
                 gamehelp.help(effect.__doc__, self.player.rect.center)
         playerrect = playerrect.inflate(-6, -6)
@@ -297,17 +336,20 @@ class GamePlay:
 
 #player die
     def playerdie_start(self):
+        game.player.lives += 1
         snd.play('explode', 1.0, self.player.rect.centerx)
-        self.explode = objexplode.Explode(self.player.rect.center, self.player.move)
-        self.staticobjs.append(self.explode)
+        #self.explode = objexplode.Explode(self.player.rect.center, self.player.move)
+        #self.staticobjs.append(self.explode)
+        self.staticobjs.extend(objexplode.superexplode(self.player.rect.center, self.player.move))
+        self.explode = self.staticobjs[-1]
         self.poptime = 3
         self.player.dead = 1
         self.player.active = 0
         self.grabbedboxes = 0
         self.numdeaths += 1
-        if len(self.boxobjs) <= 2:
+        if game.comments >= 2 and len(self.boxobjs) <= 2:
             self.textobjs.append(objtext.Text('Doh, so close'))
-        elif self.numdeaths > 1:
+        elif game.comments >= 2 and self.numdeaths > 1:
             self.textobjs.append(objtext.Text(game.Insults[self.complement]))
             self.complement = (self.complement + 1) % len(game.Insults)
         for effect in self.powereffects:
@@ -329,7 +371,7 @@ class GamePlay:
                 self.lives_left -= 1
                 self.hud.drawlives(self.lives_left)
                 self.changestate('playerstart')
-                if not self.lives_left:
+                if game.comments >= 2 and not self.lives_left:
                     self.textobjs.append(objtext.Text("Last Ship, Don't Blow It"))
             else:
                 self.changestate('gameover')
@@ -354,7 +396,7 @@ class GamePlay:
     def playerstart_tick(self):
         #when animations done
         anyblock = 0
-        collide = self.teleport.rect.inflate(10, 10).colliderect
+        collide = self.teleport.rect.inflate(12, 12).colliderect
         for a in self.asteroidobjs:
             if collide(a.rect) or collide(a.predictrect()):
                 anyblock = 1
@@ -381,12 +423,14 @@ class GamePlay:
         self.levelnum += 1
         del self.boxobjs[:]
         self.newboxes, self.startpos, msg, num = levels.makelevel(self.levelnum)
+        random.shuffle(self.newboxes)
         self.calcboxes = num
         self.addtime = 2
         if game.clock.get_fps() < 25:
             self.addtime = 1
         self.hud.drawlevel(self.levelnum)
-        #self.textobjs.append(objtext.Text(msg)) #MSG
+        if game.comments >= 2:
+            self.textobjs.append(objtext.Text(msg))
         self.grabbedboxes = 0
         self.numdeaths = 0
         for b in self.guardobjs:
@@ -413,14 +457,14 @@ class GamePlay:
 
         #make spikes
         if self.levelnum >= 30:
-            numspikes = int((self.levelnum-30)/12) + 1
-            self.secretspikes = random.sample(self.newboxes, numspikes)
+            numspikes = min(int((self.levelnum-30)/5) + 1, len(self.newboxes)-5)
+            self.secretspikes = self.newboxes[-numspikes:]
         elif self.levelnum >= 10:
             numspikes = int((self.levelnum-10)/7) + 1
-            spikes = random.sample(self.newboxes, numspikes)
+            spikes = self.newboxes[-numspikes:]
+            self.newboxes = self.newboxes[:-numspikes]
             for b in spikes:
                 s = objbox.Spike(b.rect.topleft)
-                self.newboxes.remove(b)
                 self.spikeobjs.append(s)
             self.secretspikes = []
             self.touchingsecretspike = None
@@ -428,14 +472,21 @@ class GamePlay:
             self.secretspikes = []
             self.touchingsecretspike = None
 
+        #rotate music
+        if pygame.time.get_ticks() - self.songtime > game.musictime:
+            songs = list(Songs)
+            songs.remove(self.song)
+            self.song = random.choice(songs)
+            snd.playmusic(*self.song)
+            self.songtime = pygame.time.get_ticks()
+
     def levelstart_tick(self):
         self.addtime -= 1
         if not self.addtime:
             self.addtime = 2
             if self.newboxes:
-                b = random.choice(self.newboxes)
+                b = self.newboxes.pop()
                 self.boxobjs.append(b)
-                self.newboxes.remove(b)
         if game.timeleft < 1000.0 and not self.skipping:
             game.timeleft = min(game.timeleft + 25.0, 1000.0)
         if self.skipping:
@@ -459,7 +510,7 @@ class GamePlay:
             game.timetick = (1000.0 / (self.calcboxes * game.timefactor))
         else:
             game.timetick = 5.0
-        if self.levelnum <= 1: game.timetick = 5.05
+        if self.levelnum <= 1: game.timetick = 4.0
         del self.calcboxes
 
 
@@ -472,12 +523,17 @@ class GamePlay:
         self.poptime = 2
         for effect in self.powereffects:
             effect.dead = 1
-        if self.grabbedboxes >= 36:
+        if game.comments >= 1 and self.grabbedboxes >= 36:
             self.textobjs.append(objtext.Text(game.Complements[self.complement]))
             self.complement = (self.complement + 1) % len(game.Complements)
         for s in self.spikeobjs:
             s.dead = 1
             self.popobjs.append(objpopshot.PopShot(s.rect.center))
+        #boxes may be left if the player cheated
+        for b in self.boxobjs:
+            b.erase(self.background)
+        del self.boxobjs[:]
+
 
     def levelend_tick(self):
         self.poptime -= 1
@@ -501,10 +557,12 @@ class GamePlay:
 #level skip
     def levelskip_start(self):
         snd.play('levelskip')
+        game.player.skips += 1
         self.poptime = 2
         if game.clock.get_fps() < 25:
             self.poptime = 1
-        self.textobjs.append(objtext.Text('Level Skipped'))
+        if game.comments >= 1:
+            self.textobjs.append(objtext.Text('Level Skipped'))
         self.skiptime = 25
         for s in self.spikeobjs:
             s.dead = 1
@@ -570,7 +628,8 @@ class GamePlay:
         self.runobjects([self.smokeobjs, self.guardobjs])
 
     def gamestart_end(self):
-        self.textobjs.append(objtext.Text('Begin'))
+        if game.comments >= 1:
+            self.textobjs.append(objtext.Text('Begin'))
         if self.whip:
             self.whip.stop()
         del self.ticks
@@ -618,6 +677,7 @@ class GamePlay:
             import gamewin
             nexthandler = gamewin.GameWin(nexthandler)
             if not game.player:
+                import gamename
                 nexthandler = gamename.GameName(nexthandler)
         if self.newcontinue:
             if not game.player in players.players:

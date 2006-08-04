@@ -51,8 +51,13 @@ class Font:
     def _render(self, text, color, bgd=(0,0,0)):
         return img
 
-    def text(self, color, text, center=None, pos='center'):
-        bgd = 0, 0, 0
+    def get_height(self):
+        return self.font.get_height()
+
+    def get_linesize(self):
+        return self.font.get_linesize()
+
+    def text(self, color, text, center=None, pos='center', bgd=(0,0,0)):
         if text is None: text = ' '
         try:
             if gfx.surface.get_bytesize()>1:
@@ -65,6 +70,33 @@ class Font:
         img = img.convert()
         r = self._positionrect(img, center, pos)
         return [img, r]
+
+
+    def textlined(self, color, text, center=None, pos='center'):
+        darkcolor = [int(c/2) for c in color]
+        if text is None: text = ' '
+        try:
+            if gfx.surface.get_bytesize()>1:
+                img1 = self.font.render(text, 1, color)
+                img2 = self.font.render(text, 1, darkcolor)
+            else:
+                img1 = img2 = self.font.render(text, 0, color)
+                img2 = self.font.render(text, 0, darkcolor)
+        except (pygame.error, TypeError):
+            img1 = img2 = pygame.Surface((10, 10))
+
+        newsize = img1.get_width()+4, img1.get_height()+4
+        img = pygame.Surface(newsize)
+        img.blit(img2, (0, 0))
+        img.blit(img2, (0, 4))
+        img.blit(img2, (4, 0))
+        img.blit(img2, (4, 4))
+        img.blit(img1, (2, 2))
+        img = img.convert()
+        img.set_colorkey((0,0,0), pygame.RLEACCEL)
+        r = self._positionrect(img, center, pos)
+        return [img, r]
+
 
     def textshadowed(self, color, text, center=None, pos='center'):
         darkcolor = [int(c/2) for c in color]
@@ -87,6 +119,9 @@ class Font:
         img.set_colorkey((0,0,0), pygame.RLEACCEL)
         r = self._positionrect(img, center, pos)
         return [img, r]
+
+
+
 
     def textbox(self, color, text, width, bgcolor, topmargin=6):
         sidemargin = 6

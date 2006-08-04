@@ -23,7 +23,7 @@ def load_game_resources():
 class Asteroid:
     def __init__(self):
         self.speed = game.asteroidspeed
-        self.colliderect = pygame.Rect((0, 0), origsize)
+        self.colliderect = pygame.Rect((0, 0), origsize).inflate(-8, -8)
         self.reposition()
         self.dead = 0
         self.time = 0
@@ -56,9 +56,9 @@ class Asteroid:
 
 
     def predictrect(self):
-        posx = (self.pos[0] + 16.0 * self.speed * self.movex) % 740
-        posy = (self.pos[1] + 16.0 * self.speed * self.movey) % 640
-        rect = pygame.Rect((0, 0), self.colliderect.size)
+        posx = (self.pos[0] + 24.0 * self.speed * self.movex) % 740
+        posy = (self.pos[1] + 24.0 * self.speed * self.movey) % 640
+        rect = pygame.Rect(self.colliderect)
         rect.center = posx, posy
         rect.move_ip(-20, -20)
         return rect

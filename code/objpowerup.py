@@ -84,12 +84,12 @@ class PowerupEffect:
 
 class ExtraLevelTime(PowerupEffect):
     "Skip Bonus"
-    runtime = 200.0
+    runtime = 80.0
     symbol = 0
     def start(self):
         snd.play('levelskip')
         self.origtick = game.timetick
-        game.timetick = game.timetick / -2
+        game.timetick = game.timetick * -2
         #for s in self.state.asteroidobjs[:2]:
         #    s.dead = 1
         #    self.state.popobjs.append(objpopshot.PopShot(s.rect.center))
@@ -103,21 +103,21 @@ class Shield(PowerupEffect):
     symbol = 1
     def start(self):
         #snd.play('select_choose')
+        self.player = self.state.player
         snd.play('flop')
-        self.state.player.shield += 2
-        self.ending = 0
+        self.player.shield = 1
 
     def tick(self, speedadjust):
         PowerupEffect.tick(self, speedadjust)
-        if not self.ending and self.time >= 170.0:
-            self.ending = 1
-            self.state.player.shield -= 1
+        if self.time >= 120.0:
+            self.player.shield = 2
+        elif self.time >= 145.0:
+            self.player.shield = 3
+        elif self.time >= 175.0:
+            self.player.shield = 4
 
     def end(self):
-        if self.ending:
-            self.state.player.shield -= 1
-        else:
-            self.state.player.shield -= 2
+        self.state.player.shield = 0
 
 class PopShots(PowerupEffect):
     "Shot Blocker"
@@ -146,17 +146,22 @@ class SlowMotion(PowerupEffect):
     runtime = 140.0
     symbol = 4
     def start(self):
+        self.player = self.state.player
         snd.play('gameover')
         game.speedmult += 2
         self.ending = 0
+        self.player.bullet = 1
 
     def tick(self, speedadjust):
         PowerupEffect.tick(self, speedadjust)
         if not self.ending and self.time >= 120.0:
             self.ending = 1
             game.speedmult -= 1
+        if self.time <= 100.0:
+            self.player.bullet = (int(self.time * 0.8) % 4) + 1
 
     def end(self):
+        self.player.bullet = 0
         if self.ending:
             game.speedmult -= 1
         else:
@@ -185,7 +190,9 @@ class Combustion(PowerupEffect):
 
 
 Effects = [ExtraLevelTime, PopShots, Shield,
-           SlowMotion, Combustion, ExtraLife]
+           SlowMotion, Combustion, ExtraLife,
+           PopShots, Shield, ExtraLife, Combustion,
+           PopShots, SlowMotion]
 
 
 def newpowerup(levelnum):

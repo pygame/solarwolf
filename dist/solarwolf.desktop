@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Encoding=UTF-8
+Name=SolarWolf
+Exec=/usr/games/solarwolf
+Categories=Application;Game;ArcadeGame

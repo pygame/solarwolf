@@ -4,7 +4,7 @@
 import pygame.joystick
 from pygame.locals import *
 import time, sys, os, pickle, tempfile
-import game
+import game, snd
 
 ScreenshotNum = 1
 
@@ -26,6 +26,8 @@ HATSTART = HATUP = 0
 HATLEFT = 1
 HATRIGHT = 2
 HATDOWN = 3
+
+FINISHMUSIC = USEREVENT+3
 
 #translation tables
 translations_default = {
@@ -109,6 +111,7 @@ joystick = None
 lastaxisvalue = []
 lasthatvalue = []
 exclusivedict = {}
+Cheatstring = ''
 
 def init():
     "init the joystick"
@@ -183,14 +186,21 @@ def exclusive(list, i):
     return i
 
 def translate(event):
-    global lastaxisvalue
-    global lasthatvalue
+    global lastaxisvalue, lasthatvalue, Cheatstring
     normalized = None
     translated = None
     all = 0
     release = 0
     if event.type in (KEYDOWN, KEYUP):
         # K_NUMLOCK and K_CAPSLOCK don't work right in pygame
+        if event.type == KEYDOWN:
+            if event.key == K_BACKSPACE:
+                Cheatstring = Cheatstring[:-1]
+            else:
+                try:
+                    Cheatstring = Cheatstring[-4:]+event.unicode
+                except (TypeError, AttributeError):
+                    Cheatstring = ''
         if event.key == K_PRINT:
             if event.type == KEYDOWN:
                 global ScreenshotNum
@@ -271,6 +281,8 @@ def translate(event):
             all = 1
         if event.type == JOYBUTTONUP:
             release = 1
+    elif event.type == FINISHMUSIC:
+        snd.finish_playmusic()
     newdict = event.dict
     newdict['normalized'] = normalized
     newdict['translated'] = translated
