@@ -1,0 +1,72 @@
+import objbox, game
+
+
+
+Levels = []
+initialized = 0
+
+def init():
+    global Levels, initialized
+    curlev = []
+    f = game.get_resource('levels.txt')
+    f = open(f, 'r')
+    curtitle = curtitle2 = ''
+    while 1:
+        l = f.readline()
+        if l and l[0] == '>':
+            curtitle = l[1:].strip()
+            continue
+        if l and l[0] == '<':
+            curtitle2 = l[1:].strip()
+            continue
+        if curlev and (not l or l[0] == '!'):
+            for i in range(7-len(curlev)):
+                curlev.append('         ')
+            curlev.insert(0, curtitle2)
+            curlev.insert(0, curtitle)
+            Levels.append(curlev)
+            curtitle = curtitle2 = ''
+            curlev = []
+        if not l: break
+        if l[0] == '!' or l[0] == ';':
+            continue
+        if len(curlev) < 7:
+            l = (l.rstrip() + '          ')[:9]
+            curlev.append(l)
+    initialized = 1
+
+
+def makelevel(level):
+    "returns (list, startcenter) level number"
+    if not initialized: init()
+    lev = Levels[level%len(Levels)]
+    touches = level/len(Levels) + 1
+    passes = (level>len(Levels) and 2) or 1
+    boxlist = []
+    size = 58, 58
+    corner = 106, 106
+    startpos = corner[0]+236, corner[1]+182
+    pos = [corner[0], corner[1]]
+    for row in lev[2:]:
+        cells = list(row)
+        if touches == 2:
+            cells.reverse()
+        for cell in cells:
+            if cell == '#':
+                boxlist.append(objbox.Box(pos, touches))
+            elif cell == 's':
+                startpos = pos[0] , pos[1] 
+            pos[0] = pos[0] + size[0]
+        pos[0] = corner[0]
+        pos[1] = pos[1] + size[1]
+    msg = ''
+    msg = lev[touches-1]
+    if level == maxlevels()-1: msg = 'Final Level'
+    numboxes = len(boxlist) * touches
+    return boxlist, startpos, msg, numboxes
+
+
+def maxlevels():
+    return len(Levels) * 2
+
+
