@@ -54,7 +54,7 @@ def dirty(rect):
 def dirty2(rect1, rect2):
     if not rect2:
         dirtyrects.append(rect1)
-    elif rect.colliderect(rect2):
+    elif rect1.colliderect(rect2):
         dirtyrects.append(rect1.union(rect2))
     else:
         dirtyrects.append(rect1)

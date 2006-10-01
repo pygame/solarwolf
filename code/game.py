@@ -114,5 +114,5 @@ def make_dataname(filename):
     filename = os.path.normpath(filename)
     return filename
 
-version = "1.5"
+version = "1.5.1"
 DEBUG = 0
