@@ -55,7 +55,7 @@
    ##  ##
   # #  ##
 !
-> Email Sprial
+> Email Spiral
 < More Junk Mail
  ####
 #    #
@@ -105,7 +105,7 @@
        *#
 !
 > ae
-< Daemons Fork
+< Demon's Fork
  ##
     #***
  ####   *
@@ -255,7 +255,7 @@ s ## ##
    ###
    ###
 !
-> Geomtric Puzzle
+> Geometric Puzzle
 < Challenged
  ###
  ### s
@@ -286,7 +286,7 @@ s ## ##
  #  *  #
 !
 > That's no Moon
-< It's a Spacestation
+< It's a Space Station
   ****
  **** ##
 **** ####
