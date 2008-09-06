@@ -66,12 +66,12 @@ CurrentSong = None
 CurrentVolume = 1.0
 SwitchingSongs = 0
 def playmusic(musicname, volume=1.0):
-    if not music or not game.music: return
     global CurrentSong, SwitchingSongs, CurrentVolume
     if musicname == CurrentSong:
         return
     CurrentSong = musicname
     CurrentVolume = volume
+    if not music or not game.music: return
     if SwitchingSongs:
         CurrentSong = musicname
     SwitchingSongs = 1
@@ -102,7 +102,9 @@ def tweakmusicvolume():
     prefvolume = [0, 0.6, 1.0][game.music]
     if not prefvolume:
         music.stop()
-    if not music.get_busy():
+    if CurrentSong and not music.get_busy():
+        fullname = os.path.join('data', 'music', CurrentSong)
+        music.load(fullname)
         music.play(-1)
     music.set_volume(prefvolume*CurrentVolume)
 
