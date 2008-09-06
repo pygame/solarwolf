@@ -599,7 +599,7 @@ class GamePlay:
         self.donehud = 0
         sound = snd.fetch('whip')
         self.whip = None
-        if sound:
+        if sound and game.volume > 0:
             self.whip = sound.play(-1)
         for g in self.guardobjs:
             if g.killed == 1:
