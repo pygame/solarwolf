@@ -87,8 +87,12 @@ def gamemain(args):
                 continue
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 if event.mod&pygame.KMOD_ALT:
-                    game.display = not game.display
-                    gfx.switchfullscreen()
+                    # check that we aren't still loading resources, as changing
+                    # resolution when we are can cause issues
+                    if (not hasattr(handler, 'thread')
+                            or not handler.thread.isAlive()):
+                        game.display = not game.display
+                        gfx.switchfullscreen()
                     continue
             inputevent = input.translate(event)
             if inputevent.normalized != None:
