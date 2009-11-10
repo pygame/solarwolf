@@ -21,7 +21,7 @@ import math, os
 import pygame
 from pygame.locals import *
 import game, gfx, snd, txt
-import gameplay, gamemenu, players
+import gameplay, objbox, players
 
 
 
@@ -63,9 +63,9 @@ class GameWin:
             img, r = font.text((250, 250, 250), line, (self.center, self.top))
             self.top += 30
             self.text.append((img, r))
-        self.g = gamemenu.boximages
-        self.y = gamemenu.yboximages
-        self.r = gamemenu.rboximages
+        self.g = objbox.bigboximages
+        self.y = objbox.ybigboximages
+        self.r = objbox.rbigboximages
 
 
 

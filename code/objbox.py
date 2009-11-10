@@ -22,43 +22,76 @@ import pygame
 from pygame.locals import *
 import game, gfx, snd
 
+box_color = (60, 255, 60)
+ybox_color = (255, 255, 60)
+rbox_color = (255, 60, 60)
+
+bigboximages = []
+ybigboximages = []
+rbigboximages = []
 
 boximages = []
 yboximages = []
 rboximages = []
 wboximages = []
+
 popimages = []
+
 spikeimages = []
 wspikeimages = []
 
+def yellow_animation(palette, images):
+    images.set_palette([(g,g,b) for (r,g,b) in palette])
+    return gfx.animstrip(images)
+
+def red_animation(palette, images):
+    images.set_palette([(g,b,b) for (r,g,b) in palette])
+    return gfx.animstrip(images)
+
+def white_animation(palette, images):
+    intensities = [min(g+60,255) for (r,g,b) in palette]
+    images.set_palette([(i,i,i) for i in intensities])
+    return gfx.animstrip(images)
+
 def load_game_resources():
+    global bigboximages, ybigboximages, rbigboximages, wbigboximages
     global boximages, yboximages, rboximages, wboximages
     global popimages, spikeimages, wspikeimages
+
+    ### Big Boxes ###
+
+    imgs = gfx.load_raw('bigboxes.png')
+    origpal = imgs.get_palette()
+    bigboximages = gfx.animstrip(imgs)
+
+    ybigboximages = yellow_animation(origpal, imgs)
+    rbigboximages = red_animation(origpal, imgs)
+
+    ### Small Boxes ###
+
     imgs = gfx.load_raw('boxes.png')
     origpal = imgs.get_palette()
     boximages = gfx.animstrip(imgs)
 
-    pal = [(g,g,b) for (r,g,b) in origpal]
-    imgs.set_palette(pal)
-    yboximages = gfx.animstrip(imgs)
+    yboximages = yellow_animation(origpal, imgs)
+    rboximages = red_animation(origpal, imgs)
+    wboximages = white_animation(origpal, imgs)
 
-    pal = [(g,b,b) for (r,g,b) in origpal]
-    imgs.set_palette(pal)
-    rboximages = gfx.animstrip(imgs)
-
-    pal = [min(g+60,255) for (r,g,b) in origpal]
-    imgs.set_palette(zip(pal,pal,pal))
-    wboximages = gfx.animstrip(imgs)
+    ### Popping box ###
 
     popimages = gfx.animstrip(gfx.load('popbox.png'))
 
+    ### Spike ###
 
     spikes = gfx.load_raw('spikeball.png')
     origpal = spikes.get_palette()
     spikeimages = gfx.animstrip(spikes)
+
     pal = [(min(r+100,255),min(g+100,255),min(b+100,255)) for r,g,b in origpal]
     spikes.set_palette(pal)
     wspikeimages = gfx.animstrip(spikes)
+
+    ### Sounds ###
 
     snd.preload('boxhit', 'yboxhit')
 

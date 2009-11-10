@@ -24,12 +24,10 @@ import game
 import gfx, snd, txt
 import input
 import players
+import objbox
 import gamecreds, gamenews, gamestart, gamepref
 
 images = []
-boximages = []
-yboximages = []
-rboximages = []
 fame = None
 
 class MenuItem:
@@ -76,17 +74,6 @@ def load_game_resources():
     images[1].set_colorkey()
     images[2].set_colorkey()
 
-    global boximages, yboximages, rboximages
-    imgs = gfx.load_raw('bigboxes.png')
-    origpal = imgs.get_palette()
-    boximages = gfx.animstrip(imgs)
-    pal = [(g,g,b) for (r,g,b) in origpal]
-    imgs.set_palette(pal)
-    yboximages = gfx.animstrip(imgs)
-    pal = [(g,b,b) for (r,g,b) in origpal]
-    imgs.set_palette(pal)
-    rboximages = gfx.animstrip(imgs)
-
     fame = gfx.load('fame.png')
 
     snd.preload('select_move', 'select_choose')
@@ -106,9 +93,9 @@ class GameMenu:
         self.logorectsmall = self.logorect.inflate(-2,-2)
         self.boxtick = 0
         if players.winners:
-            self.boximages = rboximages
+            self.boximages = objbox.rbigboximages
         else:
-            self.boximages = boximages
+            self.boximages = objbox.bigboximages
         self.boxrect = self.boximages[0].get_rect().move(580, 80)
         self.bigship = images[2]
         self.bigshiprect = self.bigship.get_rect().move(450, 250)
