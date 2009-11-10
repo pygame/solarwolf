@@ -22,15 +22,15 @@ import pygame
 from pygame.locals import *
 import game, gfx, snd
 
-box_color = (60, 255, 60)
+gbox_color = (60, 255, 60)
 bbox_color = (60, 60, 255)
 rbox_color = (255, 60, 60)
 
-bigboximages = []
+gbigboximages = []
 bbigboximages = []
 rbigboximages = []
 
-boximages = []
+gboximages = []
 bboximages = []
 rboximages = []
 wboximages = []
@@ -54,15 +54,15 @@ def white_animation(palette, images):
     return gfx.animstrip(images)
 
 def load_game_resources():
-    global bigboximages, bbigboximages, rbigboximages, wbigboximages
-    global boximages, bboximages, rboximages, wboximages
+    global gbigboximages, bbigboximages, rbigboximages, wbigboximages
+    global gboximages, bboximages, rboximages, wboximages
     global popimages, spikeimages, wspikeimages
 
     ### Big Boxes ###
 
     imgs = gfx.load_raw('bigboxes.png')
     origpal = imgs.get_palette()
-    bigboximages = gfx.animstrip(imgs)
+    gbigboximages = gfx.animstrip(imgs)
 
     bbigboximages = blue_animation(origpal, imgs)
     rbigboximages = red_animation(origpal, imgs)
@@ -71,7 +71,7 @@ def load_game_resources():
 
     imgs = gfx.load_raw('boxes.png')
     origpal = imgs.get_palette()
-    boximages = gfx.animstrip(imgs)
+    gboximages = gfx.animstrip(imgs)
 
     bboximages = blue_animation(origpal, imgs)
     rboximages = red_animation(origpal, imgs)
@@ -102,13 +102,13 @@ class Box:
         self.rotspeed = random.random() * 2.0 + 2.0
         if random.randint(0, 1):
             self.rotspeed = -self.rotspeed
-        self.rect = boximages[0].get_rect().move(pos)
+        self.rect = gboximages[0].get_rect().move(pos)
         self.touches = touches
         self.touching = 0
         self.firsttouch = 2.0
         self.dead = 0
         self.popped = 0
-        self.imglists = wboximages, boximages, bboximages, rboximages
+        self.imglists = wboximages, gboximages, bboximages, rboximages
         self.numframes = len(self.imglists[0])
 
     def erase(self, background):

@@ -63,7 +63,7 @@ class GameWin:
             img, r = font.text((250, 250, 250), line, (self.center, self.top))
             self.top += 30
             self.text.append((img, r))
-        self.g = objbox.bigboximages
+        self.g = objbox.gbigboximages
         self.b = objbox.bbigboximages
         self.r = objbox.rbigboximages
 

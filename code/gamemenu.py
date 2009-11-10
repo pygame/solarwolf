@@ -95,7 +95,7 @@ class GameMenu:
         if players.winners:
             self.boximages = objbox.rbigboximages
         else:
-            self.boximages = objbox.bigboximages
+            self.boximages = objbox.gbigboximages
         self.boxrect = self.boximages[0].get_rect().move(580, 80)
         self.bigship = images[2]
         self.bigshiprect = self.bigship.get_rect().move(450, 250)
