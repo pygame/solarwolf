@@ -98,7 +98,7 @@ def preview(level):
     img = pygame.Surface((52, 42))
     img.fill((20, 20, 30))
     pygame.draw.rect(img, (255, 255, 255), (0,0,51,41), 2)
-    colors = (150,150,150), objbox.box_color, objbox.ybox_color, objbox.rbox_color
+    colors = (150,150,150), objbox.box_color, objbox.bbox_color, objbox.rbox_color
     for row in lev[2:]:
         cells = list(row)
         if touches == 2:

@@ -64,7 +64,7 @@ class GameWin:
             self.top += 30
             self.text.append((img, r))
         self.g = objbox.bigboximages
-        self.y = objbox.ybigboximages
+        self.b = objbox.bbigboximages
         self.r = objbox.rbigboximages
 
 
@@ -108,7 +108,7 @@ class GameWin:
             frame = int(self.time * .5) % len(self.r)
             surf = gfx.surface
             gfx.dirty(surf.blit(self.g[frame], (50, 400)))
-            gfx.dirty(surf.blit(self.y[frame], (300, 400)))
+            gfx.dirty(surf.blit(self.b[frame], (300, 400)))
             gfx.dirty(surf.blit(self.r[frame], (550, 400)))
 
             for cred, pos in self.text:

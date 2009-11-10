@@ -23,15 +23,15 @@ from pygame.locals import *
 import game, gfx, snd
 
 box_color = (60, 255, 60)
-ybox_color = (255, 255, 60)
+bbox_color = (60, 60, 255)
 rbox_color = (255, 60, 60)
 
 bigboximages = []
-ybigboximages = []
+bbigboximages = []
 rbigboximages = []
 
 boximages = []
-yboximages = []
+bboximages = []
 rboximages = []
 wboximages = []
 
@@ -40,8 +40,8 @@ popimages = []
 spikeimages = []
 wspikeimages = []
 
-def yellow_animation(palette, images):
-    images.set_palette([(g,g,b) for (r,g,b) in palette])
+def blue_animation(palette, images):
+    images.set_palette([(b,b,g) for (r,g,b) in palette])
     return gfx.animstrip(images)
 
 def red_animation(palette, images):
@@ -54,8 +54,8 @@ def white_animation(palette, images):
     return gfx.animstrip(images)
 
 def load_game_resources():
-    global bigboximages, ybigboximages, rbigboximages, wbigboximages
-    global boximages, yboximages, rboximages, wboximages
+    global bigboximages, bbigboximages, rbigboximages, wbigboximages
+    global boximages, bboximages, rboximages, wboximages
     global popimages, spikeimages, wspikeimages
 
     ### Big Boxes ###
@@ -64,7 +64,7 @@ def load_game_resources():
     origpal = imgs.get_palette()
     bigboximages = gfx.animstrip(imgs)
 
-    ybigboximages = yellow_animation(origpal, imgs)
+    bbigboximages = blue_animation(origpal, imgs)
     rbigboximages = red_animation(origpal, imgs)
 
     ### Small Boxes ###
@@ -73,7 +73,7 @@ def load_game_resources():
     origpal = imgs.get_palette()
     boximages = gfx.animstrip(imgs)
 
-    yboximages = yellow_animation(origpal, imgs)
+    bboximages = blue_animation(origpal, imgs)
     rboximages = red_animation(origpal, imgs)
     wboximages = white_animation(origpal, imgs)
 
@@ -108,7 +108,7 @@ class Box:
         self.firsttouch = 2.0
         self.dead = 0
         self.popped = 0
-        self.imglists = wboximages, boximages, yboximages, rboximages
+        self.imglists = wboximages, boximages, bboximages, rboximages
         self.numframes = len(self.imglists[0])
 
     def erase(self, background):
