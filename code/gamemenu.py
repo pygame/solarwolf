@@ -26,10 +26,6 @@ import input
 import players
 import gamecreds, gamenews, gamestart, gamepref
 
-import gamewin
-
-
-
 images = []
 boximages = []
 yboximages = []
@@ -61,7 +57,7 @@ menu = [
 
 
 def load_game_resources():
-    global menu, images, boximages, fame
+    global menu, images, fame
     images = []
     pos = [20, 380] #[100, 420]
     odd = 0

@@ -88,17 +88,13 @@ def makelevel(level):
 
 
 def preview(level):
-    "returns (list, startcenter) level number"
+    "returns a preview image for the given level number"
     if not initialized: init()
     lev = Levels[level%len(Levels)]
     touches = level/len(Levels) + 1
-    passes = (level>len(Levels) and 2) or 1
-    boxlist = []
     size = 5, 5
     corner = 5, 5
-    startpos = corner[0]+236, corner[1]+182
     pos = [corner[0], corner[1]]
-    numboxes = level/2
     img = pygame.Surface((52, 42))
     img.fill((20, 20, 30))
     pygame.draw.rect(img, (255, 255, 255), (0,0,51,41), 2)

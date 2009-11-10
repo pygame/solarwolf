@@ -39,7 +39,7 @@ nameletters = []
 stars = []
 
 def load_game_resources():
-    global menu, fontimages, boximages, thefont, charset, images, stars
+    global menu, fontimages, thefont, charset, images, stars
     extraimgs = {'<':gfx.load('rub.gif'), '>':gfx.load('end.gif')}
     for i in extraimgs.values():
         i.set_colorkey(0, RLEACCEL)

@@ -15,7 +15,7 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-"gamemenu handler. main menu"
+"gamewin handler. congratulations"
 
 import math, os
 import pygame
@@ -117,6 +117,3 @@ class GameWin:
 
     def background(self, area):
         return gfx.surface.fill((0, 0, 0), area)
-
-
-
