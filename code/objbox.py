@@ -22,17 +22,17 @@ import pygame
 from pygame.locals import *
 import game, gfx, snd
 
+rbox_color = (255, 60, 60)
 gbox_color = (60, 255, 60)
 bbox_color = (60, 60, 255)
-rbox_color = (255, 60, 60)
 
+rbigboximages = []
 gbigboximages = []
 bbigboximages = []
-rbigboximages = []
 
+rboximages = []
 gboximages = []
 bboximages = []
-rboximages = []
 wboximages = []
 
 popimages = []
@@ -40,12 +40,12 @@ popimages = []
 spikeimages = []
 wspikeimages = []
 
-def blue_animation(palette, images):
-    images.set_palette([(b,b,g) for (r,g,b) in palette])
-    return gfx.animstrip(images)
-
 def red_animation(palette, images):
     images.set_palette([(g,b,b) for (r,g,b) in palette])
+    return gfx.animstrip(images)
+
+def blue_animation(palette, images):
+    images.set_palette([(b,b,g) for (r,g,b) in palette])
     return gfx.animstrip(images)
 
 def white_animation(palette, images):
@@ -54,8 +54,8 @@ def white_animation(palette, images):
     return gfx.animstrip(images)
 
 def load_game_resources():
-    global gbigboximages, bbigboximages, rbigboximages, wbigboximages
-    global gboximages, bboximages, rboximages, wboximages
+    global rbigboximages, gbigboximages, bbigboximages, wbigboximages
+    global rboximages, gboximages, bboximages, wboximages
     global popimages, spikeimages, wspikeimages
 
     ### Big Boxes ###
@@ -64,8 +64,8 @@ def load_game_resources():
     origpal = imgs.get_palette()
     gbigboximages = gfx.animstrip(imgs)
 
-    bbigboximages = blue_animation(origpal, imgs)
     rbigboximages = red_animation(origpal, imgs)
+    bbigboximages = blue_animation(origpal, imgs)
 
     ### Small Boxes ###
 
@@ -73,8 +73,8 @@ def load_game_resources():
     origpal = imgs.get_palette()
     gboximages = gfx.animstrip(imgs)
 
-    bboximages = blue_animation(origpal, imgs)
     rboximages = red_animation(origpal, imgs)
+    bboximages = blue_animation(origpal, imgs)
     wboximages = white_animation(origpal, imgs)
 
     ### Popping box ###
@@ -102,13 +102,13 @@ class Box:
         self.rotspeed = random.random() * 2.0 + 2.0
         if random.randint(0, 1):
             self.rotspeed = -self.rotspeed
-        self.rect = gboximages[0].get_rect().move(pos)
+        self.rect = rboximages[0].get_rect().move(pos)
         self.touches = touches
         self.touching = 0
         self.firsttouch = 2.0
         self.dead = 0
         self.popped = 0
-        self.imglists = wboximages, gboximages, bboximages, rboximages
+        self.imglists = wboximages, rboximages, gboximages, bboximages
         self.numframes = len(self.imglists[0])
 
     def erase(self, background):

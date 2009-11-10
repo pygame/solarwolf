@@ -63,9 +63,9 @@ class GameWin:
             img, r = font.text((250, 250, 250), line, (self.center, self.top))
             self.top += 30
             self.text.append((img, r))
+        self.r = objbox.rbigboximages
         self.g = objbox.gbigboximages
         self.b = objbox.bbigboximages
-        self.r = objbox.rbigboximages
 
 
 
@@ -107,9 +107,9 @@ class GameWin:
         if not self.done:
             frame = int(self.time * .5) % len(self.r)
             surf = gfx.surface
-            gfx.dirty(surf.blit(self.g[frame], (50, 400)))
-            gfx.dirty(surf.blit(self.b[frame], (300, 400)))
-            gfx.dirty(surf.blit(self.r[frame], (550, 400)))
+            gfx.dirty(surf.blit(self.r[frame], (50, 400)))
+            gfx.dirty(surf.blit(self.g[frame], (300, 400)))
+            gfx.dirty(surf.blit(self.b[frame], (550, 400)))
 
             for cred, pos in self.text:
                 gfx.surface.blit(cred, pos)
