@@ -27,10 +27,10 @@ import gameplay
 
 credits = (
     ('Developer', ('Pete "ShredWheat" Shinners',)),
-    ('Graphics', ('Eero Tamminen',)),
+    ('Graphics', ('Eero "Oak" Tamminen',)),
     ('Music', ('"theGREENzebra"',)),
     ('Programming Help', ('Aaron "APS" Schlaegel', 'Michael "MU" Urman')),
-    ('Special Thanks', ('David "Futility" Clark', 'Shandy Brown', 'John "Jacius" Croisant', 'Guido "Python" van Rossom', 'Sam "SDL" Lantinga')),
+    ('Special Thanks', ('David "Futility" Clark', 'Shandy Brown', 'John "Jacius" Croisant', 'Guido "Python" van Rossum', 'Sam "SDL" Lantinga')),
 )
 
 licenseinfo = ('This program is free software. You are encouraged to',

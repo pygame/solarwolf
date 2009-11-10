@@ -52,6 +52,7 @@ def main():
     checkdependencies()
 
     #install pychecker if debugging
+    game = None
     try:
         import game
         if game.DEBUG >= 2:
@@ -67,14 +68,15 @@ def main():
     except KeyboardInterrupt:
         print 'Keyboard Interrupt (Control-C)...'
     except:
-        #must wait on any threading
-        if game.thread:
+        #should wait on any threading
+        #never seen this happen though
+        if game and game.thread:
             game.threadstop = 1
             while game.thread:
                 pygame.time.wait(10)
                 print 'waiting on thread...'
         exception_handler()
-        if game.DEBUG:
+        if not game or game.DEBUG:
             raise
 
 

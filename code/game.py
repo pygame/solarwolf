@@ -18,8 +18,7 @@
 """game module, place for global game state"""
 
 import os
-from pygame.rect import Rect
-from cStringIO import StringIO
+from pygame import Rect
 
 
 
