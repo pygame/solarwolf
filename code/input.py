@@ -19,8 +19,7 @@
 # Portions Copyright (C) 2002 Aaron "APS" Schlaegel, LGPL, see lgpl.txt
 
 import pygame.joystick
-from pygame.locals import *
-import time, sys, os, pickle, tempfile
+import os, pickle
 import game, snd
 
 ScreenshotNum = 1
@@ -44,38 +43,38 @@ HATLEFT = 1
 HATRIGHT = 2
 HATDOWN = 3
 
-FINISHMUSIC = USEREVENT+3
+FINISHMUSIC = pygame.USEREVENT+3
 
 #translation tables
 translations_default = {
-    KEYDOWN: {
-        K_UP: UP,
-        K_DOWN: DOWN,
-        K_LEFT: LEFT,
-        K_RIGHT: RIGHT,
-        K_RETURN: PRESS,
-        K_SPACE: PRESS,
-        K_KP8: UP,
-        K_KP2: DOWN,
-        K_KP4: LEFT,
-        K_KP6: RIGHT,
-        K_KP5: DOWN,
-        K_ESCAPE: ABORT,
-        K_DELETE: ABORT,
-        K_BREAK: ABORT,
+    pygame.KEYDOWN: {
+        pygame.K_UP: UP,
+        pygame.K_DOWN: DOWN,
+        pygame.K_LEFT: LEFT,
+        pygame.K_RIGHT: RIGHT,
+        pygame.K_RETURN: PRESS,
+        pygame.K_SPACE: PRESS,
+        pygame.K_KP8: UP,
+        pygame.K_KP2: DOWN,
+        pygame.K_KP4: LEFT,
+        pygame.K_KP6: RIGHT,
+        pygame.K_KP5: DOWN,
+        pygame.K_ESCAPE: ABORT,
+        pygame.K_DELETE: ABORT,
+        pygame.K_BREAK: ABORT,
         #vi keys
-        K_h: LEFT,
-        K_j: DOWN,
-        K_k: UP,
-        K_l: RIGHT,
+        pygame.K_h: LEFT,
+        pygame.K_j: DOWN,
+        pygame.K_k: UP,
+        pygame.K_l: RIGHT,
     },
-    NOEVENT: {
+    pygame.NOEVENT: {
 #        KEYDOWN: PRESS,
 #        JOYAXISMOTION: None,
 #        JOYBUTTONDOWN: PRESS,
 #        JOYHATMOTION: None
     },
-    JOYAXISMOTION: {
+    pygame.JOYAXISMOTION: {
         AXISLESS + 0: LEFT,
         AXISMORE + 0: RIGHT,
         AXISLESS + 2: UP,
@@ -85,7 +84,7 @@ translations_default = {
         AXISLESS + 6: UP,
         AXISMORE + 6: DOWN,
     },
-    JOYBUTTONDOWN: {
+    pygame.JOYBUTTONDOWN: {
         1: PRESS,
         2: PRESS,
         3: PRESS,
@@ -94,7 +93,7 @@ translations_default = {
         15: LEFT,
         13: RIGHT,
     },
-    JOYHATMOTION: {
+    pygame.JOYHATMOTION: {
         HATUP + 0: UP,
         HATDOWN + 0: DOWN,
         HATLEFT + 0: LEFT,
@@ -153,19 +152,19 @@ def postactive():
     for key in range (len(keystate)):
         if keystate[key]:
             #I don't know how to get unicode
-            pygame.event.post(pygame.event.Event(KEYDOWN, {'key': key, 'mod': pygame.key.get_mods()}))
+            pygame.event.post(pygame.event.Event(pygame.KEYDOWN, {'key': key, 'mod': pygame.key.get_mods()}))
     if joystick:
         for button in range(joystick.get_numbuttons()):
             if joystick.get_button(button):
-                pygame.event.post(pygame.event.Event(JOYBUTTONDOWN, {'joy': joystick.get_id(), 'button': button}))
+                pygame.event.post(pygame.event.Event(pygame.JOYBUTTONDOWN, {'joy': joystick.get_id(), 'button': button}))
         for hat in range(joystick.get_numhats()):
             value = joystick.get_hat(hat)
             if 0 != value[0] or 0 != value[1]:
-                pygame.event.post(pygame.event.Event(JOYHATMOTION, {'joy': joystick.get_id(), 'hat': hat, 'value': value}))
+                pygame.event.post(pygame.event.Event(pygame.JOYHATMOTION, {'joy': joystick.get_id(), 'hat': hat, 'value': value}))
         for axis in range(joystick.get_numaxes()):
             lastaxisvalue[axis] = None
             value =  joystick.get_axis(axis)
-            pygame.event.post(pygame.event.Event(JOYAXISMOTION, {'joy': joystick.get_id(), 'axis': axis, 'value': value}))
+            pygame.event.post(pygame.event.Event(pygame.JOYAXISMOTION, {'joy': joystick.get_id(), 'axis': axis, 'value': value}))
 
 def resetexclusive():
     global exclusivedict
@@ -208,18 +207,18 @@ def translate(event):
     translated = None
     all = 0
     release = 0
-    if event.type in (KEYDOWN, KEYUP):
-        # K_NUMLOCK and K_CAPSLOCK don't work right in pygame
-        if event.type == KEYDOWN:
-            if event.key == K_BACKSPACE:
+    if event.type in (pygame.KEYDOWN, pygame.KEYUP):
+        # pygame.K_NUMLOCK and pygame.K_CAPSLOCK don't work right in pygame
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
                 Cheatstring = Cheatstring[:-1]
             else:
                 try:
                     Cheatstring = Cheatstring[-4:]+event.unicode
                 except (TypeError, AttributeError):
                     Cheatstring = ''
-        if event.key == K_PRINT:
-            if event.type == KEYDOWN:
+        if event.key == pygame.K_PRINT:
+            if event.type == pygame.KEYDOWN:
                 global ScreenshotNum
                 dir = os.environ.get('HOME', '.')
                 file = 'solarwolf%02d.bmp' % ScreenshotNum
@@ -230,15 +229,15 @@ def translate(event):
                 except:
                     print ' Screenshot FAILED'
                 ScreenshotNum += 1
-        elif event.key not in (K_NUMLOCK, K_CAPSLOCK):
+        elif event.key not in (pygame.K_NUMLOCK, pygame.K_CAPSLOCK):
             normalized = event.key
-            translated = translations[KEYDOWN].get(normalized, DEFAULT)
+            translated = translations[pygame.KEYDOWN].get(normalized, DEFAULT)
             if translated == DEFAULT:
-                translated = translations[NOEVENT].get(KEYDOWN, None)
+                translated = translations[pygame.NOEVENT].get(pygame.KEYDOWN, None)
                 all = 1
-            if event.type == KEYUP:
+            if event.type == pygame.KEYUP:
                 release = 1
-    elif event.type == JOYAXISMOTION:
+    elif event.type == pygame.JOYAXISMOTION:
         value = None
         if event.value > .8:
             value = AXISMORE
@@ -250,21 +249,21 @@ def translate(event):
                 lastaxisvalue[axis] = value
                 if value != None:
                     normalized = axis * 2 + value
-                    translated = translations[JOYAXISMOTION].get(normalized, DEFAULT)
+                    translated = translations[pygame.JOYAXISMOTION].get(normalized, DEFAULT)
                     if translated == DEFAULT:
-                        translated = translations[NOEVENT].get(JOYAXISMOTION, None)
+                        translated = translations[pygame.NOEVENT].get(pygame.JOYAXISMOTION, None)
                         all = 1
             else:
                 normalized = axis * 2 + lastaxisvalue[axis]
-                translated = translations[JOYAXISMOTION].get(normalized, DEFAULT)
+                translated = translations[pygame.JOYAXISMOTION].get(normalized, DEFAULT)
                 if translated == DEFAULT:
-                    translated = translations[NOEVENT].get(JOYAXISMOTION, None)
+                    translated = translations[pygame.NOEVENT].get(pygame.JOYAXISMOTION, None)
                     all = 1
                 if value != None:
                     pygame.event.post(event)
                 release = 1
                 lastaxisvalue[axis] = None
-    elif event.type == JOYHATMOTION:
+    elif event.type == pygame.JOYHATMOTION:
         hat = event.hat
         value = [
             (HATLEFT, None, HATRIGHT)[-1 * event.value[0] + 1],
@@ -276,27 +275,27 @@ def translate(event):
                     lasthatvalue[hat][axis] = value[axis]
                     if value[axis] != None:
                         normalized = hat * 4 + value[axis]
-                        translated = translations[JOYHATMOTION].get(normalized, DEFAULT)
+                        translated = translations[pygame.JOYHATMOTION].get(normalized, DEFAULT)
                         if translated == DEFAULT:
-                            translated = translations[NOEVENT].get(JOYHATMOTION, None)
+                            translated = translations[pygame.NOEVENT].get(pygame.JOYHATMOTION, None)
                             all = 1
                 else:
                     normalized = hat * 4 + lasthatvalue[hat][axis]
-                    translated = translations[JOYHATMOTION].get(normalized, DEFAULT)
+                    translated = translations[pygame.JOYHATMOTION].get(normalized, DEFAULT)
                     if translated == DEFAULT:
-                        translated = translations[NOEVENT].get(JOYHATMOTION, None)
+                        translated = translations[pygame.NOEVENT].get(pygame.JOYHATMOTION, None)
                         all = 1
                     if value[axis] != None:
                         pygame.event.post(event)
                     release = 1
                     lasthatvalue[hat][axis] = None
-    elif event.type in (JOYBUTTONDOWN, JOYBUTTONUP):
+    elif event.type in (pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP):
         normalized = event.button
-        translated = translations[JOYBUTTONDOWN].get(normalized, DEFAULT)
+        translated = translations[pygame.JOYBUTTONDOWN].get(normalized, DEFAULT)
         if translated == DEFAULT:
-            translated = translations[NOEVENT].get(JOYBUTTONDOWN, None)
+            translated = translations[pygame.NOEVENT].get(pygame.JOYBUTTONDOWN, None)
             all = 1
-        if event.type == JOYBUTTONUP:
+        if event.type == pygame.JOYBUTTONUP:
             release = 1
     elif event.type == FINISHMUSIC:
         snd.finish_playmusic()
@@ -310,13 +309,13 @@ def translate(event):
 
 def input_text(type, normalized):
     global hat_direction_text
-    if type == KEYDOWN:
-        # K_NUMLOCK and K_CAPSLOCK don't work in pygame
-        if normalized not in (K_NUMLOCK, K_CAPSLOCK):
+    if type == pygame.KEYDOWN:
+        # pygame.K_NUMLOCK and pygame.K_CAPSLOCK don't work in pygame
+        if normalized not in (pygame.K_NUMLOCK, pygame.K_CAPSLOCK):
             return 'Key' + pygame.key.name(normalized).title().replace(' ', '')
-    elif type == JOYBUTTONDOWN:
+    elif type == pygame.JOYBUTTONDOWN:
         return 'Btn' + str(normalized)
-    elif type == JOYAXISMOTION:
+    elif type == pygame.JOYAXISMOTION:
         if normalized % 2 == 0:
             direction = "-"
             value = AXISLESS
@@ -325,12 +324,12 @@ def input_text(type, normalized):
             value = AXISMORE
         axis = str( (normalized - value) / 2 )
         return 'Axis' + axis + direction
-    elif type == JOYHATMOTION:
+    elif type == pygame.JOYHATMOTION:
         value = HATSTART + normalized % 4
         direction = hat_direction_text[value]
         hat = str( (normalized - value) / 4 )
         return 'Hat' + hat + direction
-    elif type == NOEVENT:
+    elif type == pygame.NOEVENT:
         return "*AllElse*"
 
 def getdisplay():
@@ -340,10 +339,10 @@ def getdisplay():
         for normalized, action in table.items():
             if not display.has_key(action):
                 display[action] = []
-            if type != NOEVENT:
+            if type != pygame.NOEVENT:
                 display[action].append((type, normalized))
             else:
-                if normalized == KEYDOWN:
+                if normalized == pygame.KEYDOWN:
                     display[action].append((type, normalized))
     for a in actions_order:
         display[a].sort()
@@ -354,7 +353,7 @@ def getdisplay():
 def setdisplay(display):
     global translations
     translations.clear()
-    translations[NOEVENT] = {}
+    translations[pygame.NOEVENT] = {}
 
     for a in actions_order:
         for l in range(len(display[a])):
@@ -362,11 +361,11 @@ def setdisplay(display):
             normalized = display[a][l][1]
             if not translations.has_key(type):
                 translations[type] = {}
-            if type != NOEVENT:
+            if type != pygame.NOEVENT:
                 translations[type][normalized] = a
             else:
-                translations[type][KEYDOWN] = a
-                translations[type][JOYBUTTONDOWN] = a
+                translations[type][pygame.KEYDOWN] = a
+                translations[type][pygame.JOYBUTTONDOWN] = a
 
 def load_translations():
     global translations
@@ -392,6 +391,6 @@ def save_translations():
         p.dump(translations)
         f.close()
     except (IOError, OSError), msg:
-        import messagebox
-        messagebox.error("Error Saving Control Data",
+        import errorbox
+        errorbox.errorbox("Error Saving Control Data",
 "There was an error saving the control data.\nCurrent player controls have been lost.\n\n%s"%msg)

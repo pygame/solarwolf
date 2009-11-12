@@ -34,8 +34,7 @@ def main(args):
     try:
         gamemain(args)
     except KeyboardInterrupt:
-        print 'Keyboard Interrupt...'
-        print 'Exiting'
+        print 'Keyboard Interrupt'
 
 
 def gamemain(args):
@@ -130,7 +129,7 @@ def gamemain(args):
         #pygame.time.wait(10)
 
     gameend = pygame.time.get_ticks()
-    runtime = (gameend - gamestart) / 1000.0
+    #runtime = (gameend - gamestart) / 1000.0
     #print "FINAL FRAMERATE: ", numframes, runtime, numframes/runtime
 
 

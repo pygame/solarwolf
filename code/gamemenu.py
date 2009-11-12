@@ -17,9 +17,8 @@
 
 "Game main menu handler, part of SOLARWOLF."
 
-import math, os
+import math
 import pygame, pygame.draw
-from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
@@ -147,7 +146,7 @@ class GameMenu:
             left += 160
             firstone = 0
 
-        return img, Rect((gfx.rect.width-size[0]-10, 520), size)
+        return img, pygame.Rect((gfx.rect.width-size[0]-10, 520), size)
 
 
 
@@ -181,7 +180,7 @@ class GameMenu:
                 i.set_alpha()
                 c = i.get_colorkey()
                 if c:
-                    i.set_colorkey(c, RLEACCEL)
+                    i.set_colorkey(c, pygame.RLEACCEL)
 
 
     def drawitem(self, item, lit):
@@ -229,11 +228,9 @@ class GameMenu:
         if self.startclock:
             alpha = (6-self.startclock)*40
             self.setalphas(alpha, [menu[self.current].img_on, boximg])
-            self.background(self.boxrect)
         elif self.switchclock:
             alpha = (self.switchclock-1)*20
             self.setalphas(alpha, [boximg])
-            self.background(self.boxrect)
             if self.switchclock == 2 and gfx.surface.get_bytesize()>1:
                 menu[self.current].img_on.set_alpha(128)
 
@@ -249,10 +246,12 @@ class GameMenu:
         if self.startclock == 1 or self.switchclock == 1:
             self.setalphas(255, [menu[self.current].img_on] + self.boximages)
 
-        if self.switchclock != 1:
-            r = gfx.surface.blit(boximg, self.boxrect)
-            gfx.dirty(r)
+        self.background(self.boxrect)
+        gfx.dirty(self.boxrect)
 
+        if self.switchclock != 1:
+            gfx.surface.blit(boximg, self.boxrect)
+            
             select = menu[self.current]
             for m in [m for m in menu if m is not select]:
                 self.drawitem(m, 0)

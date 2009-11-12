@@ -18,7 +18,6 @@
 #text class
 
 import pygame
-from pygame.locals import *
 import game, gfx, txt
 
 fonts = []
@@ -35,10 +34,9 @@ def load_game_resources():
 class Text:
     def __init__(self, message):
         global availpos, numtexts
-        bgd = 0, 0, 0
         self.img, self.rect = fonts[0].text((128, 255, 255), message, availpos)
         if gfx.surface.get_bytesize() > 1:
-            self.img.set_alpha(128, RLEACCEL)
+            self.img.set_alpha(128, pygame.RLEACCEL)
         self.clocks = game.text_length
         self.dead = 0
         availpos = availpos[0], availpos[1] + self.rect.height + 10

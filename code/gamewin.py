@@ -17,11 +17,8 @@
 
 "gamewin handler. congratulations"
 
-import math, os
-import pygame
-from pygame.locals import *
 import game, gfx, snd, txt
-import gameplay, objbox, players
+import objbox, players
 
 
 

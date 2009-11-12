@@ -39,12 +39,13 @@ arena = Rect(55, 50, 590, 490)
 
 poweruptime = 1200.0
 powerupspeed = 2.0
-powerupwait = 26.0 #45.0
+powerupwait = 25.0
 asteroidspeed = 1.4
 
+threadstop = False
 timeleft = 0.0
 timetick = 0.0
-timefactor = 12.2    #how quickly time drops (bigger = slower)
+timefactor = 12.1    #how quickly time drops (bigger = slower)
 speedmult = 0
 
 musictime = 1000 * 120 #two minutes
@@ -130,5 +131,5 @@ def make_dataname(filename):
     filename = os.path.normpath(filename)
     return filename
 
-version = "1.5.1"
+version = "1.5.2"
 DEBUG = 0

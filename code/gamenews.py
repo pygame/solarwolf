@@ -17,14 +17,12 @@
 
 """Game news page handler, part of SOLARWOLF."""
 
-import math, os, threading, re
-import urllib, tempfile, shutil
-import pygame, pygame.font
-from pygame.locals import *
+import os, threading, re
+import urllib
+import pygame
 import game
 import gfx, snd, txt
 import input
-import gameplay
 import webbrowser
 import objbox
 
@@ -384,7 +382,7 @@ class GameNews:
 
 
     def pressed(self):
-        pref = Options[self.current]
+        #pref = Options[self.current]
         snd.play('select_choose')
         val = Options[self.current].split()[0].lower()
         getattr(self, "do_"+val)()

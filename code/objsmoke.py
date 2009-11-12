@@ -19,8 +19,7 @@
 
 import random, math
 import pygame
-from pygame.locals import *
-import game, gfx
+import gfx
 
 
 images = []
@@ -32,7 +31,7 @@ def load_game_resources():
     if gfx.surface.get_bytesize()>1: #16 or 32bit
         i = 1
         for img in images:
-            img.set_alpha((1.8-math.log(i))*40, RLEACCEL)
+            img.set_alpha((1.8-math.log(i))*40, pygame.RLEACCEL)
             i += 1
 
 

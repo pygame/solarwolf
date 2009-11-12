@@ -17,8 +17,7 @@
 
 "gameinit handler. splash and load resources"
 
-import pygame, pygame.draw
-from pygame.locals import *
+import pygame
 import sys, threading
 import game, gfx, snd, txt, input
 
@@ -58,7 +57,7 @@ class GameInit:
         self.prevhandler = prevhandler
         font = txt.Font(None, 20)
         self.font = txt.Font(None, 22)
-        self.rect = Rect(50, 450, 700, 22)
+        self.rect = pygame.Rect(50, 450, 700, 22)
         self.text = font.render('Loading Resources...', 1, (250, 230, 180))
         self.img_powered = gfx.load('pygame_powered.gif')
         self.img_logo = gfx.load('logo.png')
@@ -112,7 +111,7 @@ class GameInit:
 
     def event(self, e):
         if load_finished_status < 0:
-            if e.type in (KEYDOWN, MOUSEBUTTONDOWN, JOYBUTTONDOWN):
+            if e.type in (pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN, pygame.JOYBUTTONDOWN):
                 self.gotfinishinput = 1
 
 
@@ -132,7 +131,7 @@ class GameInit:
         else:
             block = pygame.Surface(size, 0, 32)
         block.fill((5, 50, 5))
-        block.fill((20, 80, 30), Rect(0, size[1]-2, size[0], 2))
+        block.fill((20, 80, 30), pygame.Rect(0, size[1]-2, size[0], 2))
         top = 10
         for i in imgs:
             pos = 10, top
@@ -167,11 +166,11 @@ class GameInit:
         for b in self.blocks:
             gfx.dirty(gfx.surface.blit(*b))
 
-        bar = Rect(self.rect)
+        bar = pygame.Rect(self.rect)
         if load_total:
             bar.width = (float(load_current)/float(load_total)) * bar.width
             gfx.surface.fill((5, 50, 5), bar)
-        r = Rect(self.rect.left, self.rect.bottom-2, self.rect.width, 2)
+        r = pygame.Rect(self.rect.left, self.rect.bottom-2, self.rect.width, 2)
         gfx.surface.fill((20, 80, 30), r)
         gfx.surface.blit(self.text, self.textrect)
         gfx.dirty(self.rect)

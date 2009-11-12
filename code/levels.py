@@ -37,7 +37,7 @@ def init():
             curtitle2 = l[1:].strip()
             continue
         if curlev and (not l or l[0] == '!'):
-            for i in range(7-len(curlev)):
+            for _ in range(7-len(curlev)):
                 curlev.append('         ')
             curlev.insert(0, curtitle2)
             curlev.insert(0, curtitle)
@@ -58,7 +58,7 @@ def makelevel(level):
     if not initialized: init()
     lev = Levels[level%len(Levels)]
     touches = level/len(Levels) + 1
-    passes = (level>len(Levels) and 2) or 1
+    #passes = (level>len(Levels) and 2) or 1
     boxlist = []
     size = 58, 58
     corner = 106, 106

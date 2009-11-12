@@ -17,7 +17,7 @@
 
 """text and font classes, helps everyone to text"""
 
-import pygame, pygame.font, gfx
+import pygame.font, gfx
 
 #old versions of SysFont were buggy
 if pygame.ver <= '1.6.1':
@@ -64,9 +64,6 @@ class Font:
         if center:
             setattr(r, pos, center)
         return r
-
-    def _render(self, text, color, bgd=(0,0,0)):
-        return img
 
     def get_height(self):
         return self.font.get_height()

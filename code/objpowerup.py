@@ -18,9 +18,7 @@
 #powerup class
 
 import random
-import pygame
-from pygame.locals import *
-import game, gfx, snd, objpopshot, objexplode
+import game, gfx, snd, objpopshot, objexplode, objlaser
 
 
 images = []
@@ -197,6 +195,8 @@ class Combustion(PowerupEffect):
         if aliveguards:
             g = random.choice(aliveguards)
             g.killed = 1
+            laser = objlaser.Laser(self.state.player.rect.center, g.rect.center)
+            self.state.staticobjs.append(laser)
             explode = objexplode.Explode(g.rect.center)
             self.state.staticobjs.append(explode)
             #argh, force a cleanup
@@ -208,11 +208,12 @@ class Combustion(PowerupEffect):
 
 Effects = [ExtraLevelTime, PopShots, Shield,
            SlowMotion, Combustion, ExtraLife,
-           PopShots, Shield, ExtraLife, Combustion,
-           PopShots, SlowMotion]
+           PopShots, Shield, Combustion,
+           PopShots, SlowMotion, Shield, ExtraLife
+           ]
 
 
 def newpowerup(levelnum):
-    choices = Effects[:2+(levelnum/8)]
+    choices = Effects[:2+(levelnum/5)]
     effect = random.choice(choices)
     return Powerup(effect)

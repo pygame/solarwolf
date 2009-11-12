@@ -21,8 +21,7 @@
 #each player needs a name, guid, score
 #high score list has name, guid, score
 
-import time, random, sys, game, pickle, tempfile
-import os
+import random, sys, game, pickle
 
 players = []
 winners = []
@@ -112,6 +111,6 @@ def save_players():
         p.dump(allplayers)
         f.close()
     except (IOError, OSError), msg:
-        import messagebox
-        messagebox.error("Error Saving Player Data",
+        import errorbox
+        errorbox.errorbox("Error Saving Player Data",
 "There was an error saving the player data.\nCurrent player data has been lost.\n\n%s"%msg)

@@ -18,7 +18,6 @@
 #player ship class
 
 import pygame
-from pygame.locals import *
 import game, gfx
 
 upimage = None
@@ -97,7 +96,7 @@ class Ship:
             img = shipimages[self.image + (self.turbo*4)][frame]
         gfx.surface.blit(img, self.rect)
         gfx.dirty2(self.rect, self.lastrect)
-        self.lastrect = Rect(self.rect)
+        self.lastrect = pygame.Rect(self.rect)
 
     def tick(self, speedadjust = 1.0):
         self.frame += speedadjust

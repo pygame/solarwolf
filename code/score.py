@@ -18,9 +18,8 @@
 #score rendering routines
 
 import pygame
-from pygame.locals import *
-import game, gfx, math
-from random import randint
+from pygame.locals import RLEACCEL
+import gfx
 
 
 img_1 = None

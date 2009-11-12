@@ -16,14 +16,10 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 """Game Settings Control for SolarWolf."""
-import string, math
 import pygame
-from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
-import score
-import gameplay
 
 
 Prefs = {
@@ -37,7 +33,6 @@ Prefs = {
 
 
 def load_prefs():
-    prefs = {}
     try:
         filename = game.make_dataname('prefs')
         for line in open(filename).readlines():
@@ -56,7 +51,7 @@ def save_prefs():
             val = getattr(game, p)
             f.write("%s = %d\n" % (p, int(val)))
         f.close()
-    except (IOError, OSError), msg:
+    except (IOError, OSError):
         #print 'ERROR SAVING PREFS FILE'
         pass
 
@@ -100,8 +95,6 @@ class GamePref:
         self.current = [0, 0]
         self.shipmovex = 40
         self.shipmovey = 16
-
-        step = 0
 
         self.moveto(self.gamelist[0][0][1])
 

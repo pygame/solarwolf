@@ -18,7 +18,6 @@
 """audio class, helps everyone to audio"""
 
 import pygame, os
-from pygame.locals import *
 import game, input
 
 
@@ -47,7 +46,6 @@ def preload(*names):
     for name in names:
         if not sound_cache.has_key(name):
             fullname = os.path.join('data', 'audio', name+'.wav')
-            #file = game.get_resource(name+'.wav')
             try: sound = mixer.Sound(fullname)
             except: sound = None
             sound_cache[name] = sound

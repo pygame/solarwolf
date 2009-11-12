@@ -17,9 +17,7 @@
 
 #simple enemy class
 
-import os
-import pygame, pygame.image
-from pygame.locals import *
+import pygame
 import game, gfx
 
 images = []

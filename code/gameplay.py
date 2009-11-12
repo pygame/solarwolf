@@ -18,7 +18,6 @@
 "gameplay handler. for the main part of the game"
 
 import pygame
-from pygame.locals import *
 import random
 
 import game, gfx, input, snd
@@ -59,7 +58,6 @@ class GamePlay:
         self.objlists = [self.boxobjs, self.shotobjs, self.spikeobjs, self.popobjs,
                          self.smokeobjs, self.powerupobjs, self.asteroidobjs,
                          self.guardobjs, self.staticobjs, self.textobjs]
-        self.glitter = objshot.Glitter()
         self.hud = hud.HUD()
 
         self.state = ''
@@ -199,10 +197,6 @@ class GamePlay:
                     o.erase(B)
                     l.remove(o)
 
-        #HERE IS THE GLITTER
-        #self.glitter.update(S)
-        #self.glitter.add(self.shotobjs, 1.0)
-
         for l in objects:
             for o in l:
                 o.draw(G)
@@ -245,8 +239,10 @@ class GamePlay:
     def normal_tick(self):
         #fire the guards
         shootchance = game.guard_fire * self.speedadjust
-        if self.player.active and random.random() < shootchance:
-            self.powerupcount += 0.3
+        randchance = random.random()
+        self.powerupcount += randchance * self.speedadjust * (self.levelnum / 300.0)
+        if self.player.active and randchance < shootchance:
+            self.powerupcount += 0.1
             baddy = random.choice(self.guardobjs)
             baddy.fire() #only requests a shot
         for baddy in self.guardobjs:
@@ -263,12 +259,13 @@ class GamePlay:
             self.powerupobjs.append(p)
             snd.play('spring', 0.6)
             gamehelp.help("powerup", p.rect.topleft)
-        if self.grabbedboxes >= 50:
+            
+        if self.grabbedboxes >= 40:
             self.grabbedboxes = 0
             if game.comments >= 1:
                 self.textobjs.append(objtext.Text(game.Complements[self.complement]))
             self.complement = (self.complement + 1) % len(game.Complements)
-        elif self.grabbedboxes >= 20:
+        elif self.grabbedboxes >= 25:
             self.numdeaths = 0
 
         self.tickleveltime(self.speedadjust)

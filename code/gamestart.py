@@ -17,9 +17,7 @@
 
 """Game start and user select handler, part of SOLARWOLF."""
 
-import string, math
 import pygame
-from pygame.locals import *
 import game
 import gfx, txt, snd
 import input
@@ -42,7 +40,6 @@ def load_game_resources():
     img = pygame.transform.rotate(gfx.load('ship-up.png'), -90)
     images.append((img, img.get_rect()))
 
-    bgd = 0, 0, 0
     font = txt.Font(None, 50)
     t = font.text((220, 210, 180), 'Select A Player:', (gfx.rect.centerx, 30))
     images.append(t)
@@ -251,7 +248,7 @@ class GameStart:
                 subimgs.reverse()
                 for sub, pos in subimgs:
                     img.blit(sub, pos)
-                img.set_colorkey(bgd, RLEACCEL)
+                img.set_colorkey(bgd, pygame.RLEACCEL)
             img = img.convert()
 
             rect = img.get_rect().move(offsetx, offsety)

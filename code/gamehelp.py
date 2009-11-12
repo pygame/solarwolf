@@ -19,11 +19,9 @@
 
 import math
 import pygame
-from pygame.locals import *
 import game
 import gfx, snd, txt
-import input
-import gameplay, objtext
+import objtext
 
 fonts = []
 

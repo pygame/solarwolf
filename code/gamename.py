@@ -20,14 +20,10 @@
 
 import string, math
 import pygame
-from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
 import players
-import gameplay
-import gamecreds
-import gamenews
 
 
 charset = string.uppercase + '-.'
@@ -42,7 +38,7 @@ def load_game_resources():
     global menu, fontimages, thefont, charset, images, stars
     extraimgs = {'<':gfx.load('rub.gif'), '>':gfx.load('end.gif')}
     for i in extraimgs.values():
-        i.set_colorkey(0, RLEACCEL)
+        i.set_colorkey(0, pygame.RLEACCEL)
     font = txt.Font(None, 100)
     thefont = font
     color = 120, 210, 160
@@ -67,13 +63,13 @@ def load_game_resources():
 
     xoffset = 40
     for x in range(game.name_maxlength):
-        rect = Rect(xoffset+x*xsize, 450, xsize, 100)
-        rect2 = Rect(rect.left+1, rect.bottom-15, rect.width-2, 8)
+        rect = pygame.Rect(xoffset+x*xsize, 450, xsize, 100)
+        rect2 = pygame.Rect(rect.left+1, rect.bottom-15, rect.width-2, 8)
         nameletters.append([rect, rect2, None])
 
     font = txt.Font(None, 40)
     img = font.render('Enter Your Name:', 1, (220, 210, 180), bgd).convert()
-    img.set_colorkey(bgd, RLEACCEL)
+    img.set_colorkey(bgd, pygame.RLEACCEL)
     r = img.get_rect()
     r.center = gfx.rect.centerx, 70
     images.append((img, r))
@@ -90,7 +86,7 @@ def load_game_resources():
         r = s.get_rect()
         r.center = star.get_rect().center
         star.blit(s, r)
-        star.set_colorkey(s.get_colorkey(), RLEACCEL)
+        star.set_colorkey(s.get_colorkey(), pygame.RLEACCEL)
         stars.append(star)
 
     snd.preload('select_choose', 'select_move', 'incorrect', 'delete')
@@ -177,7 +173,7 @@ class GameName:
             if x < length:
                 if not l[2]:
                     l[2] = thefont.render(game.player.name[x], 1, (200, 250, 200), (0, 0, 0)).convert()
-                    l[2].set_colorkey((0, 0, 0), RLEACCEL)
+                    l[2].set_colorkey((0, 0, 0), pygame.RLEACCEL)
             else:
                 l[2] = None
 
@@ -204,10 +200,10 @@ class GameName:
     def input(self, i):
         if i.release:
             return
-        if i.type == KEYDOWN:
+        if i.type == pygame.KEYDOWN:
             if i.unicode and i.unicode.upper() in charset:
                 return
-            elif i.key in (K_DELETE, K_BACKSPACE, K_RETURN, K_KP_ENTER):
+            elif i.key in (pygame.K_DELETE, pygame.K_BACKSPACE, pygame.K_RETURN, pygame.K_KP_ENTER):
                 return
         if i.translated == input.ABORT:
             return self.quit()
@@ -237,11 +233,11 @@ class GameName:
 
 
     def event(self, e):
-        if e.type == KEYDOWN:
-            if e.key in (K_DELETE, K_BACKSPACE):
+        if e.type == pygame.KEYDOWN:
+            if e.key in (pygame.K_DELETE, pygame.K_BACKSPACE):
                 self.rub()
                 self.selectletter(self.fontimages[-2])
-            elif e.key in (K_RETURN, K_KP_ENTER):
+            elif e.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
                 self.quit()
             elif e.unicode:
                 l = e.unicode.upper()

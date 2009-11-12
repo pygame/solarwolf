@@ -17,12 +17,9 @@
 
 """in game help screens"""
 
-import math
 import pygame
-from pygame.locals import *
 import game
-import gfx, snd, txt
-import input
+import gfx, txt
 import gamehelp
 
 fonts = []

@@ -19,8 +19,7 @@
 
 import random
 import pygame
-from pygame.locals import *
-import game, gfx, snd, objpopshot
+import game, gfx
 
 images = []
 origsize = 0,0
@@ -60,11 +59,8 @@ class Asteroid:
             self.pos = [0.0, float(r - 700)]
 
         self.animspeed = (random.random() + 2.0) * .1
-        #self.rotspeed = (random.random() + 3.0) * 0.08 * 0.0
         if random.random() < .5:
             self.animspeed = -self.animspeed
-        #if random.random() < .5:
-        #    self.rotspeed = -self.rotspeed
 
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
@@ -82,7 +78,6 @@ class Asteroid:
 
     def erase(self, background):
         r = background(self.rect)
-        #if self.dead:
         gfx.dirty(r)
 
     def draw(self, gfx):
@@ -91,9 +86,7 @@ class Asteroid:
 
     def tick(self, speedadjust):
         self.time += speedadjust
-        #rot = int(self.time * self.rotspeed)
         anm = int(self.time * self.animspeed)
-        #anim = self.images[rot % len(self.images)]
         anim = self.images
         self.image = anim[anm % len(anim)]
 

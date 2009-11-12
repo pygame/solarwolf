@@ -18,9 +18,7 @@
 #explosion class
 
 import random
-import pygame
-from pygame.locals import *
-import game, gfx, objpopshot
+import gfx, objpopshot
 
 
 images = []
@@ -123,7 +121,7 @@ def superexplode(pos, move):
     sprites.append(Explode(pos, move))
     for d in range(len(debris)):
         sprites.append(Debris(d, pos, move))
-    for x in range(4):
+    for _ in range(4):
         newpos = list(pos)
         newpos[0] += (random.random()-.5) * 30
         newpos[1] += (random.random()-.5) * 30

@@ -17,11 +17,9 @@
 
 "gamecreds handler. who's behind this game"
 
-import math, os
+import math
 import pygame
-from pygame.locals import *
 import game, gfx, snd, txt
-import gameplay
 
 
 
@@ -86,7 +84,7 @@ class GameCreds:
         self.center = gfx.rect.centerx - 120
         self.text = []
         self.credits = []
-        self.area = Rect(40, 140, 500, 400)
+        self.area = pygame.Rect(40, 140, 500, 400)
         self.offset = 0
         for cred in credits:
             self.createtext(cred[0], 0)
@@ -156,9 +154,9 @@ class GameCreds:
             gfx.dirty(self.area)
 
             for y,h in self.fade:
-                r = Rect(self.area.left, self.area.top+y, self.area.width, h)
+                r = pygame.Rect(self.area.left, self.area.top+y, self.area.width, h)
                 self.background(r)
-                r = Rect(self.area.left, self.area.bottom-y-h, self.area.width, h)
+                r = pygame.Rect(self.area.left, self.area.bottom-y-h, self.area.width, h)
                 self.background(r)
 
             if bottom < self.area.top:

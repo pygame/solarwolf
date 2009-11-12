@@ -117,79 +117,11 @@ def checkdependencies():
         errorbox(msg)
 
 
-
-#Pretty Error Handling Code...
-
-def __windowsbox(title, message):
-    raise ImportError #the MessageBox command is crashing!
-    import win32ui, win32con
-    win32ui.MessageBox(message, title, win32con.MB_ICONERROR)
-
-def __wxpythonbox(title, message):
-    import wxPython.wx as wx
-    class LameApp(wx.wxApp):
-        def OnInit(self): return 1
-    app = LameApp()
-    dlg = wx.wxMessageDialog(None, message, title, wx.wxOK|wx.wxICON_EXCLAMATION)
-    dlg.ShowModal()
-    dlg.Destroy()
-
-def __tkinterbox(title, message):
-    import Tkinter, tkMessageBox
-    Tkinter.Tk().wm_withdraw()
-    tkMessageBox.showerror(title, message)
-
-def __pygamebox(title, message):
-    try:
-        import pygame
-        pygame.quit() #clean out anything running
-        pygame.display.init()
-        pygame.font.init()
-        screen = pygame.display.set_mode((460, 140))
-        pygame.display.set_caption(title)
-        font = pygame.font.Font(None, 18)
-        foreg, backg, liteg = (0, 0, 0), (180, 180, 180), (210, 210, 210)
-        ok = font.render('Ok', 1, foreg, liteg)
-        okbox = ok.get_rect().inflate(200, 10)
-        okbox.centerx = screen.get_rect().centerx
-        okbox.bottom = screen.get_rect().bottom - 10
-        screen.fill(backg)
-        screen.fill(liteg, okbox)
-        screen.blit(ok, okbox.inflate(-200, -10))
-        pos = [10, 10]
-        for text in message.split('\n'):
-            if text:
-                msg = font.render(text, 1, foreg, backg)
-                screen.blit(msg, pos)
-            pos[1] += font.get_height()
-        pygame.display.flip()
-        stopkeys = pygame.K_ESCAPE, pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER
-        while 1:
-            e = pygame.event.wait()
-            if e.type == pygame.QUIT or \
-                       (e.type == pygame.KEYDOWN and e.key in stopkeys) or \
-                       (e.type == pygame.MOUSEBUTTONDOWN and okbox.collidepoint(e.pos)):
-                break
-        pygame.quit()
-    except pygame.error:
-        raise ImportError
-
-handlers = __pygamebox, __tkinterbox, __wxpythonbox, __windowsbox
-
-def __showerrorbox(message):
-    title = os.path.splitext(os.path.split(sys.argv[0])[1])[0]
-    title = title.capitalize() + ' Error'
-    for e in handlers:
-        try:
-            e(title, message)
-            break
-        except (ImportError, NameError, AttributeError):
-            pass
-
 def errorbox(message):
     message = str(message)
     if not message: message = 'Error'
-    __showerrorbox(message)
+    import errorbox
+    errorbox.errorbox("Solarwolf Error", message)
     sys.stderr.write('ERROR: ' + message + '\n')
     raise SystemExit
 
@@ -203,9 +135,11 @@ def exception_handler():
     exception_message = '%s:\n%s\n\n%s\n"%s"'
     message = exception_message % (str(type), str(info), tracetext, tracetop[3])
     if type not in (KeyboardInterrupt, SystemExit):
-        __showerrorbox(message)
-    raise
-
+        import errorbox
+        errorbox.errorbox("Solarwolf Error", message)
+        sys.stderr.write('ERROR: ' + message + '\n')
+        raise SystemExit
+ 
 
 
 if __name__ == '__main__': main()

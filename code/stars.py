@@ -17,9 +17,8 @@
 
 #player ship class
 
-import pygame
-from pygame.locals import *
-import game, gfx, math
+from pygame.locals import Rect
+import game, gfx
 from random import randint
 import gameinit
 
@@ -28,7 +27,7 @@ class Stars:
         stars = []
         scrwide, scrhigh = gfx.rect.size
         self.maxstars = 800
-        for x in range(self.maxstars):
+        for _ in range(self.maxstars):
             val = randint(1, 3)
             color = val*40+60, val*35+50, val*22+100
             speed = -val, val
@@ -51,8 +50,8 @@ class Stars:
         numstars = max(min(numstars, self.maxstars/2), 0)
         if numstars < self.numstars:
             DIRTY, BGD = gfx.dirty, self.last_background
-            for rect, vel, col in self.stars[self.odd][numstars:self.numstars]:
-                DIRTY(BGD(rect))
+            for star in self.stars[self.odd][numstars:self.numstars]:
+                DIRTY(BGD(star[0]))
         self.numstars = numstars
         #print 'STAR:', numstars, fps, change
 
@@ -71,8 +70,6 @@ class Stars:
 
 
     def eraseall(self, background, gfx): #only on fullscreen switch
-        R, B = gfx.rect.bottomright
-        FILL = gfx.surface.fill
         for s in self.stars[0][:self.numstars]:
             background(s[0])
         for s in self.stars[1][:self.numstars]:

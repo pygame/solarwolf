@@ -15,39 +15,47 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-#popped bullet class
+# laser beam effect from combustion powerup
 
+import pygame.draw
 import gfx
 
 
-images = []
-explode_frames = 11
 
 def load_game_resources():
-    global images
-    images = gfx.animstrip(gfx.load('popshot.png'), 18)
+    pass
 
 
 
-class PopShot:
-    def __init__(self, pos):
-        self.clocks = 0
-        self.life = explode_frames
-        self.rect = images[0].get_rect()
-        self.rect.center = pos
+class Laser:
+    def __init__(self, start, end):
+        self.clocks = 0.0
+        self.life = 20.0
         self.dead = 0
+        self.start = start
+        self.end = end
+        x = min(start[0], end[0]) - 4
+        y = min(start[1], end[1]) - 4
+        w = abs(start[0] - end[0]) + 8
+        h = abs(start[1] - end[1]) + 8
+        self.rect = pygame.Rect(x, y, w, h)
 
     def erase(self, background):
-        r = background(self.rect)
         if self.dead:
+            r = background(self.rect)
             gfx.dirty(r)
 
     def draw(self, gfx):
-        img = images[self.clocks/3]
-        r = gfx.surface.blit(img, self.rect)
-        gfx.dirty(r)
+        percent = 1.0 - (self.clocks / self.life)
+        c1 = (percent * 0.4 + 0.2) * 255
+        c2 = c1 / 4
+        color = (c1, c2, c2)
+        pygame.draw.line(gfx.surface, color, self.start, self.end, 3)
+        gfx.dirty(self.rect)
 
     def tick(self, speedadjust):
-        self.clocks += 1
-        if self.clocks == self.life:
+        self.clocks += speedadjust
+        if self.clocks >= self.life:
             self.dead = 1
+
+

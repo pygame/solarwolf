@@ -17,10 +17,7 @@
 
 #teleport in to start animation class
 
-import random
-import pygame
-from pygame.locals import *
-import game, gfx
+import gfx
 
 
 images = []

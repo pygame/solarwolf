@@ -17,9 +17,8 @@
 
 """graphics class, helps everyone to draw"""
 
-import sys, pygame, pygame.image
-from pygame.locals import *
-
+import sys, pygame.image
+from pygame.locals import Rect, FULLSCREEN, HWSURFACE, RLEACCEL
 import game, stars
 
 #the accessable screen surface and size
@@ -50,7 +49,7 @@ def initialize(size, fullscreen):
             loadpalette()
 
     except pygame.error, msg:
-        raise pygame.error, 'Cannot Initialize Graphics'
+        raise pygame.error, 'Cannot Initialize Graphics' + str(msg)
     starobj = stars.Stars()
 
 
@@ -97,8 +96,6 @@ def update():
         screencapture.blit(surface, (0,0))
         clipcapture = surface.get_clip()
         initialize(surface.get_size(), game.display)
-#        if game.handler:
-#            game.handler.background(rect)
         surface.blit(screencapture, (0,0))
 
         pygame.display.update()
@@ -106,13 +103,6 @@ def update():
 
 
 def optimize(img):
-    #~ if surface.get_alpha():
-        #~ img.set_alpha()
-        #~ if surface.get_flags() & HWSURFACE:
-            #~ img.set_colorkey(0)
-        #~ else:
-            #~ img.set_colorkey(0, RLEACCEL)
-    #~ elif not surface.get_flags() & HWSURFACE:
     if not surface.get_flags() & HWSURFACE:
         clear = img.get_colorkey()
         if clear:

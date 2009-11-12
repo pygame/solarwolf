@@ -19,8 +19,7 @@
 
 import random
 import pygame
-from pygame.locals import *
-import game, gfx, snd
+import gfx, snd
 
 rbox_color = (255, 60, 60)
 gbox_color = (60, 255, 60)
@@ -61,6 +60,7 @@ def load_game_resources():
     ### Big Boxes ###
 
     imgs = gfx.load_raw('bigboxes.png')
+    imgs.set_colorkey(imgs.get_at((0, 0)))
     origpal = imgs.get_palette()
     gbigboximages = gfx.animstrip(imgs)
 

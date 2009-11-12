@@ -17,14 +17,11 @@
 
 """Gamename input setup handler, part of SOLARWOLF."""
 # Copyright (C) 2002 Aaron "APS" Schlaegel, LGPL, see lgpl.txt
-import string, math
+
 import pygame
-from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
-import score
-import gameplay
 
 
 images = []
@@ -52,7 +49,6 @@ def load_game_resources():
     img = pygame.transform.rotate(gfx.load('ship-up.png'), -90)
     images.append((img, img.get_rect()))
 
-    bgd = 0, 0, 0
     font = txt.Font(None, 50)
     t = font.text((220, 210, 180), 'Setup Controls', (gfx.rect.centerx, 30))
     images.append(t)
@@ -63,13 +59,11 @@ def load_game_resources():
     namefont = txt.Font(None, 46)
     textfontheight = 26
     textfont = txt.Font(None, textfontheight)
-    smallfont = txt.Font('sans', 12)
 
     snd.preload('select_choose', 'select_move', 'incorrect', 'delete')
 
     delimage = gfx.load('btn-delete.gif')
     addimage = gfx.load('btn-add.gif')
-    #allimage = gfx.load('btn-all.gif')
 
 
 class GameSetup:
@@ -147,7 +141,7 @@ class GameSetup:
 
     def selectdelete(self):
         def ignoreall(x):
-            return x[0] != NOEVENT
+            return x[0] != pygame.NOEVENT
         mutable = len(filter(ignoreall, self.display[input.actions_order[self.currentaction]]))
         if mutable > 1:
             snd.play('select_choose')
@@ -169,10 +163,10 @@ class GameSetup:
     def selectall(self):
         snd.play('select_choose')
         self.clearactionlist()
-        if not input.translations.has_key(NOEVENT):
-            input.translations[NOEVENT] = {}
-        input.translations[NOEVENT][KEYDOWN] = input.actions_order[self.currentaction]
-        input.translations[NOEVENT][JOYBUTTONDOWN] = input.actions_order[self.currentaction]
+        if not input.translations.has_key(pygame.NOEVENT):
+            input.translations[pygame.NOEVENT] = {}
+        input.translations[pygame.NOEVENT][pygame.KEYDOWN] = input.actions_order[self.currentaction]
+        input.translations[pygame.NOEVENT][pygame.JOYBUTTONDOWN] = input.actions_order[self.currentaction]
         self.display = input.getdisplay()
         self.buildactionlist()
         self.drawactionlist()
@@ -282,7 +276,6 @@ class GameSetup:
 
     def buildbuttonlist(self):
         i = 0
-        #for img in (addimage, allimage, delimage):
         for img in (addimage, delimage):
             rect = img.get_rect().move(300 + 250 * i, 10)
             self.buttonlist.append((img, rect))
@@ -321,8 +314,7 @@ class GameSetup:
             img.fill(bgd)
             for sub, pos in subimgs:
                 img.blit(sub, pos)
-            img.set_colorkey(bgd, RLEACCEL)
-            #img = img.convert()
+            img.set_colorkey(bgd, pygame.RLEACCEL)
             rect = img.get_rect().move(0, offsety)
 
             self.actionlist.append((img, rect))
