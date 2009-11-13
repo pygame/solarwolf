@@ -104,6 +104,10 @@ class GameWin:
         if not self.done:
             frame = int(self.time * .5) % len(self.r)
             surf = gfx.surface
+
+            self.background(r.move(50, 400))
+            self.background(r.move(300, 400))
+            self.background(r.move(550, 400))
             gfx.dirty(surf.blit(self.r[frame], (50, 400)))
             gfx.dirty(surf.blit(self.g[frame], (300, 400)))
             gfx.dirty(surf.blit(self.b[frame], (550, 400)))

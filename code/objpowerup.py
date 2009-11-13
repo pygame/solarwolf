@@ -213,7 +213,15 @@ Effects = [ExtraLevelTime, PopShots, Shield,
            ]
 
 
+_LastPowerup = None
 def newpowerup(levelnum):
+    global _LastPowerup
     choices = Effects[:2+(levelnum/5)]
+    try:
+        choices.remove(_LastPowerup)    
+    except ValueError:
+        pass
     effect = random.choice(choices)
+    _LastPowerup = effect
     return Powerup(effect)
+

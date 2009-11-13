@@ -26,9 +26,9 @@ from pygame import Rect
 #various data constants
 start_lives = 3
 
-ship_fastspeed = 7
-ship_slowspeed = 5
-shot_speed = 3
+ship_fastspeed = 6.6
+ship_slowspeed = 4.6
+shot_speed = 2.6
 
 guard_speed = 4
 guard_fire = .01
@@ -39,13 +39,13 @@ arena = Rect(55, 50, 590, 490)
 
 poweruptime = 1200.0
 powerupspeed = 2.0
-powerupwait = 25.0
+powerupwait = 29.0
 asteroidspeed = 1.4
 
 threadstop = False
 timeleft = 0.0
 timetick = 0.0
-timefactor = 12.1    #how quickly time drops (bigger = slower)
+timefactor = 12.8    #how quickly time drops (bigger = slower)
 speedmult = 0
 
 musictime = 1000 * 120 #two minutes

@@ -144,7 +144,7 @@ class GamePlay:
                 snd.play('gameover')
                 snd.play('delete')
                 game.player.cheater = 1
-                self.grabbedboxes = 0 #less not give any fake complements
+                self.grabbedboxes = 0 #let's not give any fake complements
                 self.levelnum = 49
                 self.textobjs.append(objtext.Text('"shred" Cheat: Warp Level 50'))
                 self.changestate('levelend')
@@ -260,12 +260,12 @@ class GamePlay:
             snd.play('spring', 0.6)
             gamehelp.help("powerup", p.rect.topleft)
             
-        if self.grabbedboxes >= 40:
+        if self.grabbedboxes >= 30:
             self.grabbedboxes = 0
             if game.comments >= 1:
                 self.textobjs.append(objtext.Text(game.Complements[self.complement]))
             self.complement = (self.complement + 1) % len(game.Complements)
-        elif self.grabbedboxes >= 25:
+        elif self.grabbedboxes >= 20:
             self.numdeaths = 0
 
         self.tickleveltime(self.speedadjust)
@@ -537,7 +537,7 @@ class GamePlay:
         self.poptime = 2
         for effect in self.powereffects:
             effect.dead = 1
-        if game.comments >= 1 and self.grabbedboxes >= 36:
+        if game.comments >= 1 and self.grabbedboxes >= 25:
             self.textobjs.append(objtext.Text(game.Complements[self.complement]))
             self.complement = (self.complement + 1) % len(game.Complements)
         for s in self.spikeobjs:

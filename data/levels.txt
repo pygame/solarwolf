@@ -35,8 +35,8 @@
  #######
     #
 !
-> DoubleDown on Yellow?
-< TripleDown on Red?
+> DoubleDown on Green?
+< TripleDown on Blue?
   ####
  ##  ##
     ##
@@ -106,7 +106,7 @@
 !
 > ae
 < Demon's Fork
- ##
+ ###
     #***
  ####   *
 #   #****

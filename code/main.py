@@ -69,7 +69,7 @@ def gamemain(args):
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
 
-    #psyco.full()
+    #psyco.profile()
     gamestart = pygame.time.get_ticks()
     numframes = 0
     #random.seed(0)

@@ -102,7 +102,7 @@ class Ship:
         self.frame += speedadjust
         speed = self.speeds[self.turbo]
         if self.shield == 1:
-            speed = int(speed * speedadjust * 1.3)
+            speed = int(speed * speedadjust * 1.2)
         else:
             speed = int(speed * speedadjust)
         self.pos[0] += self.move[0] * speed

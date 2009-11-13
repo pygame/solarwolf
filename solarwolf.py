@@ -99,10 +99,10 @@ def checkdependencies():
     #is correct pygame found?
     try:
         import pygame
-        if pygame.ver < '1.5.6':
-            msgs.append('Requires Pygame-1.5.6 or Greater, You Have ' + pygame.ver)
+        if pygame.ver < '1.6.1':
+            msgs.append('Requires Pygame-1.6.1 or Greater, You Have ' + pygame.ver)
     except ImportError:
-        msgs.append("Cannot import Pygame, install version 1.5.6 or higher")
+        msgs.append("Cannot import Pygame, install version 1.6.1 or higher")
         pygame = None
 
     #check that we have FONT and IMAGE

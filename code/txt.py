@@ -19,11 +19,7 @@
 
 import pygame.font, gfx
 
-#old versions of SysFont were buggy
-if pygame.ver <= '1.6.1':
-    from mysysfont import SysFont
-else:
-    SysFont = pygame.font.SysFont
+from pygame.sysfont import SysFont
 
 
 FontPool = {}
