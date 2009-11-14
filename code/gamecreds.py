@@ -27,7 +27,7 @@ credits = (
     ('Developer', ('Pete "ShredWheat" Shinners',)),
     ('Graphics', ('Eero "Oak" Tamminen',)),
     ('Music', ('"theGREENzebra"',)),
-    ('Programming Help', ('Aaron "APS" Schlaegel', 'Michael "MU" Urman')),
+    ('Programming Help', ('Daniel Watkins', 'Michael Witten', 'Johannes Krude', 'Aaron "APS" Schlaegel', 'Michael "MU" Urman')),
     ('Special Thanks', ('David "Futility" Clark', 'Shandy Brown', 'John "Jacius" Croisant', 'Guido "Python" van Rossum', 'Sam "SDL" Lantinga')),
 )
 
