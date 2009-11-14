@@ -43,7 +43,6 @@ def gamemain(args):
     game.clock = pygame.time.Clock()
 
     players.load_players()
-    input.load_translations()
     gamepref.load_prefs()
 
     size = 800, 600
@@ -56,6 +55,7 @@ def gamemain(args):
     if not '-nosound' in args:
         snd.initialize()
     input.init()
+    input.load_translations()
 
     if not txt.initialize():
         raise pygame.error, "Pygame Font Module Unable to Initialize"

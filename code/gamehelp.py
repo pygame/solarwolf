@@ -171,8 +171,8 @@ class GameHelp:
                 snd.music.set_volume(vol * 0.6)
         snd.play('chimein')
 
-        if hasattr(game.handler, 'player'):
-            game.handler.player.cmd_turbo(0)
+        #if hasattr(game.handler, 'player'):
+        #    game.handler.player.cmd_turbo(0)
 
     def quit(self):
         snd.play('chimeout')

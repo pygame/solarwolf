@@ -101,6 +101,20 @@ translations_default = {
     }
 }
 
+translations_sixaxis = {
+    pygame.JOYBUTTONDOWN: {
+        3: ABORT,
+        4: UP,
+        5: RIGHT,
+        6: DOWN,
+        7: LEFT,
+        12: PRESS,
+        13: PRESS,
+        14: PRESS,
+        15: PRESS,
+    }
+}
+
 hat_direction_text = {
     HATUP: "Up", HATLEFT: "Left", HATRIGHT: "Right", HATDOWN: "Down"
 }
@@ -370,6 +384,9 @@ def setdisplay(display):
 def load_translations():
     global translations
     global translations_default
+    global translations_sixaxis
+    global joystick
+    
     translations = {}
     #just sticking to the standard controls for now
     #try:
@@ -377,8 +394,11 @@ def load_translations():
     #    translations = pickle.load(open(filename, 'rb'))
     #except (IOError, OSError, KeyError):
         #print 'ERROR OPENING CONTROL FILE, loading defaults'
-    if 1:
-        translations = translations_default
+    translations = translations_default
+    
+    if joystick:
+        if joystick.get_name() == "Sony Computer Entertainment Wireless Controller":
+            translations.update(translations_sixaxis)
 
 def save_translations():
     global translations
