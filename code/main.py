@@ -32,9 +32,12 @@ import players, gamepref
 
 def main(args):
     try:
-        gamemain(args)
-    except KeyboardInterrupt:
-        print 'Keyboard Interrupt'
+        try:
+            gamemain(args)
+        except KeyboardInterrupt:
+            print 'Keyboard Interrupt'
+    finally:
+        pygame.quit()
 
 
 def gamemain(args):
@@ -138,7 +141,6 @@ def gamemain(args):
     input.save_translations()
     players.save_players()
     gamepref.save_prefs()
-    pygame.quit()
 
 
 
