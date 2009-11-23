@@ -53,8 +53,8 @@ musictime = 1000 * 120 #two minutes
 text_length = 80  #frames text is displayed in-game
 
 
-site_url = 'http://pygame.org/shredwheat/solarwolf'
-news_url = 'http://pygame.org/shredwheat/solarwolf/thenews.html'
+site_url = 'http://code.google.com/p/solarwolf/'
+news_url = 'http://solarwolf.googlecode.com/svn/wiki/News.wiki'
 
 
 

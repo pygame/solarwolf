@@ -70,11 +70,9 @@ def downloadfunc(gamenews):
         return
     gamenews.downcur = 0
     try:
-        tag = re.compile('<.*>\n*')
         newsfilename = game.make_dataname('news')
         f = open(newsfilename, 'w')
-        for line in news:
-            l = re.sub(tag, '', line)
+        for l in news:
             if l:
                 f.write(l.rstrip() + os.linesep)
         f.close()
@@ -150,7 +148,7 @@ class GameNews:
         if not os.path.isfile(newsfilename):
             newsfilename = game.get_resource('news')
         if os.path.isfile(newsfilename):
-            news = open(newsfilename).readlines()[2:]
+            news = open(newsfilename).readlines()
             if not news:
                 self.makebadnews(' ', 'Invalid News File')
                 return
@@ -167,6 +165,10 @@ class GameNews:
                 elif not title: title = line
                 elif not date: date = line
                 else: body.append(line)
+	
+            if title and date and body:
+                newsitems.append((title, date, body))
+
             top = 150
             for t, d, body in newsitems:
                 self.boxes.append(objbox.Box((28, top+3), 1))
