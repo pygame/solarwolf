@@ -410,7 +410,7 @@ class GamePlay:
     def playerstart_tick(self):
         #when animations done
         anyblock = 0
-        collide = self.teleport.rect.inflate(12, 12).colliderect
+        collide = self.teleport.rect.inflate(14, 14).colliderect
         for a in self.asteroidobjs:
             if collide(a.rect) or collide(a.predictrect()):
                 anyblock = 1
