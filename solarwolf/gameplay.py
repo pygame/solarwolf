@@ -1,23 +1,7 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 "gameplay handler. for the main part of the game"
 
 import pygame
+from pygame.locals import *
 import random
 
 import game, gfx, input, snd
@@ -58,6 +42,7 @@ class GamePlay:
         self.objlists = [self.boxobjs, self.shotobjs, self.spikeobjs, self.popobjs,
                          self.smokeobjs, self.powerupobjs, self.asteroidobjs,
                          self.guardobjs, self.staticobjs, self.textobjs]
+        self.glitter = objshot.Glitter()
         self.hud = hud.HUD()
 
         self.state = ''
@@ -144,7 +129,7 @@ class GamePlay:
                 snd.play('gameover')
                 snd.play('delete')
                 game.player.cheater = 1
-                self.grabbedboxes = 0 #let's not give any fake complements
+                self.grabbedboxes = 0 #less not give any fake complements
                 self.levelnum = 49
                 self.textobjs.append(objtext.Text('"shred" Cheat: Warp Level 50'))
                 self.changestate('levelend')
@@ -197,6 +182,10 @@ class GamePlay:
                     o.erase(B)
                     l.remove(o)
 
+        #HERE IS THE GLITTER
+        #self.glitter.update(S)
+        #self.glitter.add(self.shotobjs, 1.0)
+
         for l in objects:
             for o in l:
                 o.draw(G)
@@ -239,10 +228,8 @@ class GamePlay:
     def normal_tick(self):
         #fire the guards
         shootchance = game.guard_fire * self.speedadjust
-        randchance = random.random()
-        self.powerupcount += randchance * self.speedadjust * (self.levelnum / 300.0)
-        if self.player.active and randchance < shootchance:
-            self.powerupcount += 0.1
+        if self.player.active and random.random() < shootchance:
+            self.powerupcount += 0.3
             baddy = random.choice(self.guardobjs)
             baddy.fire() #only requests a shot
         for baddy in self.guardobjs:
@@ -259,12 +246,11 @@ class GamePlay:
             self.powerupobjs.append(p)
             snd.play('spring', 0.6)
             gamehelp.help("powerup", p.rect.topleft)
-            
-        if self.grabbedboxes >= 30:
+        if self.grabbedboxes >= 50:
             self.grabbedboxes = 0
             if game.comments >= 1:
                 self.textobjs.append(objtext.Text(game.Complements[self.complement]))
-            self.complement = (self.complement + 1) % len(game.Complements)
+            self.complement = int((self.complement + 1) % len(game.Complements))
         elif self.grabbedboxes >= 20:
             self.numdeaths = 0
 
@@ -410,7 +396,7 @@ class GamePlay:
     def playerstart_tick(self):
         #when animations done
         anyblock = 0
-        collide = self.teleport.rect.inflate(14, 14).colliderect
+        collide = self.teleport.rect.inflate(12, 12).colliderect
         for a in self.asteroidobjs:
             if collide(a.rect) or collide(a.predictrect()):
                 anyblock = 1
@@ -471,10 +457,10 @@ class GamePlay:
 
         #make spikes
         if self.levelnum >= 30:
-            numspikes = min(int((self.levelnum-30)/5) + 1, len(self.newboxes)-5)
+            numspikes = min(int((self.levelnum-30)//5) + 1, len(self.newboxes)-5)
             self.secretspikes = self.newboxes[-numspikes:]
         elif self.levelnum >= 10:
-            numspikes = int((self.levelnum-10)/7) + 1
+            numspikes = int((self.levelnum-10)//7) + 1
             spikes = self.newboxes[-numspikes:]
             self.newboxes = self.newboxes[:-numspikes]
             for b in spikes:
@@ -537,7 +523,7 @@ class GamePlay:
         self.poptime = 2
         for effect in self.powereffects:
             effect.dead = 1
-        if game.comments >= 1 and self.grabbedboxes >= 25:
+        if game.comments >= 1 and self.grabbedboxes >= 36:
             self.textobjs.append(objtext.Text(game.Complements[self.complement]))
             self.complement = (self.complement + 1) % len(game.Complements)
         for s in self.spikeobjs:
@@ -613,7 +599,7 @@ class GamePlay:
         self.donehud = 0
         sound = snd.fetch('whip')
         self.whip = None
-        if sound and game.volume > 0:
+        if sound:
             self.whip = sound.play(-1)
         for g in self.guardobjs:
             if g.killed == 1:

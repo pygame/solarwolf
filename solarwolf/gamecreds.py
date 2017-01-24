@@ -1,34 +1,19 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+"gamemenu handler. main menu"
 
-"gamecreds handler. who's behind this game"
-
-import math
+import math, os
 import pygame
+from pygame.locals import *
 import game, gfx, snd, txt
+import gameplay
 
 
 
 credits = (
     ('Developer', ('Pete "ShredWheat" Shinners',)),
-    ('Graphics', ('Eero "Oak" Tamminen',)),
+    ('Graphics', ('Eero Tamminen',)),
     ('Music', ('"theGREENzebra"',)),
-    ('Programming Help', ('Daniel Watkins', 'Michael Witten', 'Johannes Krude', 'Aaron "APS" Schlaegel', 'Michael "MU" Urman')),
-    ('Special Thanks', ('David "Futility" Clark', 'Shandy Brown', 'John "Jacius" Croisant', 'Guido "Python" van Rossum', 'Sam "SDL" Lantinga')),
+    ('Programming Help', ('Aaron "APS" Schlaegel', 'Michael "MU" Urman')),
+    ('Special Thanks', ('David "Futility" Clark', 'Shandy Brown', 'John "Jacius" Croisant', 'Guido "Python" van Rossom', 'Sam "SDL" Lantinga')),
 )
 
 licenseinfo = ('This program is free software. You are encouraged to',
@@ -84,7 +69,7 @@ class GameCreds:
         self.center = gfx.rect.centerx - 120
         self.text = []
         self.credits = []
-        self.area = pygame.Rect(40, 140, 500, 400)
+        self.area = Rect(40, 140, 500, 400)
         self.offset = 0
         for cred in credits:
             self.createtext(cred[0], 0)
@@ -125,7 +110,7 @@ class GameCreds:
         if self.first:
             gfx.dirty(gfx.rect)
             self.first = 0
-        ratio = game.clockticks / 25
+        ratio = game.clockticks // 25
         speedadjust = max(ratio, 1.0)
 
         self.offset += speedadjust * 1.0
@@ -154,9 +139,9 @@ class GameCreds:
             gfx.dirty(self.area)
 
             for y,h in self.fade:
-                r = pygame.Rect(self.area.left, self.area.top+y, self.area.width, h)
+                r = Rect(self.area.left, self.area.top+y, self.area.width, h)
                 self.background(r)
-                r = pygame.Rect(self.area.left, self.area.bottom-y-h, self.area.width, h)
+                r = Rect(self.area.left, self.area.bottom-y-h, self.area.width, h)
                 self.background(r)
 
             if bottom < self.area.top:

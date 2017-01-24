@@ -1,25 +1,12 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """Game Settings Control for SolarWolf."""
+import string, math
 import pygame
+from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
+import score
+import gameplay
 
 
 Prefs = {
@@ -33,6 +20,7 @@ Prefs = {
 
 
 def load_prefs():
+    prefs = {}
     try:
         filename = game.make_dataname('prefs')
         for line in open(filename).readlines():
@@ -47,11 +35,11 @@ def save_prefs():
     try:
         filename = game.make_dataname('prefs')
         f = open(filename, 'w')
-        for p in Prefs.keys():
+        for p in list(Prefs.keys()):
             val = getattr(game, p)
             f.write("%s = %d\n" % (p, int(val)))
         f.close()
-    except (IOError, OSError):
+    except (IOError, OSError) as msg:
         #print 'ERROR SAVING PREFS FILE'
         pass
 
@@ -82,7 +70,7 @@ class GamePref:
         self.prevhandler = prevhandler
         self.images = images
         self.prefs = []
-        for n,v in Prefs.items():
+        for n,v in list(Prefs.items()):
             self.prefs.append((n,v))
         self.prefs.append(("", ("Return To Menu",)))
 
@@ -95,6 +83,8 @@ class GamePref:
         self.current = [0, 0]
         self.shipmovex = 40
         self.shipmovey = 16
+
+        step = 0
 
         self.moveto(self.gamelist[0][0][1])
 

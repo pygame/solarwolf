@@ -1,24 +1,10 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+"gamemenu handler. main menu"
 
-"gamewin handler. congratulations"
-
+import math, os
+import pygame
+from pygame.locals import *
 import game, gfx, snd, txt
-import objbox, players
+import gameplay, gamemenu, players
 
 
 
@@ -60,9 +46,9 @@ class GameWin:
             img, r = font.text((250, 250, 250), line, (self.center, self.top))
             self.top += 30
             self.text.append((img, r))
-        self.r = objbox.rbigboximages
-        self.g = objbox.gbigboximages
-        self.b = objbox.bbigboximages
+        self.g = gamemenu.boximages
+        self.y = gamemenu.yboximages
+        self.r = gamemenu.rboximages
 
 
 
@@ -95,7 +81,7 @@ class GameWin:
             self.background(r)
             gfx.dirty(r)
 
-        ratio = game.clockticks / 25
+        ratio = game.clockticks // 25
         speedadjust = max(ratio, 1.0)
         self.time += speedadjust
 
@@ -104,13 +90,9 @@ class GameWin:
         if not self.done:
             frame = int(self.time * .5) % len(self.r)
             surf = gfx.surface
-
-            self.background(r.move(50, 400))
-            self.background(r.move(300, 400))
-            self.background(r.move(550, 400))
-            gfx.dirty(surf.blit(self.r[frame], (50, 400)))
-            gfx.dirty(surf.blit(self.g[frame], (300, 400)))
-            gfx.dirty(surf.blit(self.b[frame], (550, 400)))
+            gfx.dirty(surf.blit(self.g[frame], (50, 400)))
+            gfx.dirty(surf.blit(self.y[frame], (300, 400)))
+            gfx.dirty(surf.blit(self.r[frame], (550, 400)))
 
             for cred, pos in self.text:
                 gfx.surface.blit(cred, pos)
@@ -118,3 +100,6 @@ class GameWin:
 
     def background(self, area):
         return gfx.surface.fill((0, 0, 0), area)
+
+
+

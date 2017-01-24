@@ -1,24 +1,9 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 #powerup class
 
 import random
-import game, gfx, snd, objpopshot, objexplode, objlaser
+import pygame
+from pygame.locals import *
+import game, gfx, snd, objpopshot, objexplode
 
 
 images = []
@@ -195,8 +180,6 @@ class Combustion(PowerupEffect):
         if aliveguards:
             g = random.choice(aliveguards)
             g.killed = 1
-            laser = objlaser.Laser(self.state.player.rect.center, g.rect.center)
-            self.state.staticobjs.append(laser)
             explode = objexplode.Explode(g.rect.center)
             self.state.staticobjs.append(explode)
             #argh, force a cleanup
@@ -208,20 +191,11 @@ class Combustion(PowerupEffect):
 
 Effects = [ExtraLevelTime, PopShots, Shield,
            SlowMotion, Combustion, ExtraLife,
-           PopShots, Shield, Combustion,
-           PopShots, SlowMotion, Shield, ExtraLife
-           ]
+           PopShots, Shield, ExtraLife, Combustion,
+           PopShots, SlowMotion]
 
 
-_LastPowerup = None
 def newpowerup(levelnum):
-    global _LastPowerup
-    choices = Effects[:2+(levelnum/5)]
-    try:
-        choices.remove(_LastPowerup)    
-    except ValueError:
-        pass
+    choices = Effects[:2+(levelnum//8)]
     effect = random.choice(choices)
-    _LastPowerup = effect
     return Powerup(effect)
-

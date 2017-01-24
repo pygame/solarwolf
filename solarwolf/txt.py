@@ -1,25 +1,12 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """text and font classes, helps everyone to text"""
 
-import pygame.font, gfx
+import pygame, pygame.font, gfx
 
-from pygame.sysfont import SysFont
+#old versions of SysFont were buggy
+if pygame.ver <= '1.6.1':
+    from mysysfont import SysFont
+else:
+    SysFont = pygame.font.SysFont
 
 
 FontPool = {}
@@ -34,7 +21,7 @@ def initialize():
 class Font:
     def __init__(self, name, size, bold=0, italic=0):
         val = name, size
-        if FontPool.has_key(val):
+        if val in FontPool:
             font = FontPool[val]
         else:
             font = SysFont(name, size, bold, italic)
@@ -61,6 +48,9 @@ class Font:
             setattr(r, pos, center)
         return r
 
+    def _render(self, text, color, bgd=(0,0,0)):
+        return img
+
     def get_height(self):
         return self.font.get_height()
 
@@ -83,7 +73,7 @@ class Font:
 
 
     def textlined(self, color, text, center=None, pos='center'):
-        darkcolor = [int(c/2) for c in color]
+        darkcolor = [int(c//2) for c in color]
         if text is None: text = ' '
         try:
             if gfx.surface.get_bytesize()>1:
@@ -109,7 +99,7 @@ class Font:
 
 
     def textshadowed(self, color, text, center=None, pos='center'):
-        darkcolor = [int(c/2) for c in color]
+        darkcolor = [int(c//2) for c in color]
         if text is None: text = ' '
         try:
             if gfx.surface.get_bytesize()>1:

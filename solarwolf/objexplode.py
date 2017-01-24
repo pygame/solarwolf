@@ -1,24 +1,9 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 #explosion class
 
 import random
-import gfx, objpopshot
+import pygame
+from pygame.locals import *
+import game, gfx, objpopshot
 
 
 images = []
@@ -121,7 +106,7 @@ def superexplode(pos, move):
     sprites.append(Explode(pos, move))
     for d in range(len(debris)):
         sprites.append(Debris(d, pos, move))
-    for _ in range(4):
+    for x in range(4):
         newpos = list(pos)
         newpos[0] += (random.random()-.5) * 30
         newpos[1] += (random.random()-.5) * 30

@@ -1,32 +1,19 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """Game name entry handler, part of SOLARWOLF."""
 # Portions Copyright (C) 2002 Aaron "APS" Schlaegel, LGPL, see lgpl.txt
 
 import string, math
 import pygame
+from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
 import players
+import gameplay
+import gamecreds
+import gamenews
 
 
-charset = string.uppercase + '-.'
+charset = string.ascii_uppercase + '-.'
 fontlookup = {}
 fontimages = []
 images = []
@@ -35,10 +22,10 @@ nameletters = []
 stars = []
 
 def load_game_resources():
-    global menu, fontimages, thefont, charset, images, stars
+    global menu, fontimages, boximages, thefont, charset, images, stars
     extraimgs = {'<':gfx.load('rub.gif'), '>':gfx.load('end.gif')}
     for i in extraimgs.values():
-        i.set_colorkey(0, pygame.RLEACCEL)
+        i.set_colorkey(0, RLEACCEL)
     font = txt.Font(None, 100)
     thefont = font
     color = 120, 210, 160
@@ -48,8 +35,8 @@ def load_game_resources():
     xsize, ysize = 70, 80
     step = 0
     for letter in charset + '<>':
-        pos = xoffset+xsize*(step%10), yoffset+ysize*(step/10)
-        if extraimgs.has_key(letter):
+        pos = xoffset+xsize*(step%10), yoffset+ysize*(step//10)
+        if letter in extraimgs:
             img = img2 = extraimgs[letter]
             r = img.get_rect()
             r.center = pos
@@ -63,13 +50,13 @@ def load_game_resources():
 
     xoffset = 40
     for x in range(game.name_maxlength):
-        rect = pygame.Rect(xoffset+x*xsize, 450, xsize, 100)
-        rect2 = pygame.Rect(rect.left+1, rect.bottom-15, rect.width-2, 8)
+        rect = Rect(xoffset+x*xsize, 450, xsize, 100)
+        rect2 = Rect(rect.left+1, rect.bottom-15, rect.width-2, 8)
         nameletters.append([rect, rect2, None])
 
     font = txt.Font(None, 40)
     img = font.render('Enter Your Name:', 1, (220, 210, 180), bgd).convert()
-    img.set_colorkey(bgd, pygame.RLEACCEL)
+    img.set_colorkey(bgd, RLEACCEL)
     r = img.get_rect()
     r.center = gfx.rect.centerx, 70
     images.append((img, r))
@@ -86,7 +73,7 @@ def load_game_resources():
         r = s.get_rect()
         r.center = star.get_rect().center
         star.blit(s, r)
-        star.set_colorkey(s.get_colorkey(), pygame.RLEACCEL)
+        star.set_colorkey(s.get_colorkey(), RLEACCEL)
         stars.append(star)
 
     snd.preload('select_choose', 'select_move', 'incorrect', 'delete')
@@ -173,7 +160,7 @@ class GameName:
             if x < length:
                 if not l[2]:
                     l[2] = thefont.render(game.player.name[x], 1, (200, 250, 200), (0, 0, 0)).convert()
-                    l[2].set_colorkey((0, 0, 0), pygame.RLEACCEL)
+                    l[2].set_colorkey((0, 0, 0), RLEACCEL)
             else:
                 l[2] = None
 
@@ -200,10 +187,10 @@ class GameName:
     def input(self, i):
         if i.release:
             return
-        if i.type == pygame.KEYDOWN:
+        if i.type == KEYDOWN:
             if i.unicode and i.unicode.upper() in charset:
                 return
-            elif i.key in (pygame.K_DELETE, pygame.K_BACKSPACE, pygame.K_RETURN, pygame.K_KP_ENTER):
+            elif i.key in (K_DELETE, K_BACKSPACE, K_RETURN, K_KP_ENTER):
                 return
         if i.translated == input.ABORT:
             return self.quit()
@@ -233,11 +220,11 @@ class GameName:
 
 
     def event(self, e):
-        if e.type == pygame.KEYDOWN:
-            if e.key in (pygame.K_DELETE, pygame.K_BACKSPACE):
+        if e.type == KEYDOWN:
+            if e.key in (K_DELETE, K_BACKSPACE):
                 self.rub()
                 self.selectletter(self.fontimages[-2])
-            elif e.key in (pygame.K_RETURN, pygame.K_KP_ENTER):
+            elif e.key in (K_RETURN, K_KP_ENTER):
                 self.quit()
             elif e.unicode:
                 l = e.unicode.upper()
@@ -259,7 +246,7 @@ class GameName:
         gfx.updatestars(self.background, gfx)
 
         if not self.done:
-            r = gfx.surface.blit(self.stars[self.starframe], self.starrect)
+            r = gfx.surface.blit(self.stars[int(self.starframe)], self.starrect)
             gfx.dirty(r)
             for img in self.fontimages:
                 self.drawletter(img, self.letter)

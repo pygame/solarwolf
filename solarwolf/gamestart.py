@@ -1,23 +1,8 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """Game start and user select handler, part of SOLARWOLF."""
 
+import string, math
 import pygame
+from pygame.locals import *
 import game
 import gfx, txt, snd
 import input
@@ -40,6 +25,7 @@ def load_game_resources():
     img = pygame.transform.rotate(gfx.load('ship-up.png'), -90)
     images.append((img, img.get_rect()))
 
+    bgd = 0, 0, 0
     font = txt.Font(None, 50)
     t = font.text((220, 210, 180), 'Select A Player:', (gfx.rect.centerx, 30))
     images.append(t)
@@ -248,7 +234,7 @@ class GameStart:
                 subimgs.reverse()
                 for sub, pos in subimgs:
                     img.blit(sub, pos)
-                img.set_colorkey(bgd, pygame.RLEACCEL)
+                img.set_colorkey(bgd, RLEACCEL)
             img = img.convert()
 
             rect = img.get_rect().move(offsetx, offsety)

@@ -1,28 +1,13 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """Game news page handler, part of SOLARWOLF."""
 
-import os, threading, re
-import urllib
-import pygame
+import math, os, threading, re
+import urllib.request, urllib.parse, urllib.error, tempfile, shutil
+import pygame, pygame.font
+from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
+import gameplay
 import webbrowser
 import objbox
 
@@ -47,7 +32,7 @@ def load_game_resources():
     images.append((img, r))
 
     img = gfx.load('download.png')
-    downimgs = gfx.animstrip(img, img.get_width()/2)
+    downimgs = gfx.animstrip(img, img.get_width()//2)
     for i in ('downerror', 'newversion', 'downok'):
         img = gfx.load(i+'.gif')
         downimgs.append(img)
@@ -64,15 +49,17 @@ def load_game_resources():
 def downloadfunc(gamenews):
     global news_downloaded
     try:
-        news = urllib.urlopen(game.news_url).readlines()
+        news = urllib.request.urlopen(game.news_url).readlines()
     except:
         gamenews.downcur = 3
         return
     gamenews.downcur = 0
     try:
+        tag = re.compile('<.*>\n*')
         newsfilename = game.make_dataname('news')
         f = open(newsfilename, 'w')
-        for l in news:
+        for line in news:
+            l = re.sub(tag, '', line)
             if l:
                 f.write(l.rstrip() + os.linesep)
         f.close()
@@ -148,7 +135,7 @@ class GameNews:
         if not os.path.isfile(newsfilename):
             newsfilename = game.get_resource('news')
         if os.path.isfile(newsfilename):
-            news = open(newsfilename).readlines()
+            news = open(newsfilename).readlines()[2:]
             if not news:
                 self.makebadnews(' ', 'Invalid News File')
                 return
@@ -165,10 +152,6 @@ class GameNews:
                 elif not title: title = line
                 elif not date: date = line
                 else: body.append(line)
-	
-            if title and date and body:
-                newsitems.append((title, date, body))
-
             top = 150
             for t, d, body in newsitems:
                 self.boxes.append(objbox.Box((28, top+3), 1))
@@ -319,8 +302,8 @@ class GameNews:
         if self.downcur == 3:
             img = self.downimgs[2]
         else:
-            self.downcur = (self.clocks / 8) % 2 + 1
-            img = self.downimgs[self.downcur-1]
+            self.downcur = (self.clocks // 8) % 2 + 1
+            img = self.downimgs[int(self.downcur-1)]
         return img, img.get_rect().move(self.downloadpos)
 
 
@@ -384,7 +367,7 @@ class GameNews:
 
 
     def pressed(self):
-        #pref = Options[self.current]
+        pref = Options[self.current]
         snd.play('select_choose')
         val = Options[self.current].split()[0].lower()
         getattr(self, "do_"+val)()

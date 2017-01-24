@@ -1,23 +1,7 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 #player ship class
 
 import pygame
+from pygame.locals import *
 import game, gfx
 
 upimage = None
@@ -37,7 +21,7 @@ def load_game_resources():
         for i in range(90, 359, 90):
             imgs.append(pygame.transform.rotate(img, i))
         anim.append(imgs)
-    shipimages.extend(zip(*anim))
+    shipimages.extend(list(zip(*anim)))
 
     anim = []
     for img in gfx.animstrip(gfx.load('ship-up-boost2.png')):
@@ -45,7 +29,7 @@ def load_game_resources():
         for i in range(90, 359, 90):
             imgs.append(pygame.transform.rotate(img, i))
         anim.append(imgs)
-    shipimages.extend(zip(*anim))
+    shipimages.extend(list(zip(*anim)))
 
     shieldbg = gfx.animstrip(gfx.load('bonus-shield.png'))
     bulletbg = gfx.animstrip(gfx.load('bonus-bullet.png'))
@@ -96,13 +80,13 @@ class Ship:
             img = shipimages[self.image + (self.turbo*4)][frame]
         gfx.surface.blit(img, self.rect)
         gfx.dirty2(self.rect, self.lastrect)
-        self.lastrect = pygame.Rect(self.rect)
+        self.lastrect = Rect(self.rect)
 
     def tick(self, speedadjust = 1.0):
         self.frame += speedadjust
         speed = self.speeds[self.turbo]
         if self.shield == 1:
-            speed = int(speed * speedadjust * 1.2)
+            speed = int(speed * speedadjust * 1.3)
         else:
             speed = int(speed * speedadjust)
         self.pos[0] += self.move[0] * speed

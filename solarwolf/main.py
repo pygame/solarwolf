@@ -1,20 +1,3 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """main module, starts game and main loop"""
 
 import pygame
@@ -32,12 +15,10 @@ import players, gamepref
 
 def main(args):
     try:
-        try:
-            gamemain(args)
-        except KeyboardInterrupt:
-            print 'Keyboard Interrupt'
-    finally:
-        pygame.quit()
+        gamemain(args)
+    except KeyboardInterrupt:
+        print('Keyboard Interrupt...')
+        print('Exiting')
 
 
 def gamemain(args):
@@ -46,6 +27,7 @@ def gamemain(args):
     game.clock = pygame.time.Clock()
 
     players.load_players()
+    input.load_translations()
     gamepref.load_prefs()
 
     size = 800, 600
@@ -58,10 +40,9 @@ def gamemain(args):
     if not '-nosound' in args:
         snd.initialize()
     input.init()
-    input.load_translations()
 
     if not txt.initialize():
-        raise pygame.error, "Pygame Font Module Unable to Initialize"
+        raise pygame.error("Pygame Font Module Unable to Initialize")
 
     #create the starting game handler
     from gameinit import GameInit
@@ -72,7 +53,7 @@ def gamemain(args):
     pygame.time.set_timer(pygame.USEREVENT, 1000)
 
 
-    #psyco.profile()
+    #psyco.full()
     gamestart = pygame.time.get_ticks()
     numframes = 0
     #random.seed(0)
@@ -106,12 +87,8 @@ def gamemain(args):
                 continue
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 if event.mod&pygame.KMOD_ALT:
-                    # check that we aren't still loading resources, as changing
-                    # resolution when we are can cause issues
-                    if (not hasattr(handler, 'thread')
-                            or not handler.thread.isAlive()):
-                        game.display = not game.display
-                        gfx.switchfullscreen()
+                    game.display = not game.display
+                    gfx.switchfullscreen()
                     continue
             inputevent = input.translate(event)
             if inputevent.normalized != None:
@@ -132,8 +109,8 @@ def gamemain(args):
         #pygame.time.wait(10)
 
     gameend = pygame.time.get_ticks()
-    #runtime = (gameend - gamestart) / 1000.0
-    #print "FINAL FRAMERATE: ", numframes, runtime, numframes/runtime
+    runtime = (gameend - gamestart) / 1000.0
+    #print "FINAL FRAMERATE: ", numframes, runtime, numframes//runtime
 
 
     #game is finished at this point, do any
@@ -141,6 +118,7 @@ def gamemain(args):
     input.save_translations()
     players.save_players()
     gamepref.save_prefs()
+    pygame.quit()
 
 
 

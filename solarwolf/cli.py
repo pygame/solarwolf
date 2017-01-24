@@ -1,21 +1,4 @@
 #!/usr/bin/env python
-
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 Solarwolf, created by Pete Shinners.
 """
@@ -38,9 +21,20 @@ else:
 def main():
     #figure out our directories
     global DATADIR, CODEDIR
-    localpath = os.path.split(os.path.abspath(sys.argv[0]))[0]
+
+    # first try to get the path from the solarwolf package.
+    try:
+        import solarwolf
+        if type(solarwolf.__path__) == list:
+            localpath = os.path.abspath(solarwolf.__path__[0])
+        else:
+            localpath = os.path.abspath(solarwolf.__path__._path[0])
+    except ImportError:
+        localpath = os.path.split(os.path.abspath(sys.argv[0]))[0]
+
     testdata = localpath
-    testcode = os.path.join(localpath, 'code')
+    testcode = os.path.join(localpath, '.')
+
     if os.path.isdir(os.path.join(testdata, 'data')):
         DATADIR = testdata
     if os.path.isdir(testcode):
@@ -52,13 +46,12 @@ def main():
     checkdependencies()
 
     #install pychecker if debugging
-    game = None
     try:
         import game
         if game.DEBUG >= 2:
             import pychecker.checker
-            print 'Pychecker Enabled'
-    except ImportError, m:
+            print('Pychecker Enabled')
+    except ImportError:
         pass
 
     #run game and protect from exceptions
@@ -66,17 +59,16 @@ def main():
         import main, pygame
         main.main(sys.argv)
     except KeyboardInterrupt:
-        print 'Keyboard Interrupt (Control-C)...'
+        print('Keyboard Interrupt (Control-C)...')
     except:
-        #should wait on any threading
-        #never seen this happen though
-        if game and game.thread:
+        #must wait on any threading
+        if game.thread:
             game.threadstop = 1
             while game.thread:
                 pygame.time.wait(10)
-                print 'waiting on thread...'
+                print('waiting on thread...')
         exception_handler()
-        if not game or game.DEBUG:
+        if game.DEBUG:
             raise
 
 
@@ -99,10 +91,10 @@ def checkdependencies():
     #is correct pygame found?
     try:
         import pygame
-        if pygame.ver < '1.6.1':
-            msgs.append('Requires Pygame-1.6.1 or Greater, You Have ' + pygame.ver)
+        if pygame.ver < '1.5.6':
+            msgs.append('Requires Pygame-1.5.6 or Greater, You Have ' + pygame.ver)
     except ImportError:
-        msgs.append("Cannot import Pygame, install version 1.6.1 or higher")
+        msgs.append("Cannot import Pygame, install version 1.5.6 or higher")
         pygame = None
 
     #check that we have FONT and IMAGE
@@ -117,11 +109,80 @@ def checkdependencies():
         errorbox(msg)
 
 
+
+#Pretty Error Handling Code...
+
+def __windowsbox(title, message):
+    raise ImportError #the MessageBox command is crashing!
+    import win32ui, win32con
+    win32ui.MessageBox(message, title, win32con.MB_ICONERROR)
+
+def __wxpythonbox(title, message):
+    import wxPython.wx as wx
+    class LameApp(wx.wxApp):
+        def OnInit(self): return 1
+    app = LameApp()
+    dlg = wx.wxMessageDialog(None, message, title, wx.wxOK|wx.wxICON_EXCLAMATION)
+    dlg.ShowModal()
+    dlg.Destroy()
+
+def __tkinterbox(title, message):
+    import tkinter, tkinter.messagebox
+    tkinter.Tk().wm_withdraw()
+    tkinter.messagebox.showerror(title, message)
+
+
+def __pygamebox(title, message):
+    try:
+        import pygame
+        pygame.quit() #clean out anything running
+        pygame.display.init()
+        pygame.font.init()
+        screen = pygame.display.set_mode((460, 140))
+        pygame.display.set_caption(title)
+        font = pygame.font.Font(None, 18)
+        foreg, backg, liteg = (0, 0, 0), (180, 180, 180), (210, 210, 210)
+        ok = font.render('Ok', 1, foreg, liteg)
+        okbox = ok.get_rect().inflate(200, 10)
+        okbox.centerx = screen.get_rect().centerx
+        okbox.bottom = screen.get_rect().bottom - 10
+        screen.fill(backg)
+        screen.fill(liteg, okbox)
+        screen.blit(ok, okbox.inflate(-200, -10))
+        pos = [10, 10]
+        for text in message.split('\n'):
+            if text:
+                msg = font.render(text, 1, foreg, backg)
+                screen.blit(msg, pos)
+            pos[1] += font.get_height()
+        pygame.display.flip()
+        stopkeys = pygame.K_ESCAPE, pygame.K_SPACE, pygame.K_RETURN, pygame.K_KP_ENTER
+        while 1:
+            e = pygame.event.wait()
+            if e.type == pygame.QUIT or \
+                       (e.type == pygame.KEYDOWN and e.key in stopkeys) or \
+                       (e.type == pygame.MOUSEBUTTONDOWN and okbox.collidepoint(e.pos)):
+                break
+        pygame.quit()
+    except pygame.error:
+        raise ImportError
+
+handlers = __pygamebox, __tkinterbox, __wxpythonbox, __windowsbox
+
+def __showerrorbox(message):
+    title = os.path.splitext(os.path.split(sys.argv[0])[1])[0]
+    title = title.capitalize() + ' Error'
+    for e in handlers:
+        try:
+            e(title, message)
+            break
+        except (ImportError, NameError, AttributeError):
+            pass
+
 def errorbox(message):
     message = str(message)
     if not message: message = 'Error'
-    import errorbox
-    errorbox.errorbox("Solarwolf Error", message)
+    __showerrorbox(message)
     sys.stderr.write('ERROR: ' + message + '\n')
     raise SystemExit
 
@@ -135,11 +196,9 @@ def exception_handler():
     exception_message = '%s:\n%s\n\n%s\n"%s"'
     message = exception_message % (str(type), str(info), tracetext, tracetop[3])
     if type not in (KeyboardInterrupt, SystemExit):
-        import errorbox
-        errorbox.errorbox("Solarwolf Error", message)
-        sys.stderr.write('ERROR: ' + message + '\n')
-        raise SystemExit
- 
+        __showerrorbox(message)
+    raise
+
 
 
 if __name__ == '__main__': main()

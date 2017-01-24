@@ -1,23 +1,7 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 "gameinit handler. splash and load resources"
 
-import pygame
+import pygame, pygame.draw
+from pygame.locals import *
 import sys, threading
 import game, gfx, snd, txt, input
 
@@ -34,7 +18,7 @@ def loadresources():
     hunt = 'load_game_resources'
     load_total = 0
     load_current = 0
-    allmods = sys.modules.values()
+    allmods = list(sys.modules.values())
     funcs = [(m.__name__, getattr(m, hunt)) for m in allmods if hasattr(m, hunt)]
     load_total = len(funcs)
     m = ''
@@ -46,8 +30,8 @@ def loadresources():
     except:
         #raise
         global load_finished_status, load_finished_message, load_finished_module, load_finished_type
-        load_finished_message = str(sys.exc_value)
-        load_finished_type = str(sys.exc_type) + ' in module ' + m
+        load_finished_message = str(sys.exc_info()[1])
+        load_finished_type = str(sys.exc_info()[0]) + ' in module ' + m
         load_finished_status = -1
     game.thread = None
 
@@ -57,7 +41,7 @@ class GameInit:
         self.prevhandler = prevhandler
         font = txt.Font(None, 20)
         self.font = txt.Font(None, 22)
-        self.rect = pygame.Rect(50, 450, 700, 22)
+        self.rect = Rect(50, 450, 700, 22)
         self.text = font.render('Loading Resources...', 1, (250, 230, 180))
         self.img_powered = gfx.load('pygame_powered.gif')
         self.img_logo = gfx.load('logo.png')
@@ -111,7 +95,7 @@ class GameInit:
 
     def event(self, e):
         if load_finished_status < 0:
-            if e.type in (pygame.KEYDOWN, pygame.MOUSEBUTTONDOWN, pygame.JOYBUTTONDOWN):
+            if e.type in (KEYDOWN, MOUSEBUTTONDOWN, JOYBUTTONDOWN):
                 self.gotfinishinput = 1
 
 
@@ -131,7 +115,7 @@ class GameInit:
         else:
             block = pygame.Surface(size, 0, 32)
         block.fill((5, 50, 5))
-        block.fill((20, 80, 30), pygame.Rect(0, size[1]-2, size[0], 2))
+        block.fill((20, 80, 30), Rect(0, size[1]-2, size[0], 2))
         top = 10
         for i in imgs:
             pos = 10, top
@@ -166,11 +150,11 @@ class GameInit:
         for b in self.blocks:
             gfx.dirty(gfx.surface.blit(*b))
 
-        bar = pygame.Rect(self.rect)
+        bar = Rect(self.rect)
         if load_total:
             bar.width = (float(load_current)/float(load_total)) * bar.width
             gfx.surface.fill((5, 50, 5), bar)
-        r = pygame.Rect(self.rect.left, self.rect.bottom-2, self.rect.width, 2)
+        r = Rect(self.rect.left, self.rect.bottom-2, self.rect.width, 2)
         gfx.surface.fill((20, 80, 30), r)
         gfx.surface.blit(self.text, self.textrect)
         gfx.dirty(self.rect)

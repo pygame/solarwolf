@@ -1,23 +1,7 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 #hud class
 
 import pygame
+from pygame.locals import *
 import game, gfx, txt, score
 
 
@@ -37,17 +21,17 @@ class HUD:
         self.imghud1 = gfx.load('hud.gif')
         self.imghud2 = gfx.load('hud2.gif')
         self.timepos = 24, 102
-        self.wolfrect = pygame.Rect(16, 57, 37, 19)
+        self.wolfrect = Rect(16, 57, 37, 19)
         self.timesize = 64, 382
         self.timestep = self.timesize[1] / 1000.0
         self.time = 0
         self.drawsurface = gfx.surface
         self.drawoffset = 800, 0
         self.imglives = pygame.Surface((1, miniship.get_height()))
-        self.imglives.set_colorkey(0, pygame.RLEACCEL)
+        self.imglives.set_colorkey(0, RLEACCEL)
         self.imglevel = score.render(0)
         self.poslives = 10, 510
-        self.poslevel = pygame.Rect(15, 550, 1, 1) #changed later in drawlevel
+        self.poslevel = Rect(15, 550, 1, 1) #changed later in drawlevel
         self.lastlives = 0
         self.lastlevel = 0
 
@@ -89,7 +73,7 @@ class HUD:
             img = self.imghud1
             top = self.timeheight(self.time)
             bot = self.timeheight(time)
-        rect = pygame.Rect(self.timepos[0], top, self.timesize[0], bot-top)
+        rect = Rect(self.timepos[0], top, self.timesize[0], bot-top)
         r = dest.blit(img, rect, rect)
         gfx.dirty(r.move(offset))
         if not self.time:
@@ -106,7 +90,7 @@ class HUD:
         dest = self.drawsurface
         offset = self.drawoffset
         if not fast:
-            r = pygame.Rect(self.poslives, self.imglives.get_size())
+            r = Rect(self.poslives, self.imglives.get_size())
             r2 = dest.blit(self.imghud1, r, r).move(offset)
         else:
             r2 = None
@@ -123,7 +107,7 @@ class HUD:
                 txt = 'x %d'%lives
                 txt,pos = livesfont.text((150,200,150), txt, pos, 'topleft')
                 self.imglives.blit(txt, pos)
-            self.imglives.set_colorkey(0, pygame.RLEACCEL)
+            self.imglives.set_colorkey(0, RLEACCEL)
         r1 = dest.blit(self.imglives, self.poslives).move(offset)
         gfx.dirty2(r1, r2)
 

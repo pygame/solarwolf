@@ -1,25 +1,9 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 #explosion class
 
 import random, math
 import pygame
-import gfx
+from pygame.locals import *
+import game, gfx
 
 
 images = []
@@ -31,7 +15,7 @@ def load_game_resources():
     if gfx.surface.get_bytesize()>1: #16 or 32bit
         i = 1
         for img in images:
-            img.set_alpha((1.8-math.log(i))*40, pygame.RLEACCEL)
+            img.set_alpha((1.8-math.log(i))*40, RLEACCEL)
             i += 1
 
 
@@ -56,7 +40,7 @@ class Smoke:
             gfx.dirty(r.inflate(1, 2))
 
     def draw(self, gfx):
-        frame = min(self.clocks / 5, 3)
+        frame = int(min(self.clocks // 5, 3))
         img = images[frame]
         r = gfx.surface.blit(img, self.rect)
         gfx.dirty(r.inflate(1, 2))

@@ -1,27 +1,13 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """Gamename input setup handler, part of SOLARWOLF."""
 # Copyright (C) 2002 Aaron "APS" Schlaegel, LGPL, see lgpl.txt
-
+import string, math
 import pygame
+from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
+import score
+import gameplay
 
 
 images = []
@@ -49,6 +35,7 @@ def load_game_resources():
     img = pygame.transform.rotate(gfx.load('ship-up.png'), -90)
     images.append((img, img.get_rect()))
 
+    bgd = 0, 0, 0
     font = txt.Font(None, 50)
     t = font.text((220, 210, 180), 'Setup Controls', (gfx.rect.centerx, 30))
     images.append(t)
@@ -59,11 +46,13 @@ def load_game_resources():
     namefont = txt.Font(None, 46)
     textfontheight = 26
     textfont = txt.Font(None, textfontheight)
+    smallfont = txt.Font('sans', 12)
 
     snd.preload('select_choose', 'select_move', 'incorrect', 'delete')
 
     delimage = gfx.load('btn-delete.gif')
     addimage = gfx.load('btn-add.gif')
+    #allimage = gfx.load('btn-all.gif')
 
 
 class GameSetup:
@@ -91,13 +80,13 @@ class GameSetup:
 
     def moveto(self, pos):
         if self.shipdir == SHIPUP:
-            self.shippos = pos[0] - (self.images[0][1].width / 2), pos[1]
+            self.shippos = pos[0] - (self.images[0][1].width // 2), pos[1]
         elif self.shipdir == SHIPDOWN:
-            self.shippos = pos[0] - (self.images[0][1].width / 2), pos[1] - self.images[0][1].height
+            self.shippos = pos[0] - (self.images[0][1].width // 2), pos[1] - self.images[0][1].height
         elif self.shipdir == SHIPRIGHT:
-            self.shippos = pos[0] - self.images[0][1].width, pos[1] - (self.images[0][1].height / 2)
+            self.shippos = pos[0] - self.images[0][1].width, pos[1] - (self.images[0][1].height // 2)
         else:
-            self.shippos == pos[0], pos[1] - (self.images[0][1].height / 2)
+            self.shippos == pos[0], pos[1] - (self.images[0][1].height // 2)
 
     def displayevent(self, i):
         if i.normalized != None:
@@ -141,8 +130,8 @@ class GameSetup:
 
     def selectdelete(self):
         def ignoreall(x):
-            return x[0] != pygame.NOEVENT
-        mutable = len(filter(ignoreall, self.display[input.actions_order[self.currentaction]]))
+            return x[0] != NOEVENT
+        mutable = len(list(filter(ignoreall, self.display[input.actions_order[self.currentaction]])))
         if mutable > 1:
             snd.play('select_choose')
             self.inputstate = DELETING
@@ -163,10 +152,10 @@ class GameSetup:
     def selectall(self):
         snd.play('select_choose')
         self.clearactionlist()
-        if not input.translations.has_key(pygame.NOEVENT):
-            input.translations[pygame.NOEVENT] = {}
-        input.translations[pygame.NOEVENT][pygame.KEYDOWN] = input.actions_order[self.currentaction]
-        input.translations[pygame.NOEVENT][pygame.JOYBUTTONDOWN] = input.actions_order[self.currentaction]
+        if NOEVENT not in input.translations:
+            input.translations[NOEVENT] = {}
+        input.translations[NOEVENT][KEYDOWN] = input.actions_order[self.currentaction]
+        input.translations[NOEVENT][JOYBUTTONDOWN] = input.actions_order[self.currentaction]
         self.display = input.getdisplay()
         self.buildactionlist()
         self.drawactionlist()
@@ -216,13 +205,13 @@ class GameSetup:
                     if currentcontrol < len(self.display[input.actions_order[self.currentaction]]):
                         self.currentcontrol = currentcontrol
                 elif i.translated == input.LEFT:
-                    self.currentcontrol = (self.currentcontrol - 1) % 6 + 6 * (self.currentcontrol / 6)
+                    self.currentcontrol = (self.currentcontrol - 1) % 6 + 6 * (self.currentcontrol // 6)
                     if self.currentcontrol >= len(self.display[input.actions_order[self.currentaction]]):
                         self.currentcontrol = len(self.display[input.actions_order[self.currentaction]]) - 1
                 elif i.translated == input.RIGHT:
-                    self.currentcontrol = (self.currentcontrol + 1) % 6 + 6 * (self.currentcontrol / 6)
+                    self.currentcontrol = (self.currentcontrol + 1) % 6 + 6 * (self.currentcontrol // 6)
                     if self.currentcontrol >= len(self.display[input.actions_order[self.currentaction]]):
-                        self.currentcontrol = 6 * (self.currentcontrol / 6)
+                        self.currentcontrol = 6 * (self.currentcontrol // 6)
                 snd.play('select_move')
                 self.moveto(self.targetcontrol())
             pass
@@ -268,7 +257,7 @@ class GameSetup:
         global textfontheight
         for l in range(16):
             x = 90 + 100 * (l % 6)
-            y = 36 + 22 * (l / 6)
+            y = 36 + 22 * (l // 6)
             w = 100
             h = textfontheight
             r = pygame.Rect(x, y, w, h)
@@ -276,6 +265,7 @@ class GameSetup:
 
     def buildbuttonlist(self):
         i = 0
+        #for img in (addimage, allimage, delimage):
         for img in (addimage, delimage):
             rect = img.get_rect().move(300 + 250 * i, 10)
             self.buttonlist.append((img, rect))
@@ -314,7 +304,8 @@ class GameSetup:
             img.fill(bgd)
             for sub, pos in subimgs:
                 img.blit(sub, pos)
-            img.set_colorkey(bgd, pygame.RLEACCEL)
+            img.set_colorkey(bgd, RLEACCEL)
+            #img = img.convert()
             rect = img.get_rect().move(0, offsety)
 
             self.actionlist.append((img, rect))

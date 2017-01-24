@@ -1,32 +1,22 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 "Game main menu handler, part of SOLARWOLF."
 
-import math
+import math, os
 import pygame, pygame.draw
+from pygame.locals import *
 import game
 import gfx, snd, txt
 import input
 import players
-import objbox
 import gamecreds, gamenews, gamestart, gamepref
 
+import gamewin
+
+
+
 images = []
+boximages = []
+yboximages = []
+rboximages = []
 fame = None
 
 class MenuItem:
@@ -54,7 +44,7 @@ menu = [
 
 
 def load_game_resources():
-    global menu, images, fame
+    global menu, images, boximages, fame
     images = []
     pos = [20, 380] #[100, 420]
     odd = 0
@@ -72,6 +62,17 @@ def load_game_resources():
     images.append(gfx.load('ship-big.png'))
     images[1].set_colorkey()
     images[2].set_colorkey()
+
+    global boximages, yboximages, rboximages
+    imgs = gfx.load_raw('bigboxes.png')
+    origpal = imgs.get_palette()
+    boximages = gfx.animstrip(imgs)
+    pal = [(g,g,b) for (r,g,b) in origpal]
+    imgs.set_palette(pal)
+    yboximages = gfx.animstrip(imgs)
+    pal = [(g,b,b) for (r,g,b) in origpal]
+    imgs.set_palette(pal)
+    rboximages = gfx.animstrip(imgs)
 
     fame = gfx.load('fame.png')
 
@@ -92,9 +93,9 @@ class GameMenu:
         self.logorectsmall = self.logorect.inflate(-2,-2)
         self.boxtick = 0
         if players.winners:
-            self.boximages = objbox.rbigboximages
+            self.boximages = rboximages
         else:
-            self.boximages = objbox.gbigboximages
+            self.boximages = boximages
         self.boxrect = self.boximages[0].get_rect().move(580, 80)
         self.bigship = images[2]
         self.bigshiprect = self.bigship.get_rect().move(450, 250)
@@ -146,7 +147,7 @@ class GameMenu:
             left += 160
             firstone = 0
 
-        return img, pygame.Rect((gfx.rect.width-size[0]-10, 520), size)
+        return img, Rect((gfx.rect.width-size[0]-10, 520), size)
 
 
 
@@ -180,7 +181,7 @@ class GameMenu:
                 i.set_alpha()
                 c = i.get_colorkey()
                 if c:
-                    i.set_colorkey(c, pygame.RLEACCEL)
+                    i.set_colorkey(c, RLEACCEL)
 
 
     def drawitem(self, item, lit):
@@ -190,7 +191,7 @@ class GameMenu:
             lite = images[0]
             glowval = (math.sin(self.glow) + 2.5) * 50.0
             if self.switchclock == 2:
-                glowval /= 2
+                glowval //= 2
             if gfx.surface.get_bytesize()>1:
                 lite.set_alpha(glowval)
             gfx.surface.blit(lite, item.rect)
@@ -223,14 +224,16 @@ class GameMenu:
     def run(self):
         self.glow += .35
         self.boxtick = (self.boxtick + 1)%15
-        boximg = self.boximages[self.boxtick]
+        boximg = self.boximages[int(self.boxtick)]
 
         if self.startclock:
             alpha = (6-self.startclock)*40
             self.setalphas(alpha, [menu[self.current].img_on, boximg])
+            self.background(self.boxrect)
         elif self.switchclock:
             alpha = (self.switchclock-1)*20
             self.setalphas(alpha, [boximg])
+            self.background(self.boxrect)
             if self.switchclock == 2 and gfx.surface.get_bytesize()>1:
                 menu[self.current].img_on.set_alpha(128)
 
@@ -246,12 +249,10 @@ class GameMenu:
         if self.startclock == 1 or self.switchclock == 1:
             self.setalphas(255, [menu[self.current].img_on] + self.boximages)
 
-        self.background(self.boxrect)
-        gfx.dirty(self.boxrect)
-
         if self.switchclock != 1:
-            gfx.surface.blit(boximg, self.boxrect)
-            
+            r = gfx.surface.blit(boximg, self.boxrect)
+            gfx.dirty(r)
+
             select = menu[self.current]
             for m in [m for m in menu if m is not select]:
                 self.drawitem(m, 0)

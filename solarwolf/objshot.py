@@ -1,24 +1,8 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 #simple enemy class
 
-import pygame
-import gfx, random, math
+import pygame, pygame.image
+from pygame.locals import *
+import gfx, game, random, math
 
 rng = random.Random()
 
@@ -46,7 +30,7 @@ def load_game_resources():
         allimages.append(gfx.animstrip(img))
 
     for i in gfx.animstrip(img):
-        i.set_alpha(128, pygame.RLEACCEL)
+        i.set_alpha(128, RLEACCEL)
         darkimages.append(i)
 
 
@@ -65,7 +49,7 @@ class Shot:
         self.frame = random.random() * 3.0
         self.rect = self.images[0].get_rect()
         self.rect.center = pos
-        self.darkrect = pygame.Rect(self.rect)
+        self.darkrect = Rect(self.rect)
         self.lastrect = None
         self.dead = 0
         self.pos = list(self.rect.topleft)
@@ -91,6 +75,7 @@ class Shot:
         img = allimages[glowset][frame]
         r1 = gfx.surface.blit(img, self.rect)
 
+        #gfx.dirty2(r, self.lastrect)
         r = r1.union(r2)
         gfx.dirty2(r, self.lastrect)
         self.lastrect = r
@@ -106,6 +91,50 @@ class Shot:
             self.dead = 1
         return self.dead
 
+
+#manage fire glitter
+#beware unused, looks mediorce, runs slow
+class Glitter:
+    def __init__(self):
+        self.dots = []
+
+    def update(self, speedadjust):
+        black = gfx.surface.map_rgb(0, 0, 0)
+        draw = gfx.surface.fill
+        dirty = gfx.dirtyrects.append
+        oneone = 1, 1
+
+        dead = 0
+        prelen = len(self.dots)
+        for dot in self.dots:
+            if not dot[1]:
+                break
+            dead += 1
+        if dead > 50:
+            del self.dots[:dead]
+
+        driftCount = 0
+        for i in range(len(self.dots)-1, -1, -1):
+            driftCount = (driftCount+1) % 6
+
+            dot = self.dots[i]
+           #dot[0] is intensity
+           #dot[1] is ( color, rect )
+           #dot[2] is the originating ball's center
+            if dot[0] > 12.0:
+                if dot[1]:
+                    dirty(draw(black, dot[1][1]))
+                    dot[1] = 0
+            else:
+                if driftCount == 1:
+                    dirty( draw(black, dot[1][1]) )
+                    dot[1][1].x = rng.randint( dot[2][0] - 2, dot[2][0] + 3)
+                    dot[1][1].y = rng.randint( dot[2][1] - 2, dot[2][1] + 3)
+                draw(*dot[1])
+                dot[0] += speedadjust
+
+
+
     def add(self, balls, ratio):
         amount = ratio * 4.0
         map = gfx.surface.map_rgb
@@ -115,21 +144,22 @@ class Shot:
         rnd = random.random
         append = self.dots.append
         draw = gfx.surface.fill
+        dirty = gfx.dirtyrects.append
         for b in balls:
             if b.dead:
                 continue
             x, y = b.rect.center
-            for _ in range( _max( 0, rng.randrange( amount-2, amount+3 ) ) ):
+            for d in range( _max( 0, rng.randrange( amount-2, amount+3 ) ) ):
                 lived = rnd()
                 r = _min(255, _int(100.0+lived*100.0))
                 g = _min(255, _int( 20.0+lived*240.0))
                 b = _min(255, _int( 2.0+lived*30.0))
-                color = map(r, g, b)
+                color = list(map(r, g, b))
                 r1 = rng.randrange( -5, 6 )
                 r2 = rng.randrange( -5, 6 )
                 #r1 = abs(r1*r1*(3-r1-r1)-.5)*10.0
                 #r2 = abs(r2*r2*(3-r2-r2)-.5)*10.0
                 size = rng.randrange( 1, 3 )
-                r = pygame.Rect(r1 + x, r2 + y, size, size)
+                r = Rect(r1 + x, r2 + y, size, size)
                 append( [lived * 9.0, (color, r), (x,y)] )
                 draw(color, r)

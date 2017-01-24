@@ -1,34 +1,18 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 #player data... wooo
 
 
 #each player needs a name, guid, score
 #high score list has name, guid, score
 
-import random, sys, game, pickle
+import time, random, sys, game, pickle, tempfile
+import os
 
 players = []
 winners = []
 
 
 def new_guid():
-    return str(random.randint(0, sys.maxint-1))
+    return str(random.randint(0, sys.maxsize-1))
 
 def make_winner(player):
     player.winner = 1
@@ -110,7 +94,7 @@ def save_players():
         p = pickle.Pickler(f, 1)
         p.dump(allplayers)
         f.close()
-    except (IOError, OSError), msg:
-        import errorbox
-        errorbox.errorbox("Error Saving Player Data",
+    except (IOError, OSError) as msg:
+        import messagebox
+        messagebox.error("Error Saving Player Data",
 "There was an error saving the player data.\nCurrent player data has been lost.\n\n%s"%msg)

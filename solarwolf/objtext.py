@@ -1,23 +1,7 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 #text class
 
 import pygame
+from pygame.locals import *
 import game, gfx, txt
 
 fonts = []
@@ -34,9 +18,10 @@ def load_game_resources():
 class Text:
     def __init__(self, message):
         global availpos, numtexts
+        bgd = 0, 0, 0
         self.img, self.rect = fonts[0].text((128, 255, 255), message, availpos)
         if gfx.surface.get_bytesize() > 1:
-            self.img.set_alpha(128, pygame.RLEACCEL)
+            self.img.set_alpha(128, RLEACCEL)
         self.clocks = game.text_length
         self.dead = 0
         availpos = availpos[0], availpos[1] + self.rect.height + 10

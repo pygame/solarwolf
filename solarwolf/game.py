@@ -1,24 +1,8 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """game module, place for global game state"""
 
 import os
-from pygame import Rect
+from pygame.rect import Rect
+from io import StringIO
 
 
 
@@ -26,9 +10,9 @@ from pygame import Rect
 #various data constants
 start_lives = 3
 
-ship_fastspeed = 6.6
-ship_slowspeed = 4.6
-shot_speed = 2.6
+ship_fastspeed = 7
+ship_slowspeed = 5
+shot_speed = 3
 
 guard_speed = 4
 guard_fire = .01
@@ -39,13 +23,12 @@ arena = Rect(55, 50, 590, 490)
 
 poweruptime = 1200.0
 powerupspeed = 2.0
-powerupwait = 29.0
+powerupwait = 26.0 #45.0
 asteroidspeed = 1.4
 
-threadstop = False
 timeleft = 0.0
 timetick = 0.0
-timefactor = 12.8    #how quickly time drops (bigger = slower)
+timefactor = 12.2    #how quickly time drops (bigger = slower)
 speedmult = 0
 
 musictime = 1000 * 120 #two minutes
@@ -53,8 +36,8 @@ musictime = 1000 * 120 #two minutes
 text_length = 80  #frames text is displayed in-game
 
 
-site_url = 'http://code.google.com/p/solarwolf/'
-news_url = 'http://solarwolf.googlecode.com/svn/wiki/News.wiki'
+site_url = 'http://pygame.org/shredwheat/solarwolf'
+news_url = 'http://pygame.org/shredwheat/solarwolf/thenews.html'
 
 
 
@@ -122,8 +105,10 @@ def make_dataname(filename):
         home = os.environ['HOME']
         fullhome = os.path.join(home, '.solarwolf')
         if not os.path.isdir(fullhome):
-            try: os.mkdir(fullhome, 0755)
-            except OSError: fullhome = home
+            try:
+                os.mkdir(fullhome, 0o755)
+            except OSError:
+                fullhome = home
         filename = os.path.join(fullhome, filename)
     else:
         filename = get_resource(filename)
@@ -131,5 +116,5 @@ def make_dataname(filename):
     filename = os.path.normpath(filename)
     return filename
 
-version = "1.5.3"
+version = "1.6"
 DEBUG = 0

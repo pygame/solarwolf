@@ -1,25 +1,9 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 #powerup class
 
 import random
 import pygame
-import game, gfx
+from pygame.locals import *
+import game, gfx, snd, objpopshot
 
 images = []
 origsize = 0,0
@@ -59,8 +43,11 @@ class Asteroid:
             self.pos = [0.0, float(r - 700)]
 
         self.animspeed = (random.random() + 2.0) * .1
+        #self.rotspeed = (random.random() + 3.0) * 0.08 * 0.0
         if random.random() < .5:
             self.animspeed = -self.animspeed
+        #if random.random() < .5:
+        #    self.rotspeed = -self.rotspeed
 
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
@@ -78,6 +65,7 @@ class Asteroid:
 
     def erase(self, background):
         r = background(self.rect)
+        #if self.dead:
         gfx.dirty(r)
 
     def draw(self, gfx):
@@ -86,7 +74,9 @@ class Asteroid:
 
     def tick(self, speedadjust):
         self.time += speedadjust
+        #rot = int(self.time * self.rotspeed)
         anm = int(self.time * self.animspeed)
+        #anim = self.images[rot % len(self.images)]
         anim = self.images
         self.image = anim[anm % len(anim)]
 

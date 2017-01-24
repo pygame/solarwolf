@@ -1,23 +1,7 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """audio class, helps everyone to audio"""
 
 import pygame, os
+from pygame.locals import *
 import game, input
 
 
@@ -44,15 +28,16 @@ def preload(*names):
             sound_cache[name] = None
         return
     for name in names:
-        if not sound_cache.has_key(name):
+        if name not in sound_cache:
             fullname = os.path.join('data', 'audio', name+'.wav')
+            #file = game.get_resource(name+'.wav')
             try: sound = mixer.Sound(fullname)
             except: sound = None
             sound_cache[name] = sound
 
 
 def fetch(name):
-    if not sound_cache.has_key(name):
+    if name not in sound_cache:
         preload(name)
     return sound_cache[name]
 
@@ -81,12 +66,12 @@ CurrentSong = None
 CurrentVolume = 1.0
 SwitchingSongs = 0
 def playmusic(musicname, volume=1.0):
+    if not music or not game.music: return
     global CurrentSong, SwitchingSongs, CurrentVolume
     if musicname == CurrentSong:
         return
     CurrentSong = musicname
     CurrentVolume = volume
-    if not music or not game.music: return
     if SwitchingSongs:
         CurrentSong = musicname
     SwitchingSongs = 1
@@ -117,9 +102,7 @@ def tweakmusicvolume():
     prefvolume = [0, 0.6, 1.0][game.music]
     if not prefvolume:
         music.stop()
-    if CurrentSong and not music.get_busy():
-        fullname = os.path.join('data', 'music', CurrentSong)
-        music.load(fullname)
+    if not music.get_busy():
         music.play(-1)
     music.set_volume(prefvolume*CurrentVolume)
 

@@ -1,20 +1,3 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 import objbox, game
 import pygame
 
@@ -37,7 +20,7 @@ def init():
             curtitle2 = l[1:].strip()
             continue
         if curlev and (not l or l[0] == '!'):
-            for _ in range(7-len(curlev)):
+            for i in range(7-len(curlev)):
                 curlev.append('         ')
             curlev.insert(0, curtitle2)
             curlev.insert(0, curtitle)
@@ -57,14 +40,14 @@ def makelevel(level):
     "returns (list, startcenter) level number"
     if not initialized: init()
     lev = Levels[level%len(Levels)]
-    touches = level/len(Levels) + 1
-    #passes = (level>len(Levels) and 2) or 1
+    touches = level//len(Levels) + 1
+    passes = (level>len(Levels) and 2) or 1
     boxlist = []
     size = 58, 58
     corner = 106, 106
     startpos = corner[0]+236, corner[1]+182
     pos = [corner[0], corner[1]]
-    numboxes = level/2
+    numboxes = level//2
     for row in lev[2:]:
         cells = list(row)
         if touches == 2:
@@ -82,23 +65,27 @@ def makelevel(level):
         pos[0] = corner[0]
         pos[1] = pos[1] + size[1]
     msg = ''
-    msg = lev[touches-1]
+    msg = lev[int(touches-1)]
     if level == maxlevels()-1: msg = 'Final Level'
     return boxlist, startpos, msg, numboxes
 
 
 def preview(level):
-    "returns a preview image for the given level number"
+    "returns (list, startcenter) level number"
     if not initialized: init()
     lev = Levels[level%len(Levels)]
-    touches = level/len(Levels) + 1
+    touches = level//len(Levels) + 1
+    passes = (level>len(Levels) and 2) or 1
+    boxlist = []
     size = 5, 5
     corner = 5, 5
+    startpos = corner[0]+236, corner[1]+182
     pos = [corner[0], corner[1]]
+    numboxes = level//2
     img = pygame.Surface((52, 42))
     img.fill((20, 20, 30))
     pygame.draw.rect(img, (255, 255, 255), (0,0,51,41), 2)
-    colors = (150,150,150), objbox.rbox_color, objbox.gbox_color, objbox.bbox_color
+    colors = (150,150,150), (60, 255, 60), (255, 255, 60), (255, 60, 60)
     for row in lev[2:]:
         cells = list(row)
         if touches == 2:
@@ -122,5 +109,5 @@ def maxlevels():
 def numrocks(level):
     if level >= maxlevels():
         return 18
-    percent = float(level) / maxlevels()
+    percent = float(level) // maxlevels()
     return int(percent * 12)

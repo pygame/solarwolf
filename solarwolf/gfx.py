@@ -1,24 +1,8 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """graphics class, helps everyone to draw"""
 
-import sys, pygame.image
-from pygame.locals import Rect, FULLSCREEN, HWSURFACE, RLEACCEL
+import sys, pygame, pygame.image
+from pygame.locals import *
+
 import game, stars
 
 #the accessable screen surface and size
@@ -48,8 +32,8 @@ def initialize(size, fullscreen):
         if surface.get_bytesize() == 1:
             loadpalette()
 
-    except pygame.error, msg:
-        raise pygame.error, 'Cannot Initialize Graphics' + str(msg)
+    except pygame.error as msg:
+        raise pygame.error('Cannot Initialize Graphics')
     starobj = stars.Stars()
 
 
@@ -70,7 +54,7 @@ def dirty(rect):
 def dirty2(rect1, rect2):
     if not rect2:
         dirtyrects.append(rect1)
-    elif rect1.colliderect(rect2):
+    elif rect.colliderect(rect2):
         dirtyrects.append(rect1.union(rect2))
     else:
         dirtyrects.append(rect1)
@@ -96,6 +80,8 @@ def update():
         screencapture.blit(surface, (0,0))
         clipcapture = surface.get_clip()
         initialize(surface.get_size(), game.display)
+#        if game.handler:
+#            game.handler.background(rect)
         surface.blit(screencapture, (0,0))
 
         pygame.display.update()
@@ -103,6 +89,13 @@ def update():
 
 
 def optimize(img):
+    #~ if surface.get_alpha():
+        #~ img.set_alpha()
+        #~ if surface.get_flags() & HWSURFACE:
+            #~ img.set_colorkey(0)
+        #~ else:
+            #~ img.set_colorkey(0, RLEACCEL)
+    #~ elif not surface.get_flags() & HWSURFACE:
     if not surface.get_flags() & HWSURFACE:
         clear = img.get_colorkey()
         if clear:

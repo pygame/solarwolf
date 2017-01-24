@@ -1,27 +1,12 @@
-# solarwolf - collecting and dodging arcade game
-# Copyright (C) 2006  Pete Shinners <pete@shinners.org>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 """in game help screens"""
 
 import math
 import pygame
+from pygame.locals import *
 import game
 import gfx, snd, txt
-import objtext
+import input
+import gameplay, objtext
 
 fonts = []
 
@@ -143,7 +128,7 @@ QuickHelp = {
 
 
 def help(helpname, helppos):
-    if not game.player.help.has_key(helpname):
+    if helpname not in game.player.help:
         game.player.help[helpname] = 1
         if game.help == 0:
             game.handler = GameHelp(game.handler, helpname, helppos)
@@ -171,8 +156,8 @@ class GameHelp:
                 snd.music.set_volume(vol * 0.6)
         snd.play('chimein')
 
-        #if hasattr(game.handler, 'player'):
-        #    game.handler.player.cmd_turbo(0)
+        if hasattr(game.handler, 'player'):
+            game.handler.player.cmd_turbo(0)
 
     def quit(self):
         snd.play('chimeout')
@@ -194,7 +179,7 @@ class GameHelp:
 
 
     def drawhelp(self, name, pos):
-        if Help.has_key(name):
+        if name in Help:
             text = Help[name]
             lines = text.splitlines()
             for x in range(1, len(lines)):
@@ -226,7 +211,7 @@ class GameHelp:
             self.needdraw = 0
             self.drawhelp(self.helpname, self.helppos)
 
-        ratio = game.clockticks / 25
+        ratio = game.clockticks // 25
         speedadjust = max(ratio, 1.0)
         self.time += speedadjust
 
