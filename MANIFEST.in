@@ -1,0 +1,2 @@
+recursive-include solarwolf *
+include README.rst lgpl.txt
