@@ -55,9 +55,9 @@ def __wxpython(title, message):
 
 
 def __tkinter(title, message):
-    import Tkinter, tkMessageBox
-    Tkinter.Tk().wm_withdraw()
-    tkMessageBox.showerror(title, message)
+    import tkinter, tkinter.messagebox
+    tkinter.Tk().wm_withdraw()
+    tkinter.messagebox.showerror(title, message)
 
 
 def __pygame(title, message):
@@ -99,7 +99,7 @@ def __pygame(title, message):
 
 def __stdout(title, message):
     text = 'ERROR: ' + title + '\n' + message
-    print text
+    print(text)
 
 handlers = __pyqt4, __tkinter, __wxpython, __pygame
 
