@@ -161,7 +161,7 @@ class GameInit:
 
         now = pygame.time.get_ticks()
         #we let the screen stay up for at about 1 second
-        if not self.thread.isAlive():
+        if not self.thread.is_alive():
             if load_finished_status >= 0:
                 if now-self.starttime > 1200:
                     self.quit()
