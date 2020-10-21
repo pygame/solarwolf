@@ -78,7 +78,7 @@ much easier to pass the level and beat the skip timer.""",
 
 "Shot Blocker":"""Shot Blocker Power Up
 This Power Up destroys all the bullets currently in space.
-It can be a life saver when things have gotten crazy.""",
+It can be a life saver when things have gotten difficult.""",
 
 "Shield":"""Shield Power Up
 This powerup enables a temporary shield on your SolarWolf
