@@ -11,8 +11,8 @@ symbols = []
 
 def load_game_resources():
     global images, symbols
-    images = gfx.animstrip(gfx.load('powerup.png'))
-    symbols = gfx.animstrip(gfx.load('powereffects.png'))
+    images = gfx.animstrip(gfx.load_raw('powerup.png'))
+    symbols = gfx.animstrip(gfx.load_raw('powereffects.png'))
     snd.preload('select_choose')
 
 
