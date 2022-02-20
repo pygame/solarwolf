@@ -1,9 +1,11 @@
 """graphics class, helps everyone to draw"""
 
-import sys, pygame, pygame.image
+import sys, platform, pygame, pygame.image
 from pygame.locals import *
 
 import game, stars
+
+IS_MAC = 'Darwin' in platform.system()
 
 #the accessable screen surface and size
 surface = None
@@ -96,6 +98,16 @@ def optimize(img):
         #~ else:
             #~ img.set_colorkey(0, RLEACCEL)
     #~ elif not surface.get_flags() & HWSURFACE:
+
+    if IS_MAC:
+        # SDL2 MacOS fix. See https://github.com/pygame/pygame/issues/721
+        if not surface.get_flags() & HWSURFACE:
+            clear = img.get_colorkey()
+            if clear:
+                img.set_colorkey(clear, RLEACCEL)
+                return img.convert()
+        return img.convert_alpha()
+
     if not surface.get_flags() & HWSURFACE:
         clear = img.get_colorkey()
         if clear:
