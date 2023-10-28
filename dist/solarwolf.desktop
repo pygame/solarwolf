@@ -2,6 +2,8 @@
 Version=1.6
 Type=Application
 Name=SolarWolf
-Icon=solarwolf.png
-Exec=/usr/games/solarwolf
+Icon=solarwolf
+Exec=solarwolf
 Categories=Application;Game;ArcadeGame
+Comment=Collect the boxes and don't become mad
+Keywords=pygame;boxes;space;ship;
