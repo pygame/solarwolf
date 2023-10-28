@@ -148,7 +148,12 @@ class GameNews:
             if not news:
                 self.makebadnews(' ', 'Invalid News File')
                 return
-            self.newsversion = news[0].split()[-1]
+            newsparts = news[0].split()
+            if not newsparts:
+                self.makebadnews(' ', 'Invalid News File')
+                return
+
+            self.newsversion = newsparts[-1]
             newsitems = []
             title = date = None
             body = []
