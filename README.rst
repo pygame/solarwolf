@@ -1,4 +1,4 @@
-SolarWolf - http://pygame.org/shredwheat/solarwolf
+SolarWolf - http://pygame.org/shredwheat/solarwolf/index.shtml
 by Pete "ShredWheat" Shinners" - pete@shinners.org
 
 SolarWolf is an action/arcade game written entirely in Python.
