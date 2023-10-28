@@ -30,7 +30,7 @@ setup(
     # package_data={'solarwolf': []},
     url='https://github.com/pygame/solarwolf',
     install_requires=['pygame'],
-    version='1.6.0.dev5',
+    version='1.6.0.dev6',
     entry_points={
         'console_scripts': [
             'solarwolf=solarwolf.cli:main',
