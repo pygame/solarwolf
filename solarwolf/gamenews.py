@@ -234,7 +234,7 @@ class GameNews:
         self.clocks += 1
         self.cleartext()
 
-        if self.thread and (not self.thread.isAlive() and self.success):
+        if self.thread and (not self.thread.is_alive() and self.success):
             self.download_finished()
 
         clearme = None
