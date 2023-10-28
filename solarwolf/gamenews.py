@@ -49,7 +49,16 @@ def load_game_resources():
 def downloadfunc(gamenews):
     global news_downloaded
     try:
-        news = urllib.request.urlopen(game.news_url).readlines()
+        req = urllib.request.Request(
+            game.news_url,
+            data=None,
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36'
+            }
+        )
+
+        f = urllib.request.urlopen(req)
+        news = [n.decode('utf-8') for n in f.readlines()]
     except:
         gamenews.downcur = 3
         return
