@@ -3,11 +3,11 @@
 
 [Setup]
 AppName=SolarWolf
-AppVerName=SolarWolf 1.5
+AppVerName=SolarWolf 1.6
 AppPublisher=Pete Shinners
-AppPublisherURL=http://pygame.org/shredwheat/solarwolf
-AppSupportURL=http://pygame.org/shredwheat/solarwolf
-AppUpdatesURL=http://pygame.org/shredwheat/solarwolf
+AppPublisherURL=http://pygame.org/shredwheat/solarwolf/index.shtml
+AppSupportURL=http://pygame.org/shredwheat/solarwolf/index.shtml
+AppUpdatesURL=http://pygame.org/shredwheat/solarwolf/index.shtml
 DefaultDirName={pf}\SolarWolf
 DefaultGroupName=SolarWolf
 DisableProgramGroupPage=true
@@ -173,7 +173,7 @@ Source: ..\solarwolf-1.4\dist\solarwolf\transform.pyd; DestDir: {app}
 
 
 [INI]
-Filename: {app}\solarwolf.url; Section: InternetShortcut; Key: URL; String: http://pygame.org/shredwheat/solarwolf
+Filename: {app}\solarwolf.url; Section: InternetShortcut; Key: URL; String: http://pygame.org/shredwheat/solarwolf/index.shtml
 
 [Icons]
 Name: {group}\SolarWolf; Filename: {app}\solarwolf.exe; IconIndex: 0
