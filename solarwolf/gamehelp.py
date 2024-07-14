@@ -21,7 +21,7 @@ Help = {
 You pilot the mighty SolarWolf fleet of ships.
 -
 There are no weapons, but it has the most advanced
-manuevering of it's kind. Control your ship with the
+manuevering of its kind. Control your ship with the
 arrow keys or a joystick.
 (You can also use "vi" keys, if you know what that is.)
 -
