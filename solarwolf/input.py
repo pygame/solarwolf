@@ -16,6 +16,7 @@ LEFT      = 3
 RIGHT     = 4
 PRESS     = 5
 ABORT     = 6
+STOP      = 7
 
 # axis norm constants, add 2 for every axis
 AXISLESS  = 0
@@ -38,6 +39,7 @@ translations_default = {
         K_RIGHT: RIGHT,
         K_RETURN: PRESS,
         K_SPACE: PRESS,
+        K_s: STOP,
         K_KP8: UP,
         K_KP2: DOWN,
         K_KP4: LEFT,
@@ -96,10 +98,11 @@ actions_text = {
     RIGHT: "Right",
     PRESS: "Turbo",
     ABORT: "Abort",
+    STOP: "Stop",
 }
 
 actions_order = [
-    UP, DOWN, LEFT, RIGHT, PRESS, ABORT
+    UP, DOWN, LEFT, RIGHT, PRESS, ABORT, STOP
 ]
 
 joystick = None

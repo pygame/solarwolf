@@ -16,9 +16,9 @@ credits = (
     ('Special Thanks', ('David "Futility" Clark', 'Shandy Brown', 'John "Jacius" Croisant', 'Guido "Python" van Rossom', 'Sam "SDL" Lantinga')),
 )
 
-licenseinfo = ('This program is free software. You are encouraged to',
-               'make copies and modify it, subject to the LGPL.',
-               'See "lgpl.txt" file for details.')
+licenseinfo = ('이 프로그램은 무료 소프트웨어입니다.',
+                '복사 및 수정이 가능하며, LGPL 의 조건을 준수해야 합니다.',
+                '자세한 내용은 "lgpl.txt" 파일을 참고하세요')
 
 
 fonts = []
@@ -27,8 +27,9 @@ images = []
 def load_game_resources():
     global fonts, images
     fontname = None
-    fonts.append((txt.Font(fontname, 30), (50, 120, 100)))
-    fonts.append((txt.Font(fontname, 44), (100, 100, 250)))
+    # 제작진 이름 폰트
+    fonts.append((txt.Font(fontname, 40), (50, 120, 100))) #----------- 폰트 30에서 25로 변경 -----------
+    fonts.append((txt.Font(fontname, 30), (100, 100, 250))) #----------- 폰트 44에서 30로 변경 -----------
 
     img = gfx.load('oldsolarfox.png')
     r = img.get_rect()
@@ -51,7 +52,7 @@ def load_game_resources():
     r = img.get_rect().move(20, 5)
     images.append((img, r))
 
-    font = txt.Font(None, 15)
+    font = txt.Font(None, 13) # ------------ licenseinfo 폰트 15에서 13으로 변경 --------------
     top = 560
     mid = 400
     for l in licenseinfo:

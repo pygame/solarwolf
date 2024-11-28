@@ -1,67 +1,31 @@
-#score rendering routines
-
 import pygame
 from pygame.locals import *
-import game, gfx, math
-from random import randint
-
-
-img_1 = None
-img_5 = None
-img_10 = None
-img_50 = None
-
-
-def load_game_resources():
-    global img_1, img_5, img_10, img_50
-    img_1 = gfx.load('score_1.png')
-    img_5 = gfx.load('score_5.png')
-    img_10 = gfx.load('score_10.png')
-    img_50 = gfx.load('score_50.png')
-
+import game, gfx, math, txt
+from pygame.font import Font
 
 def render(score):
-    imgs = []
-
+    #0일땐 출력하지 않게 함
     if score <= 0:
-        out = pygame.Surface(img_1.get_size()).convert()
-        out.set_colorkey(0, RLEACCEL)
-        return out
+        # 기존 코드와 동일한 크기의 빈 Surface 생성
+        empty_surface = pygame.Surface((30, 36))  # 크기는 적절히 조정 가능
+        empty_surface.set_colorkey(0, RLEACCEL)
+        return empty_surface
     
-    if score >= 50:
-        imgs.append(img_50)
-        score -= 50
-    while score >= 40:
-        imgs.append(img_10)
-        imgs.append(img_50)
-        score -= 40
-    while score >= 10:
-        imgs.append(img_10)
-        score -= 10
-    while score >= 9:
-        imgs.append(img_1)
-        imgs.append(img_10)
-        score -= 9
-    while score >= 5:
-        imgs.append(img_5)
-        score -= 5
-    while score >= 4:
-        imgs.append(img_1)
-        imgs.append(img_5)
-        score -= 4
-    while score:
-        imgs.append(img_1)
-        score -= 1
-
-    width = 0
-    for i in imgs:
-        width += i.get_width()
+    # 한글 폰트 사용
+    font = Font(txt.font_path, 20)  #--- 단계 폰트를 36에서 20로 변경 ---
     
-    out = pygame.Surface((width, img_1.get_height())).convert()
-    pos = 0
-    for i in imgs:
-        out.blit(i, (pos, 0))
-        pos += i.get_width()
 
-    out.set_colorkey(0, RLEACCEL)
-    return out
+    # '[숫자]단계' 형식으로 텍스트 생성
+    level_text = f"단계 {score}"
+    
+    # 흰색으로 텍스트 렌더링
+    text_surface = font.render(level_text, True, (255, 255, 255))
+    
+    # 투명한 배경을 위한 설정
+    text_surface.set_colorkey(0, RLEACCEL)
+    
+    return text_surface
+
+# 게임 리소스 로드 함수는 더 이상 필요없으므로 비워둡니다
+def load_game_resources():
+    pass

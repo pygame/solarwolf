@@ -134,3 +134,6 @@ class Ship:
         if game.thruster:
             onoff = not onoff
         self.turbo = onoff
+
+    def cmd_stop(self):
+        self.move = [0, 0]

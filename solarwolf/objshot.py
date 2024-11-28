@@ -39,11 +39,12 @@ def updateglow(speedadjust):
     glowtime += speedadjust * .2
     glowset = int((math.sin(glowtime)*.5+.5) * len(allimages))
 
-
+#총알 속도 추가
 class Shot:
     blockrocks = 1
+
     def __init__(self, pos, move):
-        self.move = move
+        self.move = move  # 초기 이동 속도 (x, y) 벡터
         self.images = images
         self.numframes = len(self.images)
         self.frame = random.random() * 3.0
@@ -55,6 +56,7 @@ class Shot:
         self.pos = list(self.rect.topleft)
         self.time = 0.0
         self.numbrights = float(len(images))
+        self.speed_multiplier = 1.0  # 속도 배수 (기본값 1.0)
 
     def prep(self, screen):
         pass
@@ -67,29 +69,36 @@ class Shot:
                 self.lastrect = None
 
     def draw(self, gfx):
-        frame = int(self.frame-1.0) % self.numframes
+        frame = int(self.frame - 1.0) % self.numframes
         img = darkimages[frame]
-        r2 = gfx.surface.blit(img, self.rect.move(-self.move[0]*2, -self.move[1]*2))
+        r2 = gfx.surface.blit(img, self.rect.move(-self.move[0] * 2, -self.move[1] * 2))
 
         frame = int(self.frame) % self.numframes
         img = allimages[glowset][frame]
         r1 = gfx.surface.blit(img, self.rect)
 
-        #gfx.dirty2(r, self.lastrect)
         r = r1.union(r2)
         gfx.dirty2(r, self.lastrect)
         self.lastrect = r
 
-    def tick(self, speedadjust = 1.0):
-        self.frame += speedadjust * .5
-        self.pos[0] += self.move[0] * speedadjust
-        self.pos[1] += self.move[1] * speedadjust
-        self.time += speedadjust * .1
-        self.images = images[int(math.cos(self.time)*self.numbrights)]
+    def tick(self, speedadjust=1.0):
+        self.frame += speedadjust * 0.5
+        # 속도 배수를 이동 속도에 적용
+        self.pos[0] += self.move[0] * speedadjust * self.speed_multiplier
+        self.pos[1] += self.move[1] * speedadjust * self.speed_multiplier
+        self.time += speedadjust * 0.1
+        self.images = images[int(math.cos(self.time) * self.numbrights)]
         self.rect.topleft = self.pos
         if not gfx.rect.colliderect(self.rect):
             self.dead = 1
         return self.dead
+
+    def set_speed_multiplier(self, multiplier):
+        """
+        총알 속도 배수를 설정하는 메서드
+        :param multiplier: 적용할 속도 배수
+        """
+        self.speed_multiplier = multiplier
 
 
 #manage fire glitter

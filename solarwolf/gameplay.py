@@ -112,6 +112,8 @@ class GamePlay:
                 self.player.cmd_right()
             elif i.translated == input.PRESS:
                 self.player.cmd_turbo(1)
+            elif i.translated == input.STOP:
+                self.player.cmd_stop()
 
 
     def event(self, e):
@@ -348,7 +350,7 @@ class GamePlay:
         self.grabbedboxes = 0
         self.numdeaths += 1
         if game.comments >= 2 and len(self.boxobjs) <= 2:
-            self.textobjs.append(objtext.Text('Doh, so close'))
+            self.textobjs.append(objtext.Text('아, 아깝다, 거의 됐는데!'))
         elif game.comments >= 2 and self.numdeaths > 1:
             self.textobjs.append(objtext.Text(game.Insults[self.complement]))
             self.complement = (self.complement + 1) % len(game.Insults)
@@ -372,7 +374,7 @@ class GamePlay:
                 self.hud.drawlives(self.lives_left)
                 self.changestate('playerstart')
                 if game.comments >= 2 and not self.lives_left:
-                    self.textobjs.append(objtext.Text("Last Ship, Don't Blow It"))
+                    self.textobjs.append(objtext.Text("마지막 배야, 망치지 마"))
             else:
                 self.changestate('gameover')
         self.tickleveltime(self.speedadjust * 1.5)
@@ -562,7 +564,7 @@ class GamePlay:
         if game.clock.get_fps() < 25:
             self.poptime = 1
         if game.comments >= 1:
-            self.textobjs.append(objtext.Text('Level Skipped'))
+            self.textobjs.append(objtext.Text('레벨 건너뛰기'))
         self.skiptime = 25
         for s in self.spikeobjs:
             s.dead = 1
@@ -629,7 +631,7 @@ class GamePlay:
 
     def gamestart_end(self):
         if game.comments >= 1:
-            self.textobjs.append(objtext.Text('Begin'))
+            self.textobjs.append(objtext.Text('시작'))
         if self.whip:
             self.whip.stop()
         del self.ticks
@@ -640,7 +642,7 @@ class GamePlay:
         snd.play('gameover')
         self.ticks = 5
         if not self.gamewon:
-            self.textobjs.append(objtext.Text('Game Over'))
+            self.textobjs.append(objtext.Text('게임 오버'))
             for g in self.guardobjs:
                 if not g.killed:
                     g.killed = 1

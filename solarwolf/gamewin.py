@@ -7,20 +7,19 @@ import game, gfx, snd, txt
 import gameplay, gamemenu, players
 
 
-
-cheer = (
-    'Congratulations!',
-    'You Beat The Game!',
+#--- 한글로 변경 ---
+cheer_korean = (
+    '축하합니다!',
+    '당신은 게임을 클리어했습니다!',
     ' ',
-    'The known galaxy is once again safe',
-    'from the unsightly Power Cubes blocking',
-    'everyone\'s clear view of space. The',
-    'deadly Guardian\'s plan of a littered skyline',
-    'has been foiled by your cunning and skill.',
+    '알려진 은하는 다시 한 번 안전해졌습니다.',
+    '모두의 시야를 가로막던 보기 흉한 파워 큐브들로부터 말이죠.',
+    '치명적인 가디언의 어지러운 계획은',
+    '당신의 기지와 기술로 좌절되었습니다.',
     '',
-    'We can only hope that one day this threat',
-    'never returns, or the power of the SolarWolf',
-    'will once again be put to the test.',
+    '우리는 이 위협이 다시는 돌아오지 않기를 바랍니다.',
+    '그러나 필요하다면 SolarWolf의 힘이',
+    '다시 한 번 시험대에 오를 것입니다.',
 )
 
 

@@ -17,11 +17,11 @@ downimgs = []
 news_downloaded = 0
 ship = None
 
-
+#--- 한글로 변경 ---
 Options = [
-"Main Menu",
-"Download News",
-"Visit Website",
+"메인 메뉴",
+"뉴스 다운로드",
+"사이트 방문",
 ]
 
 
@@ -185,7 +185,7 @@ class GameNews:
                     self.imgs.append((text, r))
                 top += 24
         else:
-            self.makebadnews(' ', 'Cannot Download News')
+            self.makebadnews(' ', '소식을 다운로드 할 수 없습니다.')    #--- 한글로 변경 ---
 
 
     def download_start(self):

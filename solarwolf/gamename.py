@@ -55,7 +55,7 @@ def load_game_resources():
         nameletters.append([rect, rect2, None])
 
     font = txt.Font(None, 40)
-    img = font.render('Enter Your Name:', 1, (220, 210, 180), bgd).convert()
+    img = font.render('이름을 적으시오:', 1, (220, 210, 180), bgd).convert()    #--- 이름을 적으시오 한글로 변경 ---
     img.set_colorkey(bgd, RLEACCEL)
     r = img.get_rect()
     r.center = gfx.rect.centerx, 70

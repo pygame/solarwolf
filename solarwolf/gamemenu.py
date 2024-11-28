@@ -46,22 +46,23 @@ menu = [
 def load_game_resources():
     global menu, images, boximages, fame
     images = []
-    pos = [20, 380] #[100, 420]
+    pos = [15, 380] #[100, 420] -> [20, 380]
     odd = 0
     for m in menu:
         m.init(pos)
-        pos[0] += 150
-        odd = (odd+1)%2
-        if odd:
-            pos[1] += 20
-        else:
-            pos[1] -= 20
-    images.append(gfx.load('menu_on_bgd.png'))
-    images[0].set_colorkey(0)
+        pos[0] += 150   
+        # odd = (odd+1)%2 #---- 주석 처리를 해서 메뉴의 상하 위치를 똑같은 위치를 유지하게 한다. ----> 수정 사항
+        # if odd:
+        #     pos[1] += 20
+        # else:
+        #     pos[1] -= 20
+
+    #images.append(gfx.load('menu_on_bgd.png')) #---- 메뉴를 선택할 때 보여주는 파란색 배경을 주석처리를 했다 ----> 수정 사항
+    #images[0].set_colorkey(0)  #---- 위의 png를 배열에다 넣기 때문에 주석처리를 했다. ----> 수정 사항
     images.append(gfx.load('logo.png'))
     images.append(gfx.load('ship-big.png'))
-    images[1].set_colorkey()
-    images[2].set_colorkey()
+    images[0].set_colorkey(0)   # --- 1을 0으로 ---> 수정 사항
+    images[1].set_colorkey(0)   # --- 2을 1으로 ---> 수정 사항
 
     global boximages, yboximages, rboximages
     imgs = gfx.load_raw('bigboxes.png')
@@ -88,7 +89,7 @@ class GameMenu:
         self.switchhandler = None
         self.switchclock = 0
         self.startclock = 5
-        self.logo = images[1]
+        self.logo = images[0]   # --- 1을 0으로 ----> 수정 사항
         self.logorect = self.logo.get_rect().move(30, 25)
         self.logorectsmall = self.logorect.inflate(-2,-2)
         self.boxtick = 0
@@ -97,8 +98,8 @@ class GameMenu:
         else:
             self.boximages = boximages
         self.boxrect = self.boximages[0].get_rect().move(580, 80)
-        self.bigship = images[2]
-        self.bigshiprect = self.bigship.get_rect().move(450, 250)
+        self.bigship = images[1]    # --- 1을 0으로 ----> 수정 사항
+        self.bigshiprect = self.bigship.get_rect().move(480, 250) # --- 450, 250을 480, 250로 변경 ---> 수정 사항
 
         fnt = txt.Font(None, 18)
         self.version = fnt.text((100, 200, 120), 'SolarWolf Version ' + game.version, (10, 580), 'topleft')
@@ -183,20 +184,15 @@ class GameMenu:
                 if c:
                     i.set_colorkey(c, RLEACCEL)
 
-
-    def drawitem(self, item, lit):
+    def drawitem(self, item, lit):  #--- 함수 수정 ---
         if not lit:
+            item.img_off.set_alpha(255) # 배경을 투명하게 만든다
             gfx.surface.blit(item.img_off, item.smallrect)
         else:
-            lite = images[0]
-            glowval = (math.sin(self.glow) + 2.5) * 50.0
-            if self.switchclock == 2:
-                glowval //= 2
-            if gfx.surface.get_bytesize()>1:
-                lite.set_alpha(glowval)
-            gfx.surface.blit(lite, item.rect)
-            gfx.surface.blit(item.img_on, item.rect)
+            item.img_on.set_alpha(255) # --- img_off를 img_on으로 변경 or 추가 코드 ---
+            gfx.surface.blit(item.img_on, item.rect)  # 강조 효과 없이 바로 표시
         gfx.dirty(item.rect)
+
 
 
     def input(self, i):
@@ -232,7 +228,7 @@ class GameMenu:
             self.background(self.boxrect)
         elif self.switchclock:
             alpha = (self.switchclock-1)*20
-            self.setalphas(alpha, [boximg])
+            self.setalphas(alpha, [boximg]) 
             self.background(self.boxrect)
             if self.switchclock == 2 and gfx.surface.get_bytesize()>1:
                 menu[self.current].img_on.set_alpha(128)
@@ -249,7 +245,7 @@ class GameMenu:
         if self.startclock == 1 or self.switchclock == 1:
             self.setalphas(255, [menu[self.current].img_on] + self.boximages)
 
-        if self.switchclock != 1:
+        if self.switchclock != 1:   
             r = gfx.surface.blit(boximg, self.boxrect)
             gfx.dirty(r)
 
