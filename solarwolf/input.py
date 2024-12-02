@@ -133,22 +133,16 @@ def init():
 
 def postactive():
     keystate = pygame.key.get_pressed()
-    for key in range (len(keystate)):
-        if keystate[key]:
-            #I don't know how to get unicode
-            pygame.event.post(pygame.event.Event(KEYDOWN, {'key': key, 'mod': pygame.key.get_mods()}))
-    if joystick:
-        for button in range(joystick.get_numbuttons()):
-            if joystick.get_button(button):
-                pygame.event.post(pygame.event.Event(JOYBUTTONDOWN, {'joy': joystick.get_id(), 'button': button}))
-        for hat in range(joystick.get_numhats()):
-            value = joystick.get_hat(hat)
-            if 0 != value[0] or 0 != value[1]:
-                pygame.event.post(pygame.event.Event(JOYHATMOTION, {'joy': joystick.get_id(), 'hat': hat, 'value': value}))
-        for axis in range(joystick.get_numaxes()):
-            lastaxisvalue[axis] = None
-            value =  joystick.get_axis(axis)
-            pygame.event.post(pygame.event.Event(JOYAXISMOTION, {'joy': joystick.get_id(), 'axis': axis, 'value': value}))
+    move = [0, 0]
+    if keystate[K_UP]:
+        move[1] -= 1
+    if keystate[K_DOWN]:
+        move[1] += 1
+    if keystate[K_LEFT]:
+        move[0] -= 1
+    if keystate[K_RIGHT]:
+        move[0] += 1
+    return move
 
 def resetexclusive():
     global exclusivedict

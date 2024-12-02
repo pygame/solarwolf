@@ -1,3 +1,5 @@
+2024-2 공개SW실무 8조 오픈소스코드분석 및 개발 프로젝트 입니다.
+
 SolarWolf - http://pygame.org/shredwheat/solarwolf/index.shtml
 by Pete "ShredWheat" Shinners" - pete@shinners.org
 

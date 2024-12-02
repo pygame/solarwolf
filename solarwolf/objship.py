@@ -3,6 +3,7 @@
 import pygame
 from pygame.locals import *
 import game, gfx
+from math import sqrt
 
 upimage = None
 shieldbg = None
@@ -89,8 +90,15 @@ class Ship:
             speed = int(speed * speedadjust * 1.3)
         else:
             speed = int(speed * speedadjust)
-        self.pos[0] += self.move[0] * speed
-        self.pos[1] += self.move[1] * speed
+
+        from input import postactive
+        self.move = postactive()
+        
+        if any(self.move):
+            norm = sqrt(self.move[0]**2 + self.move[1]**2)
+            if norm > 0:
+                self.pos[0] += (self.move[0] / norm) * self.speeds[self.turbo]
+                self.pos[1] += (self.move[1] / norm) * self.speeds[self.turbo]
         self.rect.topleft = self.pos
         if self.rect.top < game.arena.top:
             self.rect.top = game.arena.top

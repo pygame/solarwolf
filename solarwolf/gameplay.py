@@ -293,6 +293,7 @@ class GamePlay:
         hitbullet = 0
         #collide player and asteroids to bullets
         for s in self.shotobjs:
+            s.tick(speedadjust=1.0, player_ship=self.player)
             r = s.rect
             if playercollide(r):
                 s.dead = 1
