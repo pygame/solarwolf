@@ -26,13 +26,13 @@ def load_game_resources():
     images.append((img, img.get_rect()))
 
     bgd = 0, 0, 0
-    font = txt.Font(None, 50)
-    t = font.text((220, 210, 180), 'Select A Player:', (gfx.rect.centerx, 30))
+    font = txt.Font(None, 30)   #----------- 플레이어를 선택하세요 폰트 50에서 30로 변경 -----------
+    t = font.text((220, 210, 180), '플레이어를 선택하세요:', (gfx.rect.centerx, 30))    #플레이어를 선택하세요로 변경 ---
     images.append(t)
 
-    namefont = txt.Font(None, 46)
-    textfont = txt.Font(None, 26)
-    smallfont = txt.Font(None, 16)
+    namefont = txt.Font(None, 30)   #----------- 플레이어 이름 폰트 46에서 30로 변경 -----------
+    textfont = txt.Font(None, 15)   #----------- 플레이어 레벨 폰트 26에서 15로 변경 -----------
+    smallfont = txt.Font(None, 13)  #----------- 플레이어가 사용한 목숨, 레벨 건너뛰기 폰트 16에서 13로 변경 -----------
 
     snd.preload('select_choose', 'select_move', 'delete')
 
@@ -168,7 +168,7 @@ class GameStart:
                 c = clr3
             else:
                 c = clr
-            t = namefont.text(c, '-= New Player =-', (400, offsety), 'center')
+            t = namefont.text(c, '-= 새 게임 =-', (400, offsety), 'center') #--- 새 게임으로 변경 ---
             self.gamelist.append(('', t))
             offsety += sizey
             cur += 1
@@ -190,7 +190,7 @@ class GameStart:
             t,r = namefont.text(c, p.name)
             subimgs.append((t, (8, -4)))
 
-            subimg, r = textfont.text(clr2, 'Level: ')
+            subimg, r = textfont.text(clr2, '레벨: ')   #--- 레벨로 변경 ---
             r1 = subimg.get_rect()
             r1.bottomleft = 15, 54
             subimgs.append((subimg, r1))
@@ -206,10 +206,10 @@ class GameStart:
                 subimgs.append((subimg, r))
 
                 if p.lives:
-                    subimgs.append(smallfont.text((150,150,150), "Lives Used: %d"%p.lives,
+                    subimgs.append(smallfont.text((150,150,150), "사용한 목숨: %d"%p.lives, #--- 사용한 목숨으로 변경 ----
                         (440,20), "topright", bgd=(30,30,30)))
                 if p.skips:
-                    subimgs.append(smallfont.text((150,150,150), "Levels Skipped: %d"%p.skips,
+                    subimgs.append(smallfont.text((150,150,150), "레벨 건너뛰기: %d"%p.skips,   #--- 레벨 건너뛰기로 변경 ---
                         (440,34), "topright", bgd=(30,30,30)))
 
                 #progress

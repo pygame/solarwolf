@@ -3,6 +3,8 @@
 import pygame
 from pygame.locals import *
 import game, gfx
+from math import sqrt
+import game, gfx, snd, objpopshot
 
 upimage = None
 shieldbg = None
@@ -50,6 +52,9 @@ class Ship:
         self.pos = list(self.rect.topleft)
         self.shield = 0
         self.bullet = 0
+        self.ult_cooldown = 30000
+        self.ult_last_used = 0
+        self.ult_ready = True
 
     def start(self, pos):
         self.rect.topleft = pos
@@ -89,8 +94,15 @@ class Ship:
             speed = int(speed * speedadjust * 1.3)
         else:
             speed = int(speed * speedadjust)
-        self.pos[0] += self.move[0] * speed
-        self.pos[1] += self.move[1] * speed
+
+        from input import postactive
+        self.move = postactive()
+        
+        if any(self.move):
+            norm = sqrt(self.move[0]**2 + self.move[1]**2)
+            if norm > 0:
+                self.pos[0] += (self.move[0] / norm) * self.speeds[self.turbo]
+                self.pos[1] += (self.move[1] / norm) * self.speeds[self.turbo]
         self.rect.topleft = self.pos
         if self.rect.top < game.arena.top:
             self.rect.top = game.arena.top
@@ -134,3 +146,16 @@ class Ship:
         if game.thruster:
             onoff = not onoff
         self.turbo = onoff
+
+    def cmd_ult(self):
+        current_time = pygame.time.get_ticks()
+        if self.ult_ready:
+            snd.play('chimeout')  # Play a sound effect for the ultimate ability
+            state = game.handler
+            for s in state.shotobjs:
+                s.dead = 1
+                state.popobjs.append(objpopshot.PopShot(s.rect.center))
+            self.ult_ready = False
+            self.ult_last_used = current_time
+        if not self.ult_ready and current_time - self.ult_last_used >= self.ult_cooldown:
+            self.ult_ready = True

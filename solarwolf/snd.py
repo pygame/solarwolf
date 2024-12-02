@@ -102,7 +102,7 @@ def tweakmusicvolume():
     prefvolume = [0, 0.6, 1.0][game.music]
     if not prefvolume:
         music.stop()
-    if not music.get_busy():
-        music.play(-1)
+    # if not music.get_busy():
+    #     music.play(-1)
     music.set_volume(prefvolume*CurrentVolume)
 

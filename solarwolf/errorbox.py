@@ -68,7 +68,7 @@ def __pygame(title, message):
         pygame.font.init()
         screen = pygame.display.set_mode((460, 140))
         pygame.display.set_caption(title)
-        font = pygame.font.Font(None, 18)
+        font = pygame.font.Font(None, 15) 
         foreg = 0, 0, 0
         backg = 200, 200, 200
         liteg = 255, 255, 255

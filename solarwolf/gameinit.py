@@ -39,8 +39,8 @@ def loadresources():
 class GameInit:
     def __init__(self, prevhandler):
         self.prevhandler = prevhandler
-        font = txt.Font(None, 20)
-        self.font = txt.Font(None, 22)
+        font = txt.Font(None, 15)   #----------- Loading Resources 폰트 20에서 15로 변경 -----------
+        self.font = txt.Font(None, 22)  #----------- 폰트 22에서 18로 변경 -----------
         self.rect = Rect(50, 450, 700, 22)
         self.text = font.render('Loading Resources...', 1, (250, 230, 180))
         self.img_powered = gfx.load('pygame_powered.gif')

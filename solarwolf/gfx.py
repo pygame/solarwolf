@@ -214,3 +214,10 @@ def animstrip(img, width=0):
     img.set_alpha(origalpha)
     img.set_colorkey(origckey)
     return images
+
+
+def draw_text(text, position, color, font_size=30):
+    font = pygame.font.SysFont(None, font_size)  # 기본 폰트 사용
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect(center=position)
+    screen.blit(text_surface, text_rect)

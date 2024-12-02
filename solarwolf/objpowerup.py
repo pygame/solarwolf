@@ -186,13 +186,31 @@ class Combustion(PowerupEffect):
             self.state.background(g.lastrect)
             gfx.dirty(g.lastrect)
 
+#FastBullet이란 아이템 추가 (총알 속도 증가)
+class FastBullet(PowerupEffect):
+    "Fast Bullets"
+    runtime = 140.0
+    symbol = 6
 
+    def start(self):
+        self.state = game.handler
+        snd.play('whip')
+        self.ending = 0  # 속성 초기화
+        for shot in self.state.shotobjs:
+            shot.set_speed_multiplier(4.0)  # 총알 속도를 네 배로 증가
 
+    def tick(self, speedadjust):
+        PowerupEffect.tick(self, speedadjust)
+        if not self.ending and self.time >= 120.0:
+            self.ending = 1
+            for shot in self.state.shotobjs:
+                shot.set_speed_multiplier(1.5)  # 속도를 조금만 느리게
 
-Effects = [ExtraLevelTime, PopShots, Shield,
-           SlowMotion, Combustion, ExtraLife,
-           PopShots, Shield, ExtraLife, Combustion,
-           PopShots, SlowMotion]
+    def end(self):
+        for shot in self.state.shotobjs:
+            shot.set_speed_multiplier(1.0)  # 기본 속도로 복원
+
+Effects = [FastBullet] #체크용으로 FastBullet만 추가
 
 
 def newpowerup(levelnum):

@@ -36,17 +36,17 @@ def load_game_resources():
     images.append((img, img.get_rect()))
 
     bgd = 0, 0, 0
-    font = txt.Font(None, 50)
+    font = txt.Font(None, 50)   
     t = font.text((220, 210, 180), 'Setup Controls', (gfx.rect.centerx, 30))
     images.append(t)
     t = txt.Font('sans', 12).text((180, 220, 180), '(You can Pause the game with the PAUSE or P buttons)', (400, 590))
     images.append(t)
 
     namefontheight = 46
-    namefont = txt.Font(None, 46)
+    namefont = txt.Font(None, 46)   
     textfontheight = 26
     textfont = txt.Font(None, textfontheight)
-    smallfont = txt.Font('sans', 12)
+    smallfont = txt.Font('sans', 12) 
 
     snd.preload('select_choose', 'select_move', 'incorrect', 'delete')
 

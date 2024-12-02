@@ -11,118 +11,118 @@ import gameplay, objtext
 fonts = []
 
 def load_game_resources():
-    fonts.append(txt.Font('sans', 14, italic=1))
-    fonts.append(txt.Font('sans', 20, bold=1))
+    fonts.append(txt.Font('sans', 10, italic=1))  #----------- 폰트 14에서 10로 변경 -----------
+    fonts.append(txt.Font('sans', 15, bold=1))    #----------- 폰트 20에서 15로 변경 -----------
     snd.preload('chimein', 'chimeout')
 
 
 Help = {
-"player":"""SolarWolf Help
-You pilot the mighty SolarWolf fleet of ships.
+"player":"""SolarWolf 도움말
+당신은 강력한 SolarWolf 함대를 조종합니다.
 -
-There are no weapons, but it has the most advanced
-manuevering of its kind. Control your ship with the
-arrow keys or a joystick.
-(You can also use "vi" keys, if you know what that is.)
+무기는 없지만, 가장 뛰어난 기동성을 자랑합니다.
+방향키나 조이스틱으로 함선을 조작하세요.
+(또한 "vi" 키를 사용할 수도 있습니다. 이게 무엇인지 아신다면요.)
 -
-Take advantage of the Hyper Jets by holding the space
-bar or joystick button.
+스페이스바 또는 조이스틱 버튼을 누르고 있어 Hyper Jets를 활용하세요.
 -
-Collect all the Power Cubes on each level to advance.""",
+각 레벨의 모든 Power Cubes를 모아 다음 레벨로 진행하세요.""",
 
-"multibox":"""Color Power Cubes
-Some power cubes will have alternate colors, which means
-the SolarWolf ship must contact the cube multiple times
-for it to be collected.""",
+"multibox":"""색상 Power Cubes
+일부 Power Cubes는 다른 색상을 가지며, 이는 SolarWolf 함선이 해당 큐브에 여러 번 접촉해야만 수집할 수 있음을 의미합니다.""",
 
-"guardians":"""Guardian Info
-The Guardians protect the Power Cubes on every level.
-They will become more aggressive in the later levels.
+"guardians":"""Guardian 정보
+Guardian들은 각 레벨의 Power Cubes를 보호합니다.
+레벨이 높아질수록 그들은 더 공격적으로 변합니다.
 -
-Don't get too close, they like to shoot point blank.""",
+Guardian 근처로 너무 다가가지 마세요. 가까이에서 공격하기를 좋아합니다.""",
 
-"asteroids":"""Asteroid Warning
-Asteroids have started to appear. They will destroy anything
-they touch.
+"asteroids":"""운석 경고
+운석이 나타나기 시작했습니다. 운석은 닿는 모든 것을 파괴합니다.
 -
-As you progress to deeper space, more asteroids will start to appear.""",
+더 깊은 우주로 나아갈수록 더 많은 운석이 등장할 것입니다.""",
 
 "spikes":"""Spike Mine
-There is a deadly spike mine on this level. Touching it will destroy
-your ship.""",
+이 레벨에는 치명적인 Spike Mine이 있습니다.
+접촉하면 함선이 파괴됩니다.""",
 
-"secretspikes":"""Hidden Spike Mine
-Sensors indicate there is a Spike Mine somewhere on this level.
-Be careful, it could turn up anywhere.
+"secretspikes":"""숨겨진 Spike Mine
+센서는 이 레벨 어딘가에 Spike Mine이 있음을 감지했습니다.
+조심하세요. 어디든 나타날 수 있습니다.
 -
-There is only one Spike Mine hidden on this level, but there
-will be more than one on harder levels.""",
+이 레벨에는 하나의 숨겨진 Spike Mine만 있지만,
+더 어려운 레벨에서는 여러 Spike Mine이 등장합니다.""",
 
-"powerup":"""Power Ups
-When the green Power Ups appear be sure to grab them. They
-will grant you with special abilities and bonuses.
+"powerup":"""파워업
+녹색 Power Up이 나타나면 반드시 획득하세요.
+특수 능력과 보너스를 제공합니다.
 -
-As you reach harder levels the power ups will
-have better effects.""",
+더 어려운 레벨에 도달할수록 더 강력한 효과를 가진 파워업이 등장합니다.""",
 
-"skip":"""Skip Level Timer
-On the right side of the screen you see the large red
-Skip A Level Timer. If you can clear a level before the
-timer runs out, you will automatically skip the next level.""",
+"skip":"""레벨 스킵 타이머
+화면 오른쪽에 큰 빨간색 레벨 스킵 타이머가 보일 것입니다.
+타이머가 끝나기 전에 레벨을 클리어하면,
+다음 레벨을 자동으로 건너뛸 수 있습니다.""",
 
-"Skip Bonus":"""Time Skip Power Up
-This powerup adds more time to the Skip A Level Timer for a little while.
+"Skip Bonus":"""시간 스킵 파워업
+이 파워업은 레벨 스킵 타이머에 더 많은 시간을 추가합니다.
 -
-Collecting this prize makes it
-much easier to pass the level and beat the skip timer.""",
+이 아이템을 수집하면 레벨을 통과하고
+스킵 타이머를 이기기가 훨씬 쉬워집니다.""",
 
-"Shot Blocker":"""Shot Blocker Power Up
-This Power Up destroys all the bullets currently in space.
-It can be a life saver when things have gotten difficult.""",
+"Shot Blocker":"""샷 차단 파워업
+이 파워업은 현재 우주에 있는 모든 탄환을 제거합니다.
+상황이 어려울 때 생명을 구해주는 아이템입니다.""",
 
-"Shield":"""Shield Power Up
-This powerup enables a temporary shield on your SolarWolf
-ship. You will also be able to fly faster through space
-when the shield is active.
+"Shield":"""방패 파워업
+이 파워업은 SolarWolf 함선에 일시적으로 방패를 활성화합니다.
+방패가 활성화된 동안 우주를 더 빠르게 비행할 수 있습니다.
 -
-Beware, the shield does not protect you from the Asteroids.
+주의하세요. 방패는 운석으로부터는 보호해주지 않습니다.
 -
-You will are given a second of invincibility even after the
-shield effect wears out.""",
+방패 효과가 사라진 후에도 1초 동안 무적 상태가 유지됩니다.""",
 
-"Bullet Time":"""Bullet Time Power Up
-This powerup enhances temporarily enhances your reflexes
-which makes everything appear to move slowly.
+"Bullet Time":"""총알 시간 파워업
+이 파워업은 일시적으로 반응 속도를 향상시켜
+모든 것이 느리게 움직이는 것처럼 보이게 합니다.
 -
-Watch closely after a few seconds, as time will slowly
-speed up before returning to full speed.""",
+몇 초가 지나면 천천히 시간이 빨라지기 시작해
+정상 속도로 돌아옵니다.""",
 
-"Extra Life":"""Extra Life Power Up
-This powerup adds another SolarWolf ship to your fleet.
+"Extra Life":"""추가 생명 파워업
+이 파워업은 SolarWolf 함대에 새로운 함선을 추가합니다.
 -
-With skilled play and this prize you can collect many
-more ships than the original fleet of 3.""",
+숙련된 플레이와 함께 이 아이템을 사용하면,
+기본 함선 3개보다 훨씬 많은 함선을 수집할 수 있습니다.""",
 
-"Combustion":"""Guardian Combustion
-This powerup explodes one of the Guardians.
+"Combustion":"""Guardian 폭발
+이 파워업은 Guardian 중 하나를 폭발시킵니다.
 -
-The enemy will remain dead until the end of the level.""",
+폭발된 적은 해당 레벨이 끝날 때까지 사라집니다.""",
+
+"Fast Bullets": """빠른 총알 (디버프)
+    이 파워업을 수집하면 모든 총알이 일시적으로 네 배의 속도로 움직입니다.
+    -
+    빨라지는 총알에 대비하세요!
+    -
+    이 효과는 정상 속도로 돌아가기 전에 점진적으로 사라집니다.""",
 
 }
-
+#게임 help 메시지 추가
 
 
 QuickHelp = {
-"asteroids":"Beware of Asteroids",
-"spikes":"Beware of Spike Mines",
-"secretspikes":"Beware of Hidden Spike Mines",
-"powerup":"Grab the Powerups",
-"Skip Bonus":"Adds To Skip Timer",
-"Shot Blocker":"Destroys All Bullets",
-"Shield":"Temporary Invincibility",
-"Bullet Time":"Slow Motion Effect",
-"Extra Life":"Extra Life",
-"Combustion":"Destroys One Guardian",
+"asteroids":"운석을 조심하세요",
+"spikes":"스파이크 지뢰를 조심하세요",
+"secretspikes":"숨겨진 스파이크 지뢰를 조심하세요",
+"powerup":"파워업을 획득하세요",
+"Skip Bonus":"타이머 시간을 추가합니다",
+"Shot Blocker":"모든 총알을 제거합니다",
+"Shield":"일시적인 무적 상태",
+"Bullet Time":"슬로우 모션 효과",
+"Extra Life":"추가 생명",
+"Combustion":"수호자 하나를 제거합니다",
+"Fast Bullets":"총알 속도가 빨라집니다",
 }
 
 

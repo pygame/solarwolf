@@ -43,29 +43,30 @@ news_url = 'https://pygame.org/shredwheat/solarwolf/thenews.html'
 
 #number of insults must match num of complements, be careful
 Complements = (
-    'Keep it up!',
-    'Looking Great!',
-    'Hotshot',
-    'Too Hot to Handle',
-    'Bring it on',
-    'Beautiful',
-    'Own the Zone',
-    'Too Cool For School',
-    'So Hot Right Now',
-    'Smooth Moves'
+    '계속 잘해봐!',
+    '멋져 보여!',
+    '슈퍼스타',
+    '너무 뜨거워서 다룰 수 없네',
+    '한번 붙어보자!',
+    '아름다워',
+    '영역을 지배해',
+    '학교에서 너무 쿨한 사람',
+    '지금 완전 핫해',
+    '완벽한 움직임'
 )
 Insults = (
-    'Not so good',
-    'Ouch',
-    'Rookie',
-    'Sloppy',
-    'Choke Choke',
-    'Not Today',
-    'Hall of Shame',
-    'Wrong way',
-    'Clumsy, Clumsy',
-    'Medic',
+    '별로 좋지 않네',
+    '아야',
+    '초보자',
+    '엉성해',
+    '실수 연발',
+    '오늘은 아니야',
+    '굴욕의 전당',
+    '잘못된 방향이야',
+    '어설퍼, 어설퍼',
+    '의무병 불러!'
 )
+
 
 
 
